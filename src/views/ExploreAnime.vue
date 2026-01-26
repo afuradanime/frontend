@@ -3,18 +3,29 @@ import { ref, onMounted } from 'vue'
 import { animeService } from '../services/AnimeService'
 import { getAnimeTypeName, type Anime } from '../models/Anime'
 import AnimeCard from '../components/AnimeCard.vue'
-import type router from '@/router'
 
 const animes = ref<Anime[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
-const query = ref('K-On')
 
 onMounted(async () => {
     loading.value = true
     error.value = null
     try {
-        animes.value = await animeService.fetchAnimeFromQuery(query.value)
+        animes.value = await animeService.fetchAnimeThisSeason()
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible')
+                }
+            })
+        }, { threshold: 0.1 })
+
+        // Observe all anime items after they're rendered
+        setTimeout(() => {
+            document.querySelectorAll('.anime-item').forEach(el => observer.observe(el))
+        }, 0)
     } catch (err) {
         error.value = 'Failed to load anime'
         console.error('Error loading anime: ', err)
@@ -38,16 +49,17 @@ onMounted(async () => {
 
         <div v-else class="anime-grid">
             <router-link
-				v-for="anime in animes" 
-				:key="anime.ID"
-				:to="`/anime/${anime.ID}`"
-			>
-				<AnimeCard 
-					:picture="anime.Picture" 
-					:title="anime.Title"
-					:type="getAnimeTypeName(anime.Type)" 
-				/>
-			</router-link>
+                v-for="anime in animes" 
+                :key="anime.ID"
+                :to="`/anime/${anime.ID}`"
+                class="anime-item"
+            >
+                <AnimeCard 
+                    :picture="anime.Picture" 
+                    :title="anime.Title"
+                    :type="getAnimeTypeName(anime.Type)" 
+                />
+            </router-link>
         </div>
     </div>
 </template>
@@ -55,16 +67,29 @@ onMounted(async () => {
 <style scoped>
 
 .explore-anime-view {
-	display: flex;
-	justify-content: center;
-	padding: 20px;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
 }
 
 .anime-grid {
-	width: 80%;
+    width: 80%;
     display: flex;
-	flex-wrap: wrap;
+    flex-wrap: wrap;
     gap: 40px;
     margin-top: 20px;
+}
+
+.anime-item {
+    content-visibility: auto;
+    contain-intrinsic-size: 235px 319px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.anime-item.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 </style>
