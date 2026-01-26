@@ -1,0 +1,1 @@
+# Afuradanime frontend
