@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 
 defineProps<{
   picture: string
@@ -6,6 +7,7 @@ defineProps<{
   type: string
 }>()
 
+const imageLoaded = ref(false)
 </script>
 
 <template>
@@ -15,7 +17,14 @@ defineProps<{
       </div>
       <div class="triangle-left"></div>
       <div class="card-wrapper">
-        <div class="img-container" :style="`background-image: url('${picture}');`">
+        <div class="img-container">
+          <img 
+            :src="picture" 
+            :alt="title"
+            loading="lazy"
+            @load="imageLoaded = true"
+            :class="{ 'loaded': imageLoaded }"
+          />
           <div class="overlay">
             <span class="anime-name">{{ title }}</span>
           </div>
@@ -45,13 +54,12 @@ defineProps<{
   z-index: 10;
   display: flex;
   justify-content: center;
-  height: 35px;
   font-weight: bold;
 }
 
 .triangle-left {
   position: absolute;
-  margin-top: 68px;
+  margin-top: 55.5px;
   width: 0;
   height: 0;
   border-right: 10px solid #3a6999;
@@ -68,11 +76,22 @@ defineProps<{
 .img-container {
   width: 225px;
   height: 319px;
-  background-size: cover;
-  background-position: center;
   overflow: hidden;
   border-radius: 1rem;
   position: relative;
+  background-color: #2a2a2a;
+}
+
+.img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.img-container img.loaded {
+  opacity: 1;
 }
 
 .overlay {

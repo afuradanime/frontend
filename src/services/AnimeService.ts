@@ -28,11 +28,7 @@ export class AnimeService {
 
 	async fetchAnimeThisSeason(): Promise<Anime[]> {
 		const response = await this.httpService.get<Anime[]>('/anime/seasonal')
-
-		const filteredAnimes = response.data.filter(anime => 
-			anime.Sources && anime.Sources.toLowerCase().includes('myanimelist'))
-
-		return filteredAnimes
+		return response.data
 	}
 }
 
