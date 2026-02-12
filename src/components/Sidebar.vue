@@ -34,39 +34,3 @@ defineProps<{
 	</div>
 
 </template>
-
-<style scoped>
-
-.sidebar-main {
-	width: 100px;
-	height: 100vh;
-	background: #1C1C1C;
-	position: fixed;
-}
-
-.sidebar-item {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	padding: 10px;
-	color: #818181;
-	cursor: pointer;
-	font-size: medium;
-	font-weight: bold;
-	margin-bottom: 20px;
-	transition: color 0.3s;
-	text-decoration: none;
-}
-
-.sidebar-item sl-icon {
-	width: 30px;
-	height: 30px;
-	margin-bottom: 5px;
-}
-
-.sidebar-item:hover {
-	color: white;
-}
-
-</style>

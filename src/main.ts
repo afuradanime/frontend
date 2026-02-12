@@ -1,4 +1,5 @@
 import './assets/main.css'
+import './assets/anime.css'
 
 // Shoelace setup
 import '@shoelace-style/shoelace/dist/themes/light.css'
