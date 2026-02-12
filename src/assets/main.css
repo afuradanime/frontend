@@ -1,7 +1,10 @@
 :root {
     
     --primary-color: #171419;
+    --variation-color: #151217;
     --secondary-color: #272532;
+
+    --border-color: #130E16;
 
     --text-color: #C8C0CD;
 }
@@ -60,6 +63,13 @@ sl-option::part(base):hover {
 }
 
 sl-option::part(checked-icon) {
+    color: var(--text-color);
+}
+
+sl-card::part(base) {
+    background-color: var(--variation-color);
+    border: none;
+
     color: var(--text-color);
 }
 

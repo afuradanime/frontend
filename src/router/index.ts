@@ -8,6 +8,11 @@ const router = createRouter({
       name: 'explore',
       component: () => import('../views/ExploreAnime.vue'),
     },
+    {
+        path: '/anime/:id',
+        name: 'anime',
+        component: () => import('../views/ViewAnime.vue'),
+    }
   ],
 })
 

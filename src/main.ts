@@ -14,7 +14,7 @@ setBasePath('https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/')
 registerIconLibrary('material', {
     resolver: name => {
         const match = name.match(/^(.*?)(_(round|sharp|outline|twotone))?$/)
-        return `https://cdn.jsdelivr.net/npm/@material-icons/svg@1.0.5/svg/${match[1]}/${match[3] || 'outline'}.svg`
+        return match ? `https://cdn.jsdelivr.net/npm/@material-icons/svg@1.0.5/svg/${match[1]}/${match[3] || 'outline'}.svg` : ""
     },
     mutator: svg => svg.setAttribute('fill', 'currentColor')
 })
