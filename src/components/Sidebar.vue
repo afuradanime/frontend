@@ -19,7 +19,7 @@ defineProps<{
 			to="/"
 			class="sidebar-item"
 		>
-			<img style="width: 60px;" src="../../public/favicon.ico" alt="">
+			<img src="../../public/favicon.ico" alt="">
 		</router-link>
 		<router-link 
             v-for="item in menuItems" 
@@ -28,8 +28,10 @@ defineProps<{
             class="sidebar-item"
             active-class="sidebar-item-active"
         >
-			<sl-icon :name="item.icon"></sl-icon>
-			<span>{{ item.title }}</span>
+            <div class="item-contents">
+                <sl-icon library="material" :name="item.icon"></sl-icon>
+                <span>{{ item.title }}</span>
+            </div>
 		</router-link>
 	</div>
 

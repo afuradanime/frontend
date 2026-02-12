@@ -4,6 +4,10 @@ import { animeService } from '../services/AnimeService'
 import { getAnimeTypeName, type Anime } from '../models/Anime'
 import AnimeCard from '../components/AnimeCard.vue'
 
+import '@shoelace-style/shoelace/dist/components/input/input.js'
+import '@shoelace-style/shoelace/dist/components/select/select.js'
+import '@shoelace-style/shoelace/dist/components/option/option.js'
+
 const animes = ref<Anime[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -54,19 +58,43 @@ onUnmounted(() => {
             {{ error /* Implement better error handling later */}}
         </div>
 
-        <div v-else class="anime-grid">
-            <router-link
-                v-for="anime in animes" 
-                :key="anime.ID"
-                :to="`/anime/${anime.ID}`"
-                class="anime-item"
-            >
-                <AnimeCard 
-                    :picture="anime.ImageURL" 
-                    :title="anime.Title"
-                    :type="getAnimeTypeName(anime.Type)" 
-                />
-            </router-link>
+        
+        <div v-else>
+            
+            <div class="control-header">
+                <h1>Explorar</h1>
+                <p>Filtros</p>
+
+                <div class="filter-box">
+                    <sl-input placeholder="Pesquisar" size="small">
+                        <sl-icon slot="prefix" name="search"></sl-icon>
+                    </sl-input>
+
+                    <sl-select placeholder="Tipo" size="small">
+                        <sl-option value="TV">TV</sl-option>
+                        <sl-option value="Movie">Movie</sl-option>
+                        <sl-option value="OVA">OVA</sl-option>
+                        <sl-option value="ONA">ONA</sl-option>
+                        <sl-option value="TV_SHORT">TV Short</sl-option>
+                        <sl-option value="SPECIAL">Special</sl-option>
+                    </sl-select>
+                </div>
+            </div>
+
+            <div class="anime-grid">
+                <router-link
+                    v-for="anime in animes" 
+                    :key="anime.ID"
+                    :to="`/anime/${anime.ID}`"
+                    class="anime-item"
+                >
+                    <AnimeCard 
+                        :picture="anime.ImageURL" 
+                        :title="anime.Title"
+                        :type="getAnimeTypeName(anime.Type)" 
+                    />
+                </router-link>
+            </div>
         </div>
     </div>
 </template>
@@ -80,7 +108,7 @@ onUnmounted(() => {
 }
 
 .anime-grid {
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 40px;
@@ -99,4 +127,11 @@ onUnmounted(() => {
     opacity: 1;
     transform: translateY(0);
 }
+
+.filter-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
 </style>

@@ -1,0 +1,55 @@
+
+.sidebar-main {
+	width: 230px;
+	height: 100vh;
+	background: var(--primary-color);
+	position: fixed;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 10px;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: medium;
+    font-weight: bold;
+    margin-bottom: 20px;
+    transition: color 0.3s;
+    text-decoration: none;
+}
+
+.sidebar-item:first-child {
+    /* Keep logo centered */
+    align-items: center;
+    margin-top: 30px;
+    margin-bottom: 60px;
+}
+
+.sidebar-item:first-child img {
+    width: 70px;
+}
+
+.sidebar-item:not(:first-child) {
+    /* Align menu items to the left */
+    align-items: flex-start;
+}
+
+.item-contents {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.item-contents span {
+    font-size: 20px;
+    font-family: "Content", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.sidebar-item sl-icon {
+    font-size: 20px;
+}

@@ -1,37 +1,85 @@
+:root {
+    
+    --primary-color: #171419;
+    --secondary-color: #272532;
+
+    --text-color: #C8C0CD;
+}
+
 body{
 	margin: 0;
-	background: #212121;
+	background: var(--primary-color);
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.sidebar-main {
-	width: 100px;
-	height: 100vh;
-	background: #1C1C1C;
-	position: fixed;
+#content {
+    margin-left: calc(230px + 20px);
+    width: calc(100% - 230px - 20px);
 }
 
-.sidebar-item {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	padding: 10px;
-	color: #818181;
-	cursor: pointer;
-	font-size: medium;
-	font-weight: bold;
-	margin-bottom: 20px;
-	transition: color 0.3s;
-	text-decoration: none;
+sl-input::part(base) {
+    background-color: var(--secondary-color);
+    border: none;
+    color: var(--text-color);
 }
 
-.sidebar-item sl-icon {
-	width: 30px;
-	height: 30px;
-	margin-bottom: 5px;
+sl-input::part(input) {
+    color: var(--text-color);
 }
 
-.sidebar-item:hover {
-	color: white;
+sl-select::part(combobox) {
+    background-color: var(--secondary-color);
+    border: none;
+    color: var(--text-color);
+}
+
+sl-select::part(display-input) {
+    color: var(--text-color);
+}
+
+sl-select::part(listbox) {
+    background-color: var(--secondary-color);
+}
+
+sl-select::part(tag__base) {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+sl-select::part(menu) {
+    background-color: var(--secondary-color);
+}
+
+sl-option::part(base) {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+sl-option::part(base):hover {
+    background-color: var(--primary-color);
+}
+
+sl-option::part(checked-icon) {
+    color: var(--text-color);
+}
+
+h1 {
+    color: var(--text-color);
+    font-size: 36px;
+    margin: 20px 0;
+
+    font-family: "Convergence", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+p {
+    color: var(--text-color);
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 10px 0;
+ 
+    font-family: "Convergence", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
