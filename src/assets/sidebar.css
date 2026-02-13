@@ -1,9 +1,11 @@
 
 .sidebar-main {
-	width: 230px;
+	width: 200px;
 	height: 100vh;
 	background: var(--primary-color);
 	position: fixed;
+    box-shadow: inset -13px 0 31px -18px rgba(0, 0, 0, 0.25);
+    border-right: 2px solid #111111;
 }
 
 .sidebar-item {
@@ -11,13 +13,23 @@
     align-items: center;
     flex-direction: column;
     padding: 0 10px;
-    color: var(--text-color);
+    color: var(--text-color-secondary);
     cursor: pointer;
     font-size: medium;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     transition: color 0.3s;
     text-decoration: none;
+}
+
+.sidebar-item:hover {
+    color: var(--text-color);
+}
+
+.sidebar-item-active {
+    color: var(--text-color);
+    background-color: var(--variation-color);
+    border: 2px 0px 2px 0px #111111;
 }
 
 .sidebar-item:first-child {

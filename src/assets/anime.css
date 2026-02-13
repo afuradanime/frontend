@@ -3,7 +3,7 @@ Anime cards
 */
 .anime-card {
     display: inline-block;
-    width: 235px;
+    width: calc(235px / 1.2);
     background: transparent;
     flex-shrink: 0;
 }
@@ -41,8 +41,8 @@ Anime cards
 }
 
 .img-container {
-    width: 225px;
-    height: 319px;
+    width: calc(225px / 1.2);
+    height: calc(319px / 1.2);
     overflow: hidden;
     border-radius: 1rem;
     position: relative;
