@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { animeService } from '../services/AnimeService'
-import { getAnimeTypeName, getSeasonName, type Anime } from '../models/Anime'
+import { getAnimeStatusName, getAnimeTypeName, getSeasonName, type Anime } from '../models/Anime'
 import AnimeCard from '../components/AnimeCard.vue'
 
 import {useRoute} from "vue-router";
@@ -15,6 +15,10 @@ import '@shoelace-style/shoelace/dist/components/tab/tab.js'
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js'
 import '@shoelace-style/shoelace/dist/components/card/card.js'
 import '@shoelace-style/shoelace/dist/components/tag/tag.js'
+import Container from '@/components/Container.vue';
+import Subcontainer from '@/components/Subcontainer.vue';
+import InfoTable from '@/components/InfoTable.vue';
+import GenreTag from '@/components/GenreTag.vue';
 
 const anime = ref<Anime>();
 
@@ -125,56 +129,71 @@ onUnmounted(() => {
                
                 </div>
 
-                <div style="background-color: var(--primary-color); width: 100%;
-                    display: flex; justify-content: space-around; padding-top: 30px;"
-                >
-                    <div style="background: var(--primary-color); border-radius: 7px; box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.25); border: 2px solid #130E16 ; width: 20%; padding: 20px;">
-                        <div style="margin-bottom: 20px;">
-                            <div style="color: var(--text-color); box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.25); border: 2px solid #130E16; border-radius: 7px; display: flex; background-color: var(--variation-color); padding: 10px 15px;">
-                                <div style="width: 50%; height: 100%; display: flex; align-items: center; flex-direction: column; ">
-                                    <span>Nota média</span>
-                                    <span style="font-size: 32px; color: white">3.5⭐</span>
-                                </div>
-                                <div style="width: 50%; height: 100%; display: flex; align-items: center; flex-direction: column; ">
-                                    <span>Popularidade</span>
-                                    <span style="font-size: 32px; color: white">#3000</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <h3 style="color: var(--text-color); font-size: 14px; margin-bottom: 15px;">Informações</h3>
-                            <div style="color: var(--text-color-secondary); box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.25); border: 2px solid #130E16; border-radius: 7px; display: flex; flex-direction: column; gap: 8px; background-color: var(--variation-color); padding: 10px 15px;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Episódios:</span>
-                                    <span>{{ anime.Episodes || 'N/A' }}</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Estado:</span>
-                                    <span>{{ anime.Status === 1 ? 'Acabado' : 'Em exibição' }}</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Duração:</span>
-                                    <span>{{ anime.Duration || 'N/A' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 20px;" v-if="anime.Tags && anime.Tags.length > 0">
-                            <h3 style="color: var(--text-color); font-size: 14px; margin-bottom: 15px;">Géneros</h3>
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                <span style="box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.25); border: 2px solid #130E16; background: var(--variation-color); color: var(--text-color-secondary); padding: 5px 10px; border-radius: 4px; font-size: 12px;" v-for="tag in anime.Tags" :key="tag.ID">{{ tag.Name }}</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="main-content-section">
+                    
+                    <!-- Left side content, including rating, anime info, tags, statistics, etc... -->
+                    <Container style="width: 20%;">
 
-                    <div style="display: flex; justify-content: space-around; background: var(--primary-color); box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.25); border-radius: 7px; border: 2px solid #130E16 ; width: 70%;">
-                        <div style="padding: 30px; margin: 30px 0px 30px 0px; color: var(--text-color-secondary); background: var(--variation-color); box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.25); border-radius: 7px; border: 2px solid #111111 ; width: 85%;">
-                            <span style="color: var(--text-color); font-size: 24px;">Sinopse</span> <br><br>
-                            <div style="white-space: pre-line;">{{ anime.Descriptions[0]?.Description }}</div>
-                        </div>
-                    </div>
+                        <!-- Placeholder for rating -->
+                        <Subcontainer>
+                            <template #content>
+                                rating...
+                            </template>
+                        </Subcontainer>
+
+                        <!-- Anime information -->
+                        <Subcontainer>
+                            <template #outer-title> Informações </template>
+                            <template #content>
+                                <InfoTable>
+                                    <tr>
+                                        <td>Episódios</td>
+                                        <td style="text-align: right;">{{ anime.Episodes || 'N/A' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Estado</td>
+                                        <td style="text-align: right;">{{ anime.Status ?? getAnimeStatusName(anime.Status) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Duração</td>
+                                        <td style="text-align: right;">{{ anime.Duration || 'Desconhecido' }}</td>
+                                    </tr>
+                                </InfoTable>
+                            </template>
+                        </Subcontainer>
+
+                        <!-- Genre tags -->
+                        <Subcontainer v-if="anime.Tags">
+                            <template #outer-title>Géneros</template>
+                            <template #before-content>
+                                <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
+                                    {{ tag.Name }}
+                                </GenreTag>
+                            </template>
+                        </Subcontainer>
+
+                    </Container>
+
+                    <!-- Right side content, including synopsis, etc... -->
+                    <Container style="width: 70%;">
+                        <Subcontainer>
+                            <template #inner-title>Sinopse</template>
+                            <template #content>
+                                <div style="margin: 0 0 1rem 1rem;">
+                                    {{ anime.Descriptions[0]?.Description }}
+                                </div>
+                            </template>
+                        </Subcontainer>
+                    </Container>
 
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+
+
+
+</style>
