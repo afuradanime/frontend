@@ -12,6 +12,16 @@ const router = createRouter({
         path: '/anime/:id',
         name: 'anime',
         component: () => import('../views/ViewAnime.vue'),
+    },
+    {
+        path: '/profile/:id',
+        name: 'profile',
+        component: () => import('../views/ViewProfile.vue'),
+    },
+    {
+        path: '/users',
+        name: 'users',
+        component: () => import('../views/ExploreUsers.vue'),
     }
   ],
 })
