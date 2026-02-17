@@ -23,6 +23,11 @@ body{
     color: var(--text-color);
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 #content {
     margin-left: calc(200px);
     width: calc(100% - 200px);
