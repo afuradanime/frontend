@@ -24,6 +24,11 @@ export class UserService {
         const response = await this.httpService.get<User[]>(`/friends/${uid}`)
         return response.data
     }
+
+    async areFriends(userA: number, userB: number): Promise<boolean> {
+        const response = await this.httpService.get<{ areFriends: boolean }>(`/friends/check/${userA}/${userB}`)
+        return response.data.areFriends
+    }
 }
 
 export const userService = new UserService()

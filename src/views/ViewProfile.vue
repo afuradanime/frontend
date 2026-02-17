@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import type { User } from '@/models/User';
 
 import {useRoute} from "vue-router";
@@ -17,25 +17,33 @@ import Container from '@/components/Container.vue';
 import Subcontainer from '@/components/Subcontainer.vue';
 import InfoTable from '@/components/InfoTable.vue';
 import userService from '@/services/UserService';
+import { authService } from '@/services/AuthService'
 import { DateFormat, DecodeRoleList, RoleMap } from '@/composables/utils';
 import Friend from '@/components/Friend.vue';
 
 const profile = ref<User>();
 const roles = ref<number[]>([])
+const { user, isAuthenticated } = authService
 
 const friends = ref<User[]>([])
+const isFriend = ref(false)
 
 const loading = ref(false)
 const error = ref<string | null>(null)
 let observer: IntersectionObserver | null = null
 
+const route = useRoute();
+
 onMounted(() => {
+    loadProfile()
+})
+
+watch(() => route.params.id, () => {
     loadProfile()
 })
 
 const loadProfile = (async () => {
 
-    const route = useRoute();
     const userId = route.params.id as string;
 
     loading.value = true
@@ -55,6 +63,16 @@ const loadProfile = (async () => {
         }).catch(err => {
             console.error('Error loading friends: ', err)
         })
+
+        // Check if current user is friends with this profile
+        isFriend.value = false
+        if (isAuthenticated.value && user.value && user.value.ID !== parseInt(userId)) {
+            userService.areFriends(user.value.ID, parseInt(userId)).then(result => {
+                isFriend.value = result
+            }).catch(() => {
+                isFriend.value = false
+            })
+        }
 
     } catch (err) {
         error.value = 'Failed to load profile'
@@ -99,13 +117,20 @@ const avatar = computed(() => {
 
                         <div 
                             class="user-picture"
-                            :style="{backgroundImage: `url(${avatar})`}"
+                            :style="{backgroundImage: `url(${avatar})`, bottom: '60px'}"
                         ></div>
 
                         <div class="anime-header-content">
-                            <h1 class="anime-title">{{ profile?.Username }}</h1>
+                            <div style="display: flex; width: 100%; gap: 12px; align-items: center; margin-bottom: 1rem;">
+                                <h1 class="anime-title" style="margin: 0px;">{{ profile?.Username }}</h1>
+                                <a :href="`/user/${profile?.ID}/follow`" v-if="isAuthenticated && user?.ID !== profile.ID && !isFriend" class="anime-badge" 
+                                    style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px !important; text-decoration: none; "
+                                >
+                                    Seguir
+                                </a>
+                            </div>
                             <div class="anime-badges">
-                                <div v-for="role in roles" class="anime-badge" :style="{ backgroundColor: RoleMap[role - 1]?.colour || '#888' }">
+                                <div v-for="role in roles" class="role-badge" :style="{ backgroundColor: RoleMap[role - 1]?.colour || '#888' }">
                                     {{ RoleMap[role - 1]?.name || 'Unknown Role'}}
                                 </div>
                             </div>
@@ -200,3 +225,20 @@ const avatar = computed(() => {
         </div>
     </div>
 </template>
+
+<style>
+
+.role-badge{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.9rem;
+    background: rgb(from var(--primary-color) r g b / 50%) !important ;
+    border: 1px solid var(--variation-color);
+    box-shadow: var(--default-box-shadow);
+}
+
+</style>
