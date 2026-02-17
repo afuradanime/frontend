@@ -19,6 +19,7 @@ import Container from '@/components/Container.vue';
 import Subcontainer from '@/components/Subcontainer.vue';
 import InfoTable from '@/components/InfoTable.vue';
 import GenreTag from '@/components/GenreTag.vue';
+import { DateFormat, TranslateDayOfWeek, TranslateDuration } from '@/composables/utils';
 
 const anime = ref<Anime>();
 
@@ -135,23 +136,90 @@ onUnmounted(() => {
                                     </tr>
                                     <tr>
                                         <td>Estado</td>
-                                        <td style="text-align: right;">{{ anime.Status ?? getAnimeStatusName(anime.Status) }}</td>
+                                        <td style="text-align: right;">{{ getAnimeStatusName(anime.Status) }}</td>
                                     </tr>
                                     <tr>
                                         <td>Duração</td>
-                                        <td style="text-align: right;">{{ anime.Duration || 'Desconhecido' }}</td>
+                                        <td style="text-align: right;">{{ TranslateDuration(anime.Duration) || 'Desconhecido' }}</td>
+                                    </tr>
+                                    <tr v-if="anime.Source">
+                                        <td>Origem</td>
+                                        <td style="text-align: right;">{{ anime.Source }}</td>
+                                    </tr>
+                                    <tr v-if="anime.StartDate">
+                                        <td>Data de Início</td>
+                                        <td style="text-align: right;">{{ DateFormat(anime.StartDate) }}</td>
+                                    </tr>
+                                    <tr v-if="anime.EndDate">
+                                        <td>Data de Fim</td>
+                                        <td style="text-align: right;">{{ DateFormat(anime.EndDate) }}</td>
+                                    </tr>
+                                    <tr v-if="anime.Broadcast?.Day">
+                                        <td>Transmissão</td>
+                                        <td style="text-align: right;">{{ TranslateDayOfWeek(anime.Broadcast.Day) }} às {{ anime.Broadcast.Time }}</td>
                                     </tr>
                                 </InfoTable>
                             </template>
                         </Subcontainer>
 
                         <!-- Genre tags -->
-                        <Subcontainer v-if="anime.Tags">
+                        <Subcontainer v-if="anime.Tags && anime.Tags.length > 0">
                             <template #outer-title>Géneros</template>
                             <template #before-content>
                                 <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
                                     {{ tag.Name }}
                                 </GenreTag>
+                            </template>
+                        </Subcontainer>
+
+                        <!-- Studios -->
+                        <Subcontainer v-if="anime.Studios && anime.Studios.length > 0">
+                            <template #outer-title>Estúdios</template>
+                            <template #content>
+                                <div class="info-links">
+                                    <router-link 
+                                        v-for="studio in anime.Studios" 
+                                        :key="studio.ID"
+                                        :to="`/studio/${studio.ID}`"
+                                        class="info-link"
+                                    >
+                                        {{ studio.Name }}
+                                    </router-link>
+                                </div>
+                            </template>
+                        </Subcontainer>
+
+                        <!-- Producers -->
+                        <Subcontainer v-if="anime.Producers && anime.Producers.length > 0">
+                            <template #outer-title>Produtores</template>
+                            <template #content>
+                                <div class="info-links">
+                                    <router-link 
+                                        v-for="producer in anime.Producers" 
+                                        :key="producer.ID"
+                                        :to="`/producer/${producer.ID}`"
+                                        class="info-link"
+                                    >
+                                        {{ producer.Name }}
+                                    </router-link>
+                                </div>
+                            </template>
+                        </Subcontainer>
+
+                        <!-- Licensors -->
+                        <Subcontainer v-if="anime.Licensors && anime.Licensors.length > 0">
+                            <template #outer-title>Licenciadores</template>
+                            <template #content>
+                                <div class="info-links">
+                                    <router-link 
+                                        v-for="licensor in anime.Licensors" 
+                                        :key="licensor.ID"
+                                        :to="`/licensor/${licensor.ID}`"
+                                        class="info-link"
+                                    >
+                                        {{ licensor.Name }}
+                                    </router-link>
+                                </div>
                             </template>
                         </Subcontainer>
 

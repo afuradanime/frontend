@@ -13,6 +13,24 @@ const router = createRouter({
 			name: 'anime',
 			component: () => import('../views/ViewAnime.vue'),
 		},
+        { 
+            path: '/studio/:id',   
+            name: 'studio',
+            component: () => import('../views/ViewEntity.vue'),
+            props: r => ({ type: 'studio' }) 
+        },
+        {
+            path: '/producer/:id',
+            name: 'producer',
+            component: () => import('../views/ViewEntity.vue'),
+            props: r => ({type: 'producer' })
+        },
+        {
+            path: '/licensor/:id',
+            name: 'licensor',
+            component: () => import('../views/ViewEntity.vue'),
+            props: r => ({ type: 'licensor' })
+        },
 		{
 			path: '/profile/:id',
 			name: 'profile',
