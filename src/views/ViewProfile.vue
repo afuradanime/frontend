@@ -20,6 +20,7 @@ import userService from '@/services/UserService';
 import { authService } from '@/services/AuthService'
 import { DateFormat, DecodeRoleList, RoleMap } from '@/composables/utils';
 import Friend from '@/components/Friend.vue';
+import ThreadPostHeader from '@/components/ThreadPostHeader.vue';
 
 const profile = ref<User>();
 const roles = ref<number[]>([])
@@ -217,9 +218,42 @@ const avatar = computed(() => {
                     <!-- Right side content, including synopsis, etc... -->
                     <Container class="right-content">
                         <Subcontainer>
-                            <!-- 
-                                Metemos aqui os posts mais recentes depois
-                            -->
+                            <template #inner-title>
+                                <ThreadPostHeader 
+                                    :user="profile"
+                                    :threadPost="{
+                                        ID: 0,
+                                        UserID: profile.ID,
+                                        Content: 'Bem vindo ao meu perfil!',
+                                        CreatedAt: new Date(2025, 11, 10),
+                                        Pinned: true
+                                    }"
+                                />
+                            </template>
+                            <template #content>
+                                <div class="synopsis-content">
+                                    {{ 'Bem vindo ao meu perfil!' }}
+                                </div>
+                            </template>
+                        </Subcontainer>
+                        <Subcontainer>
+                            <template #inner-title>
+                                <ThreadPostHeader 
+                                    :user="profile"
+                                    :threadPost="{
+                                        ID: 0,
+                                        UserID: profile.ID,
+                                        Content: 'Bem vindo ao meu perfil!',
+                                        CreatedAt: new Date(2025, 11, 10),
+                                        Pinned: false
+                                    }"
+                                />
+                            </template>
+                            <template #content>
+                                <div class="synopsis-content">
+                                    {{ 'BLHEHEHEHEHE' }}
+                                </div>
+                            </template>
                         </Subcontainer>
                     </Container>
 

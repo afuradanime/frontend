@@ -12,6 +12,11 @@
 
 }
 
+*{
+    inline-size: auto;
+    overflow-wrap: break-word;
+}
+
 .special-text{
     font-family: "Convergence", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
