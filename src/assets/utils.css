@@ -1,10 +1,18 @@
 .pagination {
+    width:  500px;
+    background: #130e16ed;
+    left: calc((100% - 200px - 250px) * 0.5);
+    bottom: 10px;
+    position: sticky;
+    padding: 20px;
+    border-radius: 1rem;
+    box-shadow: var(--default-box-shadow);
+
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     margin-top: 32px;
-    padding-bottom: 32px;
 }
 
 .page-btn {
