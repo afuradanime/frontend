@@ -66,7 +66,7 @@ onUnmounted(() => {
         <div v-else>
             
             <div class="control-header">
-                <h1>Explorar</h1>
+                <h1>Utilizadores</h1>
                 <p>Filtros</p>
 
                 <div class="filter-box">

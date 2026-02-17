@@ -29,6 +29,18 @@ function DecodeRoleList(encodedRoles: string): number[] {
     }
 }
 
+function TranslateDayOfWeek(day: string): string {
+    const days = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays"];
+    const translatedDays = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"];
+
+    const index = days.indexOf(day);
+    return translatedDays[index] || day;
+}
+
+function TranslateDuration(duration: string): string {
+    return duration.replace("min per ep", "min por ep");
+}
+
 const RoleMap = [
     {
         name: "Admin",
@@ -47,5 +59,7 @@ const RoleMap = [
 export { 
     DateFormat, 
     DecodeRoleList,
+    TranslateDayOfWeek,
+    TranslateDuration,
     RoleMap,
 }

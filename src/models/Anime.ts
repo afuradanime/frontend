@@ -111,31 +111,31 @@ export enum AnimeStatus {
 
 export function getSeasonName(season: SeasonType): string {
   switch (season) {
-    case SeasonType.Spring: return 'Spring'
-    case SeasonType.Summer: return 'Summer'
-    case SeasonType.Fall: return 'Fall'
-    case SeasonType.Winter: return 'Winter'
-    default: return 'Unknown'
+    case SeasonType.Spring: return 'Primavera'
+    case SeasonType.Summer: return 'Verão'
+    case SeasonType.Fall: return 'Outono'
+    case SeasonType.Winter: return 'Inverno'
+    default: return 'Desconecido'
   }
 }
 
 export function getAnimeTypeName(type: number): string {
   switch (type) {
     case AnimeType.TV: return 'TV'
-    case AnimeType.Movie: return 'Movie'
+    case AnimeType.Movie: return 'Filme'
     case AnimeType.OVA: return 'OVA'
-    case AnimeType.Special: return 'Special'
+    case AnimeType.Special: return 'Especial'
     case AnimeType.ONA: return 'ONA'
-    case AnimeType.Music: return 'Music'
-    default: return 'Unknown'
+    case AnimeType.Music: return 'Música'
+    default: return 'Desconhecido'
   }
 }
 
 export function getAnimeStatusName(status: number): string {
   switch (status) {
-    case AnimeStatus.Finished: return 'Finished'
-    case AnimeStatus.Ongoing: return 'Ongoing'
-    case AnimeStatus.Upcoming: return 'Upcoming'
-    default: return 'Unknown'
+    case AnimeStatus.Finished: return 'Acabado'
+    case AnimeStatus.Ongoing: return 'Em andamento'
+    case AnimeStatus.Upcoming: return 'A ser lançado'
+    default: return 'Desconhecido'
   }
 }

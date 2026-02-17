@@ -191,3 +191,21 @@
     border-radius: 4px;
     background-color: var(--variation-color);
 }
+
+.info-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-link {
+    color: var(--text-color, #3498db);
+    text-decoration: none;
+    padding: 0.25rem 0;
+    transition: color 0.2s ease;
+}
+
+.info-link:hover {
+    color: var(--primary-color-dark, #2980b9);
+    text-decoration: underline;
+}
