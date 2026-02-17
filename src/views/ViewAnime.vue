@@ -174,5 +174,3 @@ onUnmounted(() => {
         </div>
     </div>
 </template>
-
-<style scoped src="./AnimeDetailView.css"></style>

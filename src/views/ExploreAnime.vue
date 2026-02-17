@@ -7,6 +7,7 @@ import AnimeCard from '../components/AnimeCard.vue'
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import '@shoelace-style/shoelace/dist/components/select/select.js'
 import '@shoelace-style/shoelace/dist/components/option/option.js'
+import Loading from '@/components/Loading.vue'
 
 const animes = ref<Anime[]>([])
 const loading = ref(false)
@@ -48,19 +49,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="explore-anime-view">
-        
-        <div v-if="loading">
-            Loading...
-        </div>
 
-        <div v-else-if="error">
-            {{ error /* Implement better error handling later */}}
-        </div>
+    <Loading v-if="loading" />
 
-        
-        <div v-else>
-            
+    <div v-else-if="error">
+        {{ error /* Implement better error handling later */}}
+    </div>
+
+    <div v-else class="explore-anime-view">
+        <div>
             <div class="control-header">
                 <h1>Explorar</h1>
                 <p>Filtros</p>

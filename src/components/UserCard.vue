@@ -27,6 +27,7 @@ const avatarUrl = computed(() => {
             alt="Avatar" 
             class="user-avatar"
             loading="lazy"
+            referrerpolicy="no-referrer"
             @load="imageLoaded = true"
             :class="{ 'loaded': imageLoaded }"
         />

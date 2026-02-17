@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import Sidebar from './components/Sidebar.vue'
+import { authService } from './services/AuthService'
+
+onMounted(() => {
+	authService.fetchCurrentUser()
+})
 
 const menuItems = [
 	{ title: 'Explorar', icon: 'public', route: '/explore' },

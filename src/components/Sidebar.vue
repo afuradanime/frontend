@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { authService } from '@/services/AuthService'
 
 interface MenuItem {
 	title: string
@@ -10,6 +11,8 @@ defineProps<{
 	menuItems: MenuItem[];
 }>()
 
+const { user, isAuthenticated } = authService
+
 </script>
 
 <template>
@@ -17,7 +20,7 @@ defineProps<{
 	<div class="sidebar-main">
 		<router-link
 			to="/"
-			class="sidebar-item"
+			class="sidebar-item sidebar-logo"
 		>
 			<img src="../../public/favicon.ico" alt="">
 		</router-link>
@@ -33,6 +36,43 @@ defineProps<{
                 <span>{{ item.title }}</span>
             </div>
 		</router-link>
+
+		<router-link
+			v-if="!isAuthenticated"
+			to="/auth/google/login"
+			class="sidebar-item sidebar-bottom"
+			active-class="sidebar-item-active"
+		>
+			<div class="item-contents">
+                <sl-icon library="material" name="login"></sl-icon>
+                <span> Google Login </span>
+            </div>
+		</router-link>
+
+		<div v-else class="sidebar-bottom">
+			<router-link
+				:to="`/profile/${user!.ID}`"
+				class="sidebar-item"
+				active-class="sidebar-item-active"
+			>
+				<div class="item-contents">
+					<img v-if="user!.AvatarURL" :src="user!.AvatarURL" alt="avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
+					<sl-icon v-else library="material" name="person"></sl-icon>
+					<span>Perfil</span>
+				</div>
+			</router-link>
+
+			<router-link
+				:to="`/logout`"
+				class="sidebar-item"
+				active-class="sidebar-item-active"
+			>
+				<div class="item-contents">
+					<sl-icon library="material" name="logout"></sl-icon>
+					<span>Sair</span>
+				</div>
+			</router-link>
+		</div>
 	</div>
 
 </template>
