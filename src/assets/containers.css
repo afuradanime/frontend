@@ -209,3 +209,10 @@
     color: var(--primary-color-dark, #2980b9);
     text-decoration: underline;
 }
+
+.no-friends {
+    color: var(--text-color-secondary);
+    font-size: 14px;
+    margin-top: 20px;
+    margin-left: 1rem;
+}

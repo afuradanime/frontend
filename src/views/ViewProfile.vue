@@ -159,7 +159,7 @@ const avatar = computed(() => {
                             </template>
                         </Subcontainer>
 
-                        <Subcontainer>
+                        <Subcontainer v-if="profile.Socials">
                             <template #outer-title>Contactos</template>
                             <template #before-content>
                                 <div class="social-list">
@@ -178,8 +178,11 @@ const avatar = computed(() => {
                         <Subcontainer v-if="friends">
                             <template #outer-title>Amigos</template>
                             <template #before-content>
-                                <div class="friends-list">
+                                <div v-if="friends.length > 0" class="friends-list">
                                     <Friend v-for="friend in friends" :key="friend.ID" :friend="friend" />
+                                </div>
+                                <div v-else class="no-friends">
+                                    {{ profile.Username }} ainda não tem amigos, sê o primeiro a adicionar!
                                 </div>
                             </template>
                         </Subcontainer>
