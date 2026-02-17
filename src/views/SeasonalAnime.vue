@@ -16,6 +16,7 @@ const initialLoading = ref(true)
 const pageLoading = ref(false)
 
 import { nextTick } from 'vue'
+import Error from '@/components/Error.vue'
 
 const loadPage = async (page: number) => {
     pageLoading.value = true
@@ -46,7 +47,7 @@ onMounted(() => loadPage(1))
 
 <template>
     <Loading v-if="initialLoading" />
-    <div v-else-if="error">{{ error }}</div>
+    <div v-else-if="error"> <Error :message="error" /> </div>
     <div v-else class="entity-anime-view">
         <div class="control-header">
             <h1>Sazonal</h1>
@@ -89,17 +90,3 @@ onMounted(() => loadPage(1))
         />
     </div>
 </template>
-
-<style scoped>
-
-.control-header {
-    margin-bottom: 8px;
-}
-
-.filter-box {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-</style>

@@ -20,6 +20,8 @@ import userService from '@/services/UserService';
 import { authService } from '@/services/AuthService'
 import { DateFormat, DecodeRoleList, RoleMap } from '@/composables/utils';
 import Friend from '@/components/Friend.vue';
+import Loading from '@/components/Loading.vue';
+import Error from '@/components/Error.vue';
 
 const profile = ref<User>();
 const roles = ref<number[]>([])
@@ -96,12 +98,10 @@ const avatar = computed(() => {
 <template>
     <div class="explore-anime-view">
         
-        <div v-if="loading">
-            Loading...
-        </div>
+        <Loading v-if="loading" />
 
         <div v-else-if="error">
-            {{ error /* Implement better error handling later */}}
+            <Error :message="error" />
         </div>
 
         <div v-else-if="profile">

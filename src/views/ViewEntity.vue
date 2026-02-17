@@ -7,6 +7,7 @@ import Loading from '@/components/Loading.vue'
 import { getAnimeTypeName, type Licensor, type Producer, type Studio } from '../models/Anime'
 import { useRoute } from 'vue-router'
 import { useAnimeGrid } from '@/composables/anime_grid'
+import Error from '@/components/Error.vue'
 
 type EntityType = 'studio' | 'producer' | 'licensor'
 type Entity = Studio | Producer | Licensor
@@ -51,7 +52,7 @@ onMounted(() => loadPage(1))
 
 <template>
     <Loading v-if="loading" />
-    <div v-else-if="error">{{ error }}</div>
+    <div v-else-if="error"> <Error :message="error" /> </div>
     <div v-else class="entity-anime-view">
         <div class="entity-header">
             <h1>{{ (entity as any)?.Name }}</h1>

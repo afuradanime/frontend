@@ -157,3 +157,13 @@ Season tags
     color: var(--text-color-secondary);
     margin: auto 0;
 }
+
+.control-header {
+    margin-bottom: 8px;
+}
+
+.filter-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}

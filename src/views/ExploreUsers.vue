@@ -10,6 +10,8 @@ import '@shoelace-style/shoelace/dist/components/option/option.js'
 import type { User } from '@/models/User'
 import userService from '@/services/UserService'
 import UserCard from '@/components/UserCard.vue'
+import Error from '@/components/Error.vue'
+import Loading from '@/components/Loading.vue'
 
 const users = ref<User[]>([])
 
@@ -54,15 +56,10 @@ onUnmounted(() => {
 <template>
     <div class="explore-users-view">
         
-        <div v-if="loading">
-            Loading...
-        </div>
-
+        <Loading v-if="loading" />
         <div v-else-if="error">
-            {{ error /* Implement better error handling later */}}
+            <Error :message="error" />
         </div>
-
-        
         <div v-else>
             
             <div class="control-header">

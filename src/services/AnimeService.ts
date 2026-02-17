@@ -24,11 +24,13 @@ export class AnimeService {
         return response.data
     }
 
-    async fetchAnimeFromQuery(query: string): Promise<Anime[]> {
-        const response = await this.httpService.get<Anime[]>('/anime/search', {
-            params: { q: query },
+    async fetchAnimeFromQuery(q: string = "", pageNumber = 1, pageSize = 20): Promise<{
+        animes: Anime[]
+        pagination: Pagination
+    }> {
+        const response = await this.httpService.get<{ animes: Anime[]; pagination: Pagination }>(`/anime/search`, {
+            params: { q, pageNumber, pageSize },
         })
-        console.log("Fetched " + response.data.length + " animes")
         return response.data
     }
 
