@@ -20,6 +20,8 @@ import Subcontainer from '@/components/Subcontainer.vue';
 import InfoTable from '@/components/InfoTable.vue';
 import GenreTag from '@/components/GenreTag.vue';
 import { DateFormat, TranslateDayOfWeek, TranslateDuration } from '@/composables/utils';
+import Loading from '@/components/Loading.vue';
+import Error from '@/components/Error.vue';
 
 const anime = ref<Anime>();
 
@@ -54,12 +56,9 @@ onUnmounted(() => {
 <template>
     <div class="explore-anime-view">
         
-        <div v-if="loading">
-            Loading...
-        </div>
-
+        <Loading v-if="loading" />
         <div v-else-if="error">
-            {{ error /* Implement better error handling later */}}
+            <Error :message="error" />
         </div>
 
         <div v-else-if="anime">
