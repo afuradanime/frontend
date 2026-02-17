@@ -1,5 +1,14 @@
 import { AxiosHTTPService } from './AxiosHttpService'
-import type { Anime, Studio, Producer, Licensor } from '../models/Anime'
+import type { Anime, Licensor, Producer, Studio } from '../models/Anime'
+import type { Pagination } from '@/models/Pagination'
+
+export interface EntityAnimeResponse<T> {
+    animes: Anime[]
+    pagination: Pagination
+    studio?: T
+    producer?: T
+    licensor?: T
+}
 
 export class AnimeService {
     private httpService: AxiosHTTPService
@@ -28,23 +37,23 @@ export class AnimeService {
         return response.data
     }
 
-    async fetchStudioByID(studioID: number, pageNumber = 1, pageSize = 20): Promise<{ studio: Studio; animes: Anime[] }> {
-        const response = await this.httpService.get<{ studio: Studio; animes: Anime[] }>(`/anime/studio/${studioID}`, {
-            params: { pageNumber: pageNumber, pageSize: pageSize },
+    async fetchStudioByID(studioID: number, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Studio>> {
+        const response = await this.httpService.get<EntityAnimeResponse<Studio>>(`/anime/studio/${studioID}`, {
+            params: { pageNumber, pageSize },
         })
         return response.data
     }
 
-    async fetchProducerByID(producerID: number, pageNumber = 1, pageSize = 20): Promise<{ producer: Producer; animes: Anime[] }> {
-        const response = await this.httpService.get<{ producer: Producer; animes: Anime[] }>(`/anime/producer/${producerID}`, {
-            params: { pageNumber: pageNumber, pageSize: pageSize },
+    async fetchProducerByID(producerID: number, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Producer>> {
+        const response = await this.httpService.get<EntityAnimeResponse<Producer>>(`/anime/producer/${producerID}`, {
+            params: { pageNumber, pageSize },
         })
         return response.data
     }
 
-    async fetchLicensorByID(licensorID: number, pageNumber = 1, pageSize = 20): Promise<{ licensor: Licensor; animes: Anime[] }> {
-        const response = await this.httpService.get<{ licensor: Licensor; animes: Anime[] }>(`/anime/licensor/${licensorID}`, {
-            params: { pageNumber: pageNumber, pageSize: pageSize },
+    async fetchLicensorByID(licensorID: number, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Licensor>> {
+        const response = await this.httpService.get<EntityAnimeResponse<Licensor>>(`/anime/licensor/${licensorID}`, {
+            params: { pageNumber, pageSize },
         })
         return response.data
     }

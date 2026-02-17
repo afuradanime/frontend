@@ -6,6 +6,7 @@ import AnimeCard from '../components/AnimeCard.vue'
 import Loading from '@/components/Loading.vue'
 import { getAnimeTypeName } from '../models/Anime'
 import { useRoute } from 'vue-router'
+import Pagination from '@/components/Pagination.vue'
 
 type EntityType = 'studio' | 'producer' | 'licensor'
 
@@ -21,27 +22,29 @@ const entity = ref<Entity | null>(null)
 const animes = ref<Anime[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+const currentPage = ref(1)
+const pageSize = ref(20)
+const totalPages = ref(0)
+
 let observer: IntersectionObserver | null = null
 
-const fetchMap: Record<EntityType, (id: number) => Promise<{ animes: Anime[]; studio?: Studio; producer?: Producer; licensor?: Licensor }>> = {
-    studio: (id) => animeService.fetchStudioByID(id),
-    producer: (id) => animeService.fetchProducerByID(id),
-    licensor: (id) => animeService.fetchLicensorByID(id),
+const fetchMap: Record<EntityType, (id: number, page: number, size: number) => Promise<any>> = {
+    studio:   (id, page, size) => animeService.fetchStudioByID(id, page, size),
+    producer: (id, page, size) => animeService.fetchProducerByID(id, page, size),
+    licensor: (id, page, size) => animeService.fetchLicensorByID(id, page, size),
 }
 
-const entityKey: Record<EntityType, string> = {
-    studio: 'studio',
-    producer: 'producer',
-    licensor: 'licensor',
-}
-
-onMounted(async () => {
+const loadPage = async (page: number) => {
+    
     loading.value = true
     error.value = null
     try {
-        const response = await fetchMap[props.type](id)
-        entity.value = response[entityKey[props.type] as keyof typeof response] as Entity
+
+        const response = await fetchMap[props.type](id, page - 1, pageSize.value)
+        entity.value = (response.studio ?? response.producer ?? response.licensor) as Entity
         animes.value = response.animes
+        totalPages.value = response.pagination.TotalPages
+        currentPage.value = page
 
         observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -64,6 +67,10 @@ onMounted(async () => {
     } finally {
         loading.value = false
     }
+}
+
+onMounted(async () => {
+    loadPage(1)
 })
 
 onUnmounted(() => {
@@ -100,6 +107,12 @@ onUnmounted(() => {
                     />
                 </router-link>
             </div>
+            <Pagination
+                :current-page="currentPage"
+                :page-size="pageSize"
+                :total="totalPages * pageSize"
+                @page-change="loadPage"
+            />
         </div>
     </div>
 </template>
