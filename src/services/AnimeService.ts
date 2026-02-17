@@ -32,8 +32,15 @@ export class AnimeService {
         return response.data
     }
 
-    async fetchAnimeThisSeason(): Promise<Anime[]> {
-        const response = await this.httpService.get<Anime[]>('/anime/seasonal')
+    async fetchAnimeThisSeason(pageNumber = 1, pageSize = 20): Promise<{
+        animes: Anime[]
+        pagination: Pagination
+    }> {
+        const response = await this.httpService.get<{ animes: Anime[]; pagination: Pagination }>(
+            '/anime/seasonal'
+        , {
+            params: { pageNumber, pageSize },
+        })
         return response.data
     }
 

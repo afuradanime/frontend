@@ -112,3 +112,48 @@ Season tags
 .season-fall {
     background: linear-gradient(135deg, #FF8C00, #FF7F50);
 }
+
+.entity-anime-view {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.entity-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.entity-header a {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.anime-grid {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.anime-item {
+    content-visibility: auto;
+    contain-intrinsic-size: 235px 319px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.anime-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.entity-type {
+    font-size: 0.9rem;
+    color: var(--text-color-secondary);
+    margin: auto 0;
+}
