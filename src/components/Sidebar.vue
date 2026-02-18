@@ -44,7 +44,7 @@ const { user, isAuthenticated } = authService
 			active-class="sidebar-item-active"
 		>
 			<div class="item-contents">
-                <sl-icon library="material" name="login"></sl-icon>
+                <sl-icon name="google"></sl-icon>
                 <span> Google Login </span>
             </div>
 		</router-link>
@@ -68,7 +68,7 @@ const { user, isAuthenticated } = authService
 				active-class="sidebar-item-active"
 			>
 				<div class="item-contents">
-					<sl-icon library="material" name="logout"></sl-icon>
+					<sl-icon name="box-arrow-right"></sl-icon>
 					<span>Sair</span>
 				</div>
 			</router-link>

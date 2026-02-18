@@ -22,6 +22,7 @@ import GenreTag from '@/components/GenreTag.vue';
 import { DateFormat, TranslateDayOfWeek, TranslateDuration } from '@/composables/utils';
 import Loading from '@/components/Loading.vue';
 import Error from '@/components/Error.vue';
+import SeasonBadge from '@/components/SeasonBadge.vue';
 
 const anime = ref<Anime>();
 
@@ -84,9 +85,11 @@ onUnmounted(() => {
                                     {{ getAnimeTypeName(anime.Type || 0) }}
                                 </div>
     
-                                <div class="anime-badge">
-                                    {{ getSeasonName(anime.Season.Season) }} {{ anime?.Season.Year }}
-                                </div>
+                                <SeasonBadge 
+                                    v-if="anime.Season"
+                                    :season="anime.Season.Season" 
+                                    :year="anime.Season.Year"
+                                />
                             </div>
                         </div>
                     

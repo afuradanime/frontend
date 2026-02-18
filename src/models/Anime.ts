@@ -134,8 +134,8 @@ export function getAnimeTypeName(type: number): string {
 export function getAnimeStatusName(status: number): string {
   switch (status) {
     case AnimeStatus.Finished: return 'Acabado'
-    case AnimeStatus.Ongoing: return 'Em andamento'
-    case AnimeStatus.Upcoming: return 'A ser lançado'
+    case AnimeStatus.Ongoing: return 'A sair'
+    case AnimeStatus.Upcoming: return 'Por ser lançado'
     default: return 'Desconhecido'
   }
 }
