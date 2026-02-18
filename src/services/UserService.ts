@@ -1,7 +1,9 @@
 import type { User } from '@/models/User'
 import { AxiosHTTPService } from './AxiosHttpService'
+import type { Pagination } from '@/models/Pagination'
 
 export class UserService {
+
 	private httpService: AxiosHTTPService
 
 	constructor(baseURL?: string) {
@@ -10,25 +12,61 @@ export class UserService {
 		)
 	}
 
-    async fetchAll(): Promise<User[]> {
-        const response = await this.httpService.get<User[]>('/users')
-        return response.data
-    }
+	async fetchAll(): Promise<User[]> {
+		const response = await this.httpService.get<User[]>('/users')
+		return response.data
+	}
 
 	async fetchByID(uid: number): Promise<User> {
 		const response = await this.httpService.get<User>(`/users/${uid}`)
 		return response.data
 	}
 
-    async fetchFriends(uid: number): Promise<User[]> {
-        const response = await this.httpService.get<User[]>(`/friends/${uid}`)
-        return response.data
-    }
+	async fetchFriends(
+		uid: number,
+		pageNumber = 1,
+		pageSize = 20
+	): Promise<{ data: User[]; pagination: Pagination }> {
+		const response = await this.httpService.get<{ data: User[]; pagination: Pagination }>(
+			`/friends/${uid}`,
+			{ params: { pageNumber, pageSize } }
+		)
+		return response.data
+	}
 
-    async areFriends(userA: number, userB: number): Promise<boolean> {
-        const response = await this.httpService.get<{ areFriends: boolean }>(`/friends/check/${userA}/${userB}`)
-        return response.data.areFriends
-    }
+	async fetchPendingFriendRequests(
+		pageNumber = 0,
+		pageSize = 20
+	): Promise<{ data: User[]; pagination: Pagination }> {
+		const response = await this.httpService.get<{ data: User[]; pagination: Pagination }>(
+			`/friends/pending`,
+			{ params: { pageNumber, pageSize } }
+		)
+		return response.data
+	}
+
+	async areFriends(userB: number): Promise<boolean> {
+		const response = await this.httpService.get<{ areFriends: boolean }>(
+			`/friends/check/${userB}`
+		)
+		return response.data.areFriends
+	}
+
+	async sendFriendRequest(receiverId: number): Promise<void> {
+		await this.httpService.put(`/friends/send/${receiverId}`)
+	}
+
+	async acceptFriendRequest(initiatorId: number): Promise<void> {
+		await this.httpService.put(`/friends/accept/${initiatorId}`)
+	}
+
+	async declineFriendRequest(initiatorId: number): Promise<void> {
+		await this.httpService.put(`/friends/decline/${initiatorId}`)
+	}
+
+	async blockUser(receiverId: number): Promise<void> {
+		await this.httpService.put(`/friends/block/${receiverId}`)
+	}
 }
 
 export const userService = new UserService()

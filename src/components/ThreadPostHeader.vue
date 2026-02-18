@@ -19,7 +19,7 @@ defineProps<{
 		</div>
 		<div style="display: flex; flex-direction: column; gap: 4px;">
 			<span>{{ user.Username }}</span>
-			<span style="font-size: 14px; font-weight: 400;">{{ threadPost.Pinned ? '📌 Pinned' : '' }}</span>
+			<span style="font-size: 14px; font-weight: 400;">{{ threadPost.Pinned ? '📌 Afixado' : '' }}</span>
 		</div>
 		<div style="margin-left: auto; margin-right: 10px;">
 			<sl-relative-time :date="threadPost.CreatedAt" format="short"/>

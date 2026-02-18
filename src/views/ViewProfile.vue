@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import type { User } from '@/models/User';
-
-import {useRoute} from "vue-router";
+import { useRoute } from "vue-router";
 
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import '@shoelace-style/shoelace/dist/components/select/select.js'
@@ -23,54 +22,48 @@ import Friend from '@/components/Friend.vue';
 import Loading from '@/components/Loading.vue';
 import Error from '@/components/Error.vue';
 import ThreadPostHeader from '@/components/ThreadPostHeader.vue';
+import { useNotification } from '@/composables/notification';
 
-const profile = ref<User>();
+const { notify } = useNotification()
+
+const profile = ref<User>()
 const roles = ref<number[]>([])
 const { user, isAuthenticated } = authService
 
 const friends = ref<User[]>([])
 const isFriend = ref(false)
+const followLoading = ref(false)
 
 const loading = ref(false)
 const error = ref<string | null>(null)
-let observer: IntersectionObserver | null = null
 
-const route = useRoute();
+const route = useRoute()
 
-onMounted(() => {
-    loadProfile()
-})
+onMounted(() => loadProfile())
+watch(() => route.params.id, () => loadProfile())
 
-watch(() => route.params.id, () => {
-    loadProfile()
-})
-
-const loadProfile = (async () => {
-
-    const userId = route.params.id as string;
+const loadProfile = async () => {
+    const userId = route.params.id as string
 
     loading.value = true
     error.value = null
+    isFriend.value = false
+
     try {
-        profile.value = await userService.fetchByID(parseInt(userId));
-        
-        roles.value = DecodeRoleList(profile.value.Roles);
-        roles.value.sort((a, b) => a - b);
+        profile.value = await userService.fetchByID(parseInt(userId))
 
-        // Remove user role (3)
-        roles.value = roles.value.filter(role => role !== 3);
+        roles.value = DecodeRoleList(profile.value.Roles)
+        roles.value.sort((a, b) => a - b)
+        roles.value = roles.value.filter(role => role !== 3)
 
-        // Get friend list async
         userService.fetchFriends(parseInt(userId)).then(friendsList => {
-            friends.value = friendsList
-        }).catch(err => {
-            console.error('Error loading friends: ', err)
+            friends.value = friendsList.data
+        }).catch(() => {
+            notify('Não foi possível carregar a lista de amigos.', 'warning')
         })
 
-        // Check if current user is friends with this profile
-        isFriend.value = false
         if (isAuthenticated.value && user.value && user.value.ID !== parseInt(userId)) {
-            userService.areFriends(user.value.ID, parseInt(userId)).then(result => {
+            userService.areFriends(parseInt(userId)).then(result => {
                 isFriend.value = result
             }).catch(() => {
                 isFriend.value = false
@@ -79,26 +72,33 @@ const loadProfile = (async () => {
 
     } catch (err) {
         error.value = 'Failed to load profile'
+        notify('Não foi possível carregar o perfil.', 'danger')
         console.error('Error loading profile: ', err)
     } finally {
         loading.value = false
     }
-})
+}
 
-onUnmounted(() => {
-    observer?.disconnect()
-    observer = null
-})
+const avatar = computed(() => profile.value?.AvatarURL || '/default-avatar.png')
 
-const avatar = computed(() => {
-    return profile.value?.AvatarURL || '/default-avatar.png'
-})
-
+const followUser = async () => {
+    if (!profile.value || !user.value) return
+    followLoading.value = true
+    try {
+        await userService.sendFriendRequest(profile.value.ID)
+        notify('Pedido de amizade enviado!', 'success')
+    } catch (err) {
+        notify('Não foi possível enviar o pedido de amizade.\n' + (err as any).response.data, 'danger')
+        console.error('Follow error: ', err)
+    } finally {
+        followLoading.value = false
+    }
+}
 </script>
 
 <template>
     <div class="explore-anime-view">
-        
+
         <Loading v-if="loading" />
 
         <div v-else-if="error">
@@ -106,62 +106,65 @@ const avatar = computed(() => {
         </div>
 
         <div v-else-if="profile">
-            
             <div class="anime-container">
-
                 <div>
                     <div class="anime-header">
                         <div class="anime-header-background"></div>
-
-                        <!-- Halftone dot pattern overlay -->
                         <div class="anime-header-overlay"></div>
 
-                        <div 
+                        <div
                             class="user-picture"
-                            :style="{backgroundImage: `url(${avatar})`, bottom: '60px'}"
+                            :style="{ backgroundImage: `url(${avatar})`, bottom: '60px' }"
                         ></div>
 
                         <div class="anime-header-content">
                             <div style="display: flex; width: 100%; gap: 12px; align-items: center; margin-bottom: 1rem;">
-                                <h1 class="anime-title" style="margin: 0px;">{{ profile?.Username }}</h1>
-                                <a :href="`/user/${profile?.ID}/follow`" v-if="isAuthenticated && user?.ID !== profile.ID && !isFriend" class="anime-badge" 
-                                    style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px !important; text-decoration: none; "
+                                <h1 class="anime-title" style="margin: 0px;">{{ profile.Username }}</h1>
+
+                                <button
+                                    v-if="isAuthenticated && user?.ID !== profile.ID && !isFriend"
+                                    class="anime-badge"
+                                    :disabled="followLoading"
+                                    @click="followUser"
+                                    style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px; border: none; cursor: pointer;"
                                 >
-                                    Seguir
-                                </a>
+                                    <span v-if="!followLoading">Seguir</span>
+                                    <span v-else>Enviando...</span>
+                                </button>
+
+                                <span
+                                    v-else-if="isFriend"
+                                    class="anime-badge"
+                                    style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                >
+                                    Amigo
+                                </span>
                             </div>
+
                             <div class="anime-badges">
-                                <div v-for="role in roles" class="role-badge" :style="{ backgroundColor: RoleMap[role - 1]?.colour || '#888' }">
-                                    {{ RoleMap[role - 1]?.name || 'Unknown Role'}}
+                                <div
+                                    v-for="role in roles"
+                                    class="role-badge"
+                                    :style="{ backgroundColor: RoleMap[role - 1]?.colour || '#888' }"
+                                >
+                                    {{ RoleMap[role - 1]?.name || 'Unknown Role' }}
                                 </div>
                             </div>
                         </div>
-                    
+
                         <div class="anime-tabs">
-                            <div class="anime-tab anime-tab-active">
-                                Geral
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Lista de Anime
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Lista de Manga
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Estatísticas
-                            </div>
+                            <div class="anime-tab anime-tab-active">Geral</div>
+                            <div class="anime-tab anime-tab-inactive">Lista de Anime</div>
+                            <div class="anime-tab anime-tab-inactive">Lista de Manga</div>
+                            <div class="anime-tab anime-tab-inactive">Estatísticas</div>
                         </div>
                     </div>
-               
                 </div>
 
                 <div class="main-content-section">
-                    
                     <Container class="left-sidebar">
-
-                        <!-- User information -->
                         <Subcontainer>
-                            <template #outer-title> Informações </template>
+                            <template #outer-title>Informações</template>
                             <template #content>
                                 <InfoTable>
                                     <tr>
@@ -180,7 +183,6 @@ const avatar = computed(() => {
                                         <td>Pronomes</td>
                                         <td style="text-align: right;">{{ profile.Pronouns || 'N/A' }}</td>
                                     </tr>
-                                    
                                 </InfoTable>
                             </template>
                         </Subcontainer>
@@ -200,7 +202,6 @@ const avatar = computed(() => {
                             </template>
                         </Subcontainer>
 
-
                         <Subcontainer v-if="friends">
                             <template #outer-title>Amigos</template>
                             <template #before-content>
@@ -212,10 +213,8 @@ const avatar = computed(() => {
                                 </div>
                             </template>
                         </Subcontainer>
-
                     </Container>
 
-                    <!-- Right side content, including synopsis, etc... -->
                     <Container class="right-content">
                         <Subcontainer>
                             <template #inner-title>
@@ -254,9 +253,9 @@ const avatar = computed(() => {
                                     {{ 'BLHEHEHEHEHE' }}
                                 </div>
                             </template>
+                            <!-- Metemos aqui os posts mais recentes depois -->
                         </Subcontainer>
                     </Container>
-
                 </div>
             </div>
         </div>
@@ -264,8 +263,7 @@ const avatar = computed(() => {
 </template>
 
 <style>
-
-.role-badge{
+.role-badge {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -273,9 +271,8 @@ const avatar = computed(() => {
     border-radius: 12px;
     color: white;
     font-size: 0.9rem;
-    background: rgb(from var(--primary-color) r g b / 50%) !important ;
+    background: rgb(from var(--primary-color) r g b / 50%) !important;
     border: 1px solid var(--variation-color);
     box-shadow: var(--default-box-shadow);
 }
-
 </style>

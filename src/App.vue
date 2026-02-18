@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import { authService } from './services/AuthService'
+import Toast from './components/Toast.vue'
 
 onMounted(() => {
 	authService.fetchCurrentUser()
@@ -21,6 +22,7 @@ const menuItems = [
 <template>
 
 	<div class="app-container">
+        <Toast />
 		<Sidebar :menuItems="menuItems" />
 		<RouterView id="content"/>
 	</div>
