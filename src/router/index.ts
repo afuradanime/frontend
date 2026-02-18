@@ -41,6 +41,11 @@ const router = createRouter({
 			name: 'profile',
 			component: () => import('../views/ViewProfile.vue'),
 		},
+        {
+			path: '/friends/pending',
+			name: 'pending_friends',
+			component: () => import('../views/PendingRequests.vue'),
+		},
 		{
 			path: '/users',
 			name: 'users',

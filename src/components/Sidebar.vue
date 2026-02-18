@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { authService } from '@/services/AuthService'
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip'
 
 interface MenuItem {
 	title: string
@@ -50,6 +51,19 @@ const { user, isAuthenticated } = authService
 		</router-link>
 
 		<div v-else class="sidebar-bottom">
+
+			<router-link
+				:to="`/friends/pending`"
+				class="sidebar-item"
+				active-class="sidebar-item-active"
+			>
+				<div class="item-contents">
+                    <sl-tooltip content="Ver pedidos de amizade pendentes">
+                        <sl-icon library="material" name="list_alt"></sl-icon>
+                    </sl-tooltip>
+				</div>
+			</router-link>
+            
 			<router-link
 				:to="`/profile/${user!.ID}`"
 				class="sidebar-item"

@@ -221,3 +221,14 @@ sl-menu-item.danger::part(base):hover {
     background-color: #7B2D2D;
     color: #ff8080;
 }
+
+sl-button[variant="success"]::part(base) {
+    background-color: #1a5c47;
+    border-color: #16A085;
+    color: var(--text-color);
+}
+
+sl-button[variant="success"]::part(base):hover {
+    background-color: #16A085;
+    filter: brightness(1.1);
+}
