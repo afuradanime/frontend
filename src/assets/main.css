@@ -111,3 +111,113 @@ p {
     font-weight: 400;
     font-style: normal;
 }
+
+/* Dialog */
+sl-dialog::part(base) {
+    --sl-z-index-dialog: 1000;
+}
+
+sl-dialog::part(overlay) {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+sl-dialog::part(panel) {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--default-box-shadow);
+    color: var(--text-color);
+}
+
+sl-dialog::part(title) {
+    color: var(--text-color);
+    font-family: "Convergence", sans-serif;
+    font-size: 1.2rem;
+}
+
+sl-dialog::part(close-button__base) {
+    color: var(--text-color-secondary);
+}
+
+sl-dialog::part(close-button__base):hover {
+    color: var(--text-color);
+}
+
+sl-dialog::part(header-actions) {
+    align-items: center;
+}
+
+sl-dialog::part(body) {
+    color: var(--text-color);
+    font-family: "Roboto", sans-serif;
+}
+
+sl-dialog p {
+    font-family: "Roboto", sans-serif;
+    font-size: 1rem;
+}
+
+sl-dialog::part(footer) {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--secondary-color);
+}
+
+/* Buttons */
+sl-button::part(base) {
+    background-color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: "Roboto", sans-serif;
+    transition: filter 0.2s ease;
+}
+
+sl-button::part(base):hover {
+    filter: brightness(1.2);
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+sl-button[variant="danger"]::part(base) {
+    background-color: #7B2D2D;
+    border-color: #AA4141;
+    color: var(--text-color);
+}
+
+sl-button[variant="danger"]::part(base):hover {
+    background-color: #AA4141;
+    filter: brightness(1.1);
+}
+
+/* Dropdown & Menu */
+sl-dropdown::part(panel) {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--default-box-shadow);
+    border-radius: 8px;
+}
+
+sl-menu {
+    background-color: var(--secondary-color);
+    border: none;
+    padding: 4px;
+}
+
+sl-menu-item::part(base) {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border-radius: 4px;
+    font-family: "Roboto", sans-serif;
+}
+
+sl-menu-item::part(base):hover {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+sl-menu-item.danger::part(base) {
+    color: #e05555;
+}
+
+sl-menu-item.danger::part(base):hover {
+    background-color: #7B2D2D;
+    color: #ff8080;
+}

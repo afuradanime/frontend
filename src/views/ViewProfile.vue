@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import type { User } from '@/models/User';
+import type { Friendship, User } from '@/models/User';
 import { useRoute } from "vue-router";
 
 import '@shoelace-style/shoelace/dist/components/input/input.js'
@@ -12,6 +12,11 @@ import '@shoelace-style/shoelace/dist/components/tab/tab.js'
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js'
 import '@shoelace-style/shoelace/dist/components/card/card.js'
 import '@shoelace-style/shoelace/dist/components/tag/tag.js'
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
+import '@shoelace-style/shoelace/dist/components/button/button.js'
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js'
+import '@shoelace-style/shoelace/dist/components/menu/menu.js'
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js'
 import Container from '@/components/Container.vue';
 import Subcontainer from '@/components/Subcontainer.vue';
 import InfoTable from '@/components/InfoTable.vue';
@@ -24,6 +29,12 @@ import Error from '@/components/Error.vue';
 import ThreadPostHeader from '@/components/ThreadPostHeader.vue';
 import { useNotification } from '@/composables/notification';
 
+const PENDING = 0;
+const FRIENDS = 1;
+const DECLINED = 2;
+const BLOCKED = 3;
+const NOT_RELATED = 4;
+
 const { notify } = useNotification()
 
 const profile = ref<User>()
@@ -31,11 +42,15 @@ const roles = ref<number[]>([])
 const { user, isAuthenticated } = authService
 
 const friends = ref<User[]>([])
-const isFriend = ref(false)
-const followLoading = ref(false)
+const friendshipState = ref<Friendship>({
+    initiator: -1,
+    receiver: -1,
+    status: NOT_RELATED
+} as Friendship);
 
 const loading = ref(false)
 const error = ref<string | null>(null)
+const blockDialogRef = ref<any>(null)
 
 const route = useRoute()
 
@@ -47,7 +62,7 @@ const loadProfile = async () => {
 
     loading.value = true
     error.value = null
-    isFriend.value = false
+    friendshipState.value = { initiator: -1, receiver: -1, status: NOT_RELATED } as Friendship
 
     try {
         profile.value = await userService.fetchByID(parseInt(userId))
@@ -64,9 +79,9 @@ const loadProfile = async () => {
 
         if (isAuthenticated.value && user.value && user.value.ID !== parseInt(userId)) {
             userService.areFriends(parseInt(userId)).then(result => {
-                isFriend.value = result
+                friendshipState.value = result
             }).catch(() => {
-                isFriend.value = false
+                friendshipState.value.status = NOT_RELATED
             })
         }
 
@@ -83,15 +98,31 @@ const avatar = computed(() => profile.value?.AvatarURL || '/default-avatar.png')
 
 const followUser = async () => {
     if (!profile.value || !user.value) return
-    followLoading.value = true
     try {
         await userService.sendFriendRequest(profile.value.ID)
         notify('Pedido de amizade enviado!', 'success')
+        friendshipState.value.status = PENDING
+        friendshipState.value.initiator = user.value.ID
+        friendshipState.value.receiver = profile.value.ID
     } catch (err) {
         notify('Não foi possível enviar o pedido de amizade.\n' + (err as any).response.data, 'danger')
         console.error('Follow error: ', err)
-    } finally {
-        followLoading.value = false
+    }
+}
+
+const openBlockDialog = () => {
+    blockDialogRef.value?.show()
+}
+
+const blockUser = async () => {
+    if (!profile.value || !user.value) return
+    blockDialogRef.value?.hide()
+    try {
+        await userService.blockUser(profile.value.ID)
+        notify('Utilizador bloqueado.', 'warning')
+        friendshipState.value.status = BLOCKED
+    } catch (err) {
+        notify('Não foi possível bloquear o utilizador.', 'danger')
     }
 }
 </script>
@@ -121,24 +152,59 @@ const followUser = async () => {
                             <div style="display: flex; width: 100%; gap: 12px; align-items: center; margin-bottom: 1rem;">
                                 <h1 class="anime-title" style="margin: 0px;">{{ profile.Username }}</h1>
 
+                                <!-- Follow button -->
                                 <button
-                                    v-if="isAuthenticated && user?.ID !== profile.ID && !isFriend"
+                                    v-if="isAuthenticated && user?.ID !== profile.ID && (friendshipState.status == NOT_RELATED || friendshipState.status == DECLINED)"
                                     class="anime-badge"
-                                    :disabled="followLoading"
                                     @click="followUser"
                                     style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px; border: none; cursor: pointer;"
                                 >
-                                    <span v-if="!followLoading">Seguir</span>
-                                    <span v-else>Enviando...</span>
+                                    Seguir
                                 </button>
 
+                                <!-- They sent me a request -->
                                 <span
-                                    v-else-if="isFriend"
+                                    v-else-if="friendshipState.status == PENDING && friendshipState.receiver == user?.ID"
                                     class="anime-badge"
                                     style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
                                 >
+                                    Pedido recebido
+                                </span>
+
+                                <!-- I sent the request -->
+                                <span
+                                    v-else-if="friendshipState.status == PENDING"
+                                    class="anime-badge"
+                                    style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                >
+                                    Enviado
+                                </span>
+
+                                <span
+                                    v-else-if="friendshipState.status == FRIENDS"
+                                    class="anime-badge"
+                                    style="background-color: #B7A543; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                >
                                     Amigo
                                 </span>
+
+                                <span
+                                    v-else-if="friendshipState.status == BLOCKED"
+                                    class="anime-badge"
+                                    style="background-color: #AA4141; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                >
+                                    Bloqueado
+                                </span>
+
+                                <!-- Ellipsis dropdown -->
+                                <sl-dropdown v-if="isAuthenticated && user?.ID !== profile.ID && friendshipState.status != BLOCKED">
+                                    <sl-button slot="trigger">⋯</sl-button>
+                                    <sl-menu>
+                                        <sl-menu-item class="danger" @click="openBlockDialog">
+                                            Bloquear utilizador
+                                        </sl-menu-item>
+                                    </sl-menu>
+                                </sl-dropdown>
                             </div>
 
                             <div class="anime-badges">
@@ -218,7 +284,7 @@ const followUser = async () => {
                     <Container class="right-content">
                         <Subcontainer>
                             <template #inner-title>
-                                <ThreadPostHeader 
+                                <ThreadPostHeader
                                     :user="profile"
                                     :threadPost="{
                                         ID: 0,
@@ -237,7 +303,7 @@ const followUser = async () => {
                         </Subcontainer>
                         <Subcontainer>
                             <template #inner-title>
-                                <ThreadPostHeader 
+                                <ThreadPostHeader
                                     :user="profile"
                                     :threadPost="{
                                         ID: 0,
@@ -253,12 +319,23 @@ const followUser = async () => {
                                     {{ 'BLHEHEHEHEHE' }}
                                 </div>
                             </template>
-                            <!-- Metemos aqui os posts mais recentes depois -->
                         </Subcontainer>
                     </Container>
                 </div>
             </div>
         </div>
+
+        <sl-dialog
+            ref="blockDialogRef"
+            :label="`Bloquear ${profile?.Username ?? 'utilizador'}?`"
+        >
+            <p>Tens a certeza que queres bloquear <strong>{{ profile?.Username }}</strong>? Esta ação irá remover a amizade e impedir futuras interações.</p>
+            <div slot="footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+                <sl-button @click="blockDialogRef?.hide()">Cancelar</sl-button>
+                <sl-button variant="danger" @click="blockUser">Bloquear</sl-button>
+            </div>
+        </sl-dialog>
+
     </div>
 </template>
 

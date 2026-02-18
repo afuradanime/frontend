@@ -17,3 +17,10 @@ export interface User {
 export interface Social {
     URL: string
 }
+
+export interface Friendship {
+    initiator: number,
+    receiver: number,
+    status: number,
+    created_at: string
+}

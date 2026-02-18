@@ -9,7 +9,6 @@ Anime cards
 }
 
 .type-badge {
-    background: #4177AA;
     position: absolute;
     margin-top: 25px;
     border-radius: 0px 10px 10px 0px;
@@ -26,11 +25,50 @@ Anime cards
 
 .triangle-left {
     position: absolute;
-    margin-top: 53.5px;
+    margin-top: 53px;
     width: 0;
     height: 0;
-    border-right: 10px solid #3a6999;
     border-bottom: 5px solid transparent;
+}
+
+.blue-badge {
+    background: #4177AA;
+}
+
+.blue-triangle {
+    border-right: 10px solid #3a6999;
+}
+
+.purple-badge {
+    background: #B44BC9;
+}
+
+.purple-triangle {
+    border-right: 10px solid #B44BC9;
+}
+
+.red-badge {
+    background: #AA4141;
+}
+
+.red-triangle {
+    border-right: 10px solid #AA4141;
+}
+
+.green-badge {
+    background: #539D39;
+}
+
+.green-triangle {
+    border-right: 10px solid #539D39;
+}
+
+.yellow-badge {
+    background: #B7A543;
+}
+
+.yellow-triangle {
+    border-right: 10px solid #B7A543;
 }
 
 .card-wrapper {

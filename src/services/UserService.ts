@@ -1,4 +1,4 @@
-import type { User } from '@/models/User'
+import type { Friendship, User } from '@/models/User'
 import { AxiosHTTPService } from './AxiosHttpService'
 import type { Pagination } from '@/models/Pagination'
 
@@ -45,11 +45,11 @@ export class UserService {
 		return response.data
 	}
 
-	async areFriends(userB: number): Promise<boolean> {
-		const response = await this.httpService.get<{ areFriends: boolean }>(
+	async areFriends(userB: number): Promise<Friendship> {
+		const response = await this.httpService.get<Friendship>(
 			`/friends/check/${userB}`
 		)
-		return response.data.areFriends
+		return response.data
 	}
 
 	async sendFriendRequest(receiverId: number): Promise<void> {
