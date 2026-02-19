@@ -232,3 +232,32 @@ sl-button[variant="success"]::part(base):hover {
     background-color: #16A085;
     filter: brightness(1.1);
 }
+
+/* Textarea */
+sl-textarea::part(base) {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 6px;
+}
+
+sl-textarea::part(textarea) {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-family: "Roboto", sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+sl-textarea::part(base):focus-within {
+    border-color: var(--text-color-secondary);
+    box-shadow: 0 0 0 2px rgba(135, 126, 144, 0.2);
+}
+
+/* Warning icon on flag */
+.flag-warning .material-icons {
+    font-size: 0.85rem;
+    color: #e0a020;
+    vertical-align: top;
+}
