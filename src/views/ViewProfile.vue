@@ -28,6 +28,7 @@ import Loading from '@/components/Loading.vue';
 import Error from '@/components/Error.vue';
 import ThreadPostHeader from '@/components/ThreadPostHeader.vue';
 import { useNotification } from '@/composables/notification';
+import UserBadge from '@/components/UserBadge.vue';
 
 const PENDING = 0;
 const FRIENDS = 1;
@@ -55,7 +56,10 @@ const blockDialogRef = ref<any>(null)
 const route = useRoute()
 
 onMounted(() => loadProfile())
-watch(() => route.params.id, () => loadProfile())
+watch(() => route.params.id, () => {
+    friends.value = []
+    loadProfile()
+})
 
 const loadProfile = async () => {
     const userId = route.params.id as string
@@ -86,8 +90,7 @@ const loadProfile = async () => {
         }
 
     } catch (err) {
-        error.value = 'Failed to load profile'
-        notify('Não foi possível carregar o perfil.', 'danger')
+        error.value = 'Erro ao carregar o perfil'
         console.error('Error loading profile: ', err)
     } finally {
         loading.value = false
@@ -149,62 +152,69 @@ const blockUser = async () => {
                         ></div>
 
                         <div class="anime-header-content">
-                            <div style="display: flex; width: 100%; gap: 12px; align-items: center; margin-bottom: 1rem;">
-                                <h1 class="anime-title" style="margin: 0px;">{{ profile.Username }}</h1>
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <!-- Badge row -->
+                                <div v-if="profile.Badges?.length > 0" style="display: flex; gap: 6px;">
+                                    <UserBadge v-for="badge in DecodeRoleList(profile.Badges)" :key="badge" :badge="badge" />
+                                </div>
+                                
+                                <div style="display: flex; width: 100%; gap: 12px; align-items: center; margin-bottom: 1rem;">
+                                    <h1 class="anime-title" style="margin: 0px;">{{ profile.Username }}</h1>
 
-                                <!-- Follow button -->
-                                <button
-                                    v-if="isAuthenticated && user?.ID !== profile.ID && (friendshipState.status == NOT_RELATED || friendshipState.status == DECLINED)"
-                                    class="anime-badge"
-                                    @click="followUser"
-                                    style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px; border: none; cursor: pointer;"
-                                >
-                                    Seguir
-                                </button>
+                                    <!-- Follow button -->
+                                    <button
+                                        v-if="isAuthenticated && user?.ID !== profile.ID && (friendshipState.status == NOT_RELATED || friendshipState.status == DECLINED)"
+                                        class="anime-badge"
+                                        @click="followUser"
+                                        style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px; border: none; cursor: pointer;"
+                                    >
+                                        Seguir
+                                    </button>
 
-                                <!-- They sent me a request -->
-                                <span
-                                    v-else-if="friendshipState.status == PENDING && friendshipState.receiver == user?.ID"
-                                    class="anime-badge"
-                                    style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
-                                >
-                                    Pedido recebido
-                                </span>
+                                    <!-- They sent me a request -->
+                                    <span
+                                        v-else-if="friendshipState.status == PENDING && friendshipState.receiver == user?.ID"
+                                        class="anime-badge"
+                                        style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                    >
+                                        Pedido recebido
+                                    </span>
 
-                                <!-- I sent the request -->
-                                <span
-                                    v-else-if="friendshipState.status == PENDING"
-                                    class="anime-badge"
-                                    style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
-                                >
-                                    Enviado
-                                </span>
+                                    <!-- I sent the request -->
+                                    <span
+                                        v-else-if="friendshipState.status == PENDING"
+                                        class="anime-badge"
+                                        style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                    >
+                                        Enviado
+                                    </span>
 
-                                <span
-                                    v-else-if="friendshipState.status == FRIENDS"
-                                    class="anime-badge"
-                                    style="background-color: #B7A543; font-weight: bold; height: fit-content; padding: 10px 15px;"
-                                >
-                                    Amigo
-                                </span>
+                                    <span
+                                        v-else-if="friendshipState.status == FRIENDS"
+                                        class="anime-badge"
+                                        style="background-color: #B7A543; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                    >
+                                        Amigo
+                                    </span>
 
-                                <span
-                                    v-else-if="friendshipState.status == BLOCKED"
-                                    class="anime-badge"
-                                    style="background-color: #AA4141; font-weight: bold; height: fit-content; padding: 10px 15px;"
-                                >
-                                    Bloqueado
-                                </span>
+                                    <span
+                                        v-else-if="friendshipState.status == BLOCKED"
+                                        class="anime-badge"
+                                        style="background-color: #AA4141; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                    >
+                                        Bloqueado
+                                    </span>
 
-                                <!-- Ellipsis dropdown -->
-                                <sl-dropdown v-if="isAuthenticated && user?.ID !== profile.ID && friendshipState.status != BLOCKED">
-                                    <sl-button slot="trigger">⋯</sl-button>
-                                    <sl-menu>
-                                        <sl-menu-item class="danger" @click="openBlockDialog">
-                                            Bloquear utilizador
-                                        </sl-menu-item>
-                                    </sl-menu>
-                                </sl-dropdown>
+                                    <!-- Ellipsis dropdown -->
+                                    <sl-dropdown v-if="isAuthenticated && user?.ID !== profile.ID && friendshipState.status != BLOCKED">
+                                        <sl-button slot="trigger">⋯</sl-button>
+                                        <sl-menu>
+                                            <sl-menu-item class="danger" @click="openBlockDialog">
+                                                Bloquear utilizador
+                                            </sl-menu-item>
+                                        </sl-menu>
+                                    </sl-dropdown>
+                                </div>
                             </div>
 
                             <div class="anime-badges">

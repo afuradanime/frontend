@@ -11,6 +11,11 @@ import { useNotification } from '@/composables/notification'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import '@shoelace-style/shoelace/dist/components/textarea/textarea.js'
+import { animeService } from '@/services/AnimeService'
+import type { Anime } from '@/models/Anime'
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js'
+import '@shoelace-style/shoelace/dist/components/tab/tab.js'
+import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js'
 
 const { notify } = useNotification()
 
@@ -48,11 +53,18 @@ const loadPage = async (page: number) => {
 const readDialogRef = ref<any>(null)
 const readingTranslation = ref<DescriptionTranslation | null>(null)
 
-const openReadDialog = (t: DescriptionTranslation) => {
-    readingTranslation.value = t
-    readDialogRef.value?.show()
-}
+const readingAnime = ref<Anime | null>(null)
 
+const openReadDialog = async (t: DescriptionTranslation) => {
+    readingTranslation.value = t
+    readingAnime.value = null
+    readDialogRef.value?.show()
+    try {
+        readingAnime.value = await animeService.fetchAnimeByID(t.Anime)
+    } catch {
+        // /shrug
+    }
+}
 const acceptTranslation = async (t: DescriptionTranslation) => {
     try {
         await translationService.acceptTranslation(t.ID)
@@ -108,7 +120,7 @@ onMounted(() => loadPage(1))
                 class="translation-row"
             >
                 <div class="translation-meta">
-                    <span class="translation-anime">Anime #{{ t.Anime }}</span>
+                    <span class="translation-anime">{{ readingAnime?.Title || `Anime ${t.Anime}` }}</span>
                     <span class="translation-author">por utilizador #{{ t.CreatedBy }}</span>
                     <span class="translation-date">{{ new Date(t.CreatedAt).toLocaleDateString('pt-PT') }}</span>
                 </div>
@@ -145,10 +157,27 @@ onMounted(() => loadPage(1))
             </div>
         </sl-dialog>
 
-        <sl-dialog ref="readDialogRef" label="Tradução completa" style="--width: 50vw;">
-            <div v-if="readingTranslation" class="full-translation">
-                {{ readingTranslation.TranslatedDescription }}
-            </div>
+        <sl-dialog ref="readDialogRef" label="Tradução completa" style="--width: 60vw;">
+            <sl-tab-group v-if="readingTranslation">
+                <sl-tab slot="nav" panel="translation">Adaptação</sl-tab>
+                <sl-tab slot="nav" panel="original">Original</sl-tab>
+        
+                <sl-tab-panel name="translation">
+                    <div class="full-translation">
+                        {{ readingTranslation.TranslatedDescription }}
+                    </div>
+                </sl-tab-panel>
+        
+                <sl-tab-panel name="original">
+                    <div class="full-translation" v-if="readingAnime">
+                        {{ readingAnime.Descriptions?.[0]?.Description ?? 'Sem descrição original disponível.' }}
+                    </div>
+                    <div v-else class="full-translation" style="opacity: 0.5;">
+                        A carregar...
+                    </div>
+                </sl-tab-panel>
+            </sl-tab-group>
+        
             <div slot="footer" style="display: flex; gap: 8px; justify-content: flex-end;">
                 <sl-button @click="readDialogRef?.hide()">Fechar</sl-button>
                 <sl-button variant="success" @click="acceptTranslation(readingTranslation!); readDialogRef?.hide()">Aceitar</sl-button>

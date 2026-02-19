@@ -12,6 +12,7 @@ export interface User {
     CreatedAt: string
     LastLogin: string
     Roles: string
+    Badges: string
 }
 
 export interface Social {

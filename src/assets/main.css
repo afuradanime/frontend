@@ -261,3 +261,37 @@ sl-textarea::part(base):focus-within {
     color: #e0a020;
     vertical-align: top;
 }
+
+/* Tab group */
+sl-tab-group::part(base) {
+    background-color: transparent;
+}
+
+sl-tab-group::part(nav) {
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+sl-tab-group::part(active-tab-indicator) {
+    background-color: var(--text-color);
+}
+
+sl-tab::part(base) {
+    color: var(--text-color-secondary);
+    font-family: "Roboto", sans-serif;
+    font-size: 0.9rem;
+}
+
+sl-tab::part(base):hover {
+    color: var(--text-color);
+}
+
+sl-tab[active]::part(base) {
+    color: var(--text-color);
+}
+
+sl-tab-panel::part(base) {
+    background-color: transparent;
+    color: var(--text-color);
+    padding: 16px 0 0 0;
+}
