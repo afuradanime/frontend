@@ -152,6 +152,18 @@ const blockUser = async () => {
                             <div style="display: flex; width: 100%; gap: 12px; align-items: center; margin-bottom: 1rem;">
                                 <h1 class="anime-title" style="margin: 0px;">{{ profile.Username }}</h1>
 
+                                
+                                <!-- Edit profile button -->
+                                <router-link v-if="isAuthenticated && user?.ID === profile.ID" :to="'/settings/profile'">
+                                    <button
+                                        class="anime-badge"
+                                        style="background-color: #1714197b; border-radius: 50%; font-weight: bold; height: fit-content; padding: 10px 10px; border: none; cursor: pointer;"
+                                    >
+                                        <sl-icon name="pencil" label="Editar perfil" style="display: inline-flex;"></sl-icon>
+                                    </button>
+                                </router-link>
+
+
                                 <!-- Follow button -->
                                 <button
                                     v-if="isAuthenticated && user?.ID !== profile.ID && (friendshipState.status == NOT_RELATED || friendshipState.status == DECLINED)"
@@ -282,44 +294,7 @@ const blockUser = async () => {
                     </Container>
 
                     <Container class="right-content">
-                        <Subcontainer>
-                            <template #inner-title>
-                                <ThreadPostHeader
-                                    :user="profile"
-                                    :threadPost="{
-                                        ID: 0,
-                                        UserID: profile.ID,
-                                        Content: 'Bem vindo ao meu perfil!',
-                                        CreatedAt: new Date(2025, 11, 10),
-                                        Pinned: true
-                                    }"
-                                />
-                            </template>
-                            <template #content>
-                                <div class="synopsis-content">
-                                    {{ 'Bem vindo ao meu perfil!' }}
-                                </div>
-                            </template>
-                        </Subcontainer>
-                        <Subcontainer>
-                            <template #inner-title>
-                                <ThreadPostHeader
-                                    :user="profile"
-                                    :threadPost="{
-                                        ID: 0,
-                                        UserID: profile.ID,
-                                        Content: 'Bem vindo ao meu perfil!',
-                                        CreatedAt: new Date(2025, 11, 10),
-                                        Pinned: false
-                                    }"
-                                />
-                            </template>
-                            <template #content>
-                                <div class="synopsis-content">
-                                    {{ 'BLHEHEHEHEHE' }}
-                                </div>
-                            </template>
-                        </Subcontainer>
+                        <!-- Thread content -->
                     </Container>
                 </div>
             </div>
