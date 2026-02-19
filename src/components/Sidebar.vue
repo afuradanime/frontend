@@ -1,33 +1,37 @@
 <script setup lang="ts">
 import { authService } from '@/services/AuthService'
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip'
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js'
+import '@shoelace-style/shoelace/dist/components/menu/menu.js'
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js'
+import '@shoelace-style/shoelace/dist/components/icon/icon.js'
+import { computed } from 'vue'
 
 interface MenuItem {
-	title: string
-	icon: string
-	route: string
+    title: string
+    icon: string
+    route: string
 }
 
 defineProps<{
-	menuItems: MenuItem[];
+    menuItems: MenuItem[];
 }>()
 
 const { user, isAuthenticated } = authService
 
+const isModerator = computed(() => true)
+
 </script>
 
 <template>
+    <div class="sidebar-main">
+        <router-link to="/" class="sidebar-item sidebar-logo">
+            <img src="../../public/favicon.ico" alt="">
+        </router-link>
 
-	<div class="sidebar-main">
-		<router-link
-			to="/"
-			class="sidebar-item sidebar-logo"
-		>
-			<img src="../../public/favicon.ico" alt="">
-		</router-link>
-		<router-link 
-            v-for="item in menuItems" 
-            :key="item.route" 
+        <router-link
+            v-for="item in menuItems"
+            :key="item.route"
             :to="item.route"
             class="sidebar-item"
             active-class="sidebar-item-active"
@@ -36,57 +40,73 @@ const { user, isAuthenticated } = authService
                 <sl-icon library="material" :name="item.icon"></sl-icon>
                 <span>{{ item.title }}</span>
             </div>
-		</router-link>
+        </router-link>
 
-		<router-link
-			v-if="!isAuthenticated"
-			to="/auth/google/login"
-			class="sidebar-item sidebar-bottom"
-			active-class="sidebar-item-active"
-		>
-			<div class="item-contents">
+        <!-- Moderation section -->
+        <template v-if="isAuthenticated && isModerator">
+            <sl-dropdown hoverToOpen placement="right">
+                <div slot="trigger" class="sidebar-item">
+                    <div class="item-contents">
+                        <sl-icon library="material" name="lock"></sl-icon>
+                        <span>Moderação</span>
+                    </div>
+                </div>
+                <sl-menu>
+                    <sl-menu-item @click="$router.push('/moderation/translations')">
+                        <sl-icon slot="prefix" library="material" name="translate"></sl-icon>
+                        Traduções pendentes
+                    </sl-menu-item>
+                </sl-menu>
+            </sl-dropdown>
+        </template>
+
+        <router-link
+            v-if="!isAuthenticated"
+            to="/auth/google/login"
+            class="sidebar-item sidebar-bottom"
+            active-class="sidebar-item-active"
+        >
+            <div class="item-contents">
                 <sl-icon name="google"></sl-icon>
-                <span> Google Login </span>
+                <span>Google Login</span>
             </div>
-		</router-link>
+        </router-link>
 
-		<div v-else class="sidebar-bottom">
-
-			<router-link
-				:to="`/friends/pending`"
-				class="sidebar-item"
-				active-class="sidebar-item-active"
-			>
-				<div class="item-contents">
+        <div v-else class="sidebar-bottom">
+            <router-link
+                to="/friends/pending"
+                class="sidebar-item"
+                active-class="sidebar-item-active"
+            >
+                <div class="item-contents">
                     <sl-tooltip content="Ver pedidos de amizade pendentes">
                         <sl-icon library="material" name="list_alt"></sl-icon>
                     </sl-tooltip>
-				</div>
-			</router-link>
-            
-			<router-link
-				:to="`/profile/${user!.ID}`"
-				class="sidebar-item"
-				active-class="sidebar-item-active"
-			>
-				<div class="item-contents">
-					<img v-if="user!.AvatarURL" :src="user!.AvatarURL" alt="avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
-					<sl-icon v-else library="material" name="person"></sl-icon>
-					<span>Perfil</span>
-				</div>
-			</router-link>
+                </div>
+            </router-link>
 
-			<router-link
-				:to="`/logout`"
-				class="sidebar-item"
-				active-class="sidebar-item-active"
-			>
-				<div class="item-contents">
-					<sl-icon name="box-arrow-right"></sl-icon>
-					<span>Sair</span>
-				</div>
-			</router-link>
-		</div>
-	</div>
+            <router-link
+                :to="`/profile/${user!.ID}`"
+                class="sidebar-item"
+                active-class="sidebar-item-active"
+            >
+                <div class="item-contents">
+                    <img v-if="user!.AvatarURL" :src="user!.AvatarURL" alt="avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
+                    <sl-icon v-else library="material" name="person"></sl-icon>
+                    <span>Perfil</span>
+                </div>
+            </router-link>
 
+            <router-link
+                to="/logout"
+                class="sidebar-item"
+                active-class="sidebar-item-active"
+            >
+                <div class="item-contents">
+                    <sl-icon name="box-arrow-right"></sl-icon>
+                    <span>Sair</span>
+                </div>
+            </router-link>
+        </div>
+    </div>
 </template>

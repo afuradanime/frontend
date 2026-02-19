@@ -51,6 +51,11 @@ const router = createRouter({
 			name: 'users',
 			component: () => import('../views/ExploreUsers.vue'),
 		},
+        {
+            path: '/moderation/translations',
+            name: 'translations',
+            component: () => import('../views/Moderation/PendingTranslations.vue')
+        },
 		{
 			path: '/auth/google/login',
 			name: 'login',

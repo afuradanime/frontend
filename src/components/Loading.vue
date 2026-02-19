@@ -9,13 +9,5 @@
 
 <style scoped>
 
-.loading-view {
-	position: absolute;
-	margin-left: 200px;
-	width: calc(100% - 200px);
-	height: 100%;
-	background: var(--variation-color);
-	z-index: 100;
-}
 
 </style>

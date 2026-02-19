@@ -6,6 +6,7 @@ import AnimeCard from '../components/AnimeCard.vue'
 
 import {useRoute} from "vue-router";
 
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip'
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import '@shoelace-style/shoelace/dist/components/select/select.js'
 import '@shoelace-style/shoelace/dist/components/option/option.js'
@@ -15,6 +16,9 @@ import '@shoelace-style/shoelace/dist/components/tab/tab.js'
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js'
 import '@shoelace-style/shoelace/dist/components/card/card.js'
 import '@shoelace-style/shoelace/dist/components/tag/tag.js'
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
+import '@shoelace-style/shoelace/dist/components/button/button.js'
+import '@shoelace-style/shoelace/dist/components/textarea/textarea.js'
 import Container from '@/components/Container.vue';
 import Subcontainer from '@/components/Subcontainer.vue';
 import InfoTable from '@/components/InfoTable.vue';
@@ -23,12 +27,46 @@ import { DateFormat, TranslateDayOfWeek, TranslateDuration } from '@/composables
 import Loading from '@/components/Loading.vue';
 import Error from '@/components/Error.vue';
 import SeasonBadge from '@/components/SeasonBadge.vue';
+import translationService from '@/services/TranslationService';
+import { useNotification } from '@/composables/notification';
+import type { DescriptionTranslation } from '@/models/DescriptionTranslation';
+import userService from '@/services/UserService';
+import type { User } from '@/models/User';
+
+const { notify } = useNotification()
 
 const anime = ref<Anime>();
 
 const loading = ref(false)
 const error = ref<string | null>(null)
 let observer: IntersectionObserver | null = null
+
+const translation = ref<DescriptionTranslation | null>(null);
+
+const translationDialogRef = ref<any>(null)
+const translationInput = ref('')
+const translator = ref<User | null>(null)
+const submitting = ref(false)
+
+const openTranslationModal = () => {
+    translationInput.value = ''
+    translationDialogRef.value?.show()
+}
+
+const submitTranslation = async () => {
+
+    if (!translationInput.value.trim() || !anime.value) return
+    submitting.value = true
+    try {
+        await translationService.submitTranslation(anime.value.ID, translationInput.value.trim())
+        translationDialogRef.value?.hide()
+        notify('Tradução submetida com sucesso!', 'success')
+    } catch (err) {
+        notify('Não foi possível submeter a tradução. ' + (err as any).response.data, 'danger')
+    } finally {
+        submitting.value = false
+    }
+}
 
 onMounted(async () => {
 
@@ -39,6 +77,14 @@ onMounted(async () => {
     error.value = null
     try {
         anime.value = await animeService.fetchAnimeByID(parseInt(animeId));
+
+        // Get translation async
+        translationService.getAnimeTranslation(parseInt(animeId)).then((result) => {
+            translation.value = result
+            userService.fetchByID(result.CreatedBy).then((result2) => {
+                translator.value = result2
+            })
+        })
     } catch (err) {
         error.value = 'Failed to load anime'
         console.error('Error loading anime: ', err)
@@ -230,13 +276,45 @@ onUnmounted(() => {
                     <!-- Right side content, including synopsis, etc... -->
                     <Container class="right-content">
                         <Subcontainer>
-                            <template #inner-title>Sinopse</template>
+                            <template #inner-title>
+                                <div class="about-header">
+                                    <span>Sinopse</span>
+                                    <sl-tooltip :content="'Este anime não tem tradução para português, podes contribuir com a tua tradução aqui.'" v-if="!translation">
+                                        <span class="flag-btn" @click="!translation && openTranslationModal()">
+                                            <img src="/icons/portugal.webp" alt="Bandeira portuguesa">
+                                            <span v-if="!translation" class="flag-warning">
+                                                <sl-icon class="material-icon" library="material" name="warning"></sl-icon>
+                                            </span>
+                                        </span>
+                                    </sl-tooltip>
+                                </div>
+                            </template>
                             <template #content>
                                 <div class="synopsis-content">
-                                    {{ anime.Descriptions[0]?.Description }}
+                                    {{ translation?.TranslatedDescription || anime.Descriptions[0]?.Description }}
+
+                                    <span v-if="translation" class="no-friends">
+                                        <br> <br>
+                                        Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
+                                    </span>
                                 </div>
                             </template>
                         </Subcontainer>
+                        
+                        <sl-dialog ref="translationDialogRef" label="Contribuir com tradução" style="--width: 50vw;">
+                            <p>Escreve aqui a tua adaptação da sinopse para português:</p>
+                            <sl-textarea
+                                resize="none"
+                                placeholder="Tradução da sinopse..."
+                                :rows="6"
+                                style="width: 100%;"
+                                @sl-input="translationInput = $event.target.value"
+                            ></sl-textarea>
+                            <div slot="footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <sl-button @click="translationDialogRef?.hide()">Cancelar</sl-button>
+                                <sl-button variant="success" @click="submitTranslation" :loading="submitting">Submeter</sl-button>
+                            </div>
+                        </sl-dialog>
                     </Container>
 
                 </div>
@@ -244,3 +322,16 @@ onUnmounted(() => {
         </div>
     </div>
 </template>
+
+<style scoped>
+
+.about-header {
+    justify-content: space-between;
+    display: flex;
+}
+
+.about-header img {
+    width: 25px;
+}
+
+</style>
