@@ -56,6 +56,24 @@ const router = createRouter({
             name: 'translations',
             component: () => import('../views/Moderation/PendingTranslations.vue')
         },
+        {
+            path: '/moderation/reports',
+            name: 'reports',
+            component: () => import('@/views/Moderation/ViewReports.vue'),
+        },
+        {
+            path: '/moderation/reports/user/:userID',
+            name: 'user reports',
+            component: () => import('@/views/Moderation/ViewUserReports.vue'),
+        },
+        {
+            path: '/moderation/users/:id',
+            component: () => import('@/views/Moderation/ManageUser.vue'),
+        },
+        { 
+            path: '/moderation/permissions', 
+            component: () => import('@/views/Moderation/ControlUsers.vue') 
+        },
 		{
 			path: '/auth/google/login',
 			name: 'login',

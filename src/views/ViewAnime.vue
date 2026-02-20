@@ -46,6 +46,7 @@ const translation = ref<DescriptionTranslation | null>(null);
 const translationDialogRef = ref<any>(null)
 const translationInput = ref('')
 const translator = ref<User | null>(null)
+const accepter = ref<User | null>(null)
 const submitting = ref(false)
 
 const openTranslationModal = () => {
@@ -80,10 +81,9 @@ onMounted(async () => {
 
         // Get translation async
         translationService.getAnimeTranslation(parseInt(animeId)).then((result) => {
-            translation.value = result
-            userService.fetchByID(result.CreatedBy).then((result2) => {
-                translator.value = result2
-            })
+            translation.value = result.translation
+            translator.value = result.translator
+            accepter.value = result.accepter
         })
     } catch (err) {
         error.value = 'Failed to load anime'
@@ -294,8 +294,9 @@ onUnmounted(() => {
                                     {{ translation?.TranslatedDescription || anime.Descriptions[0]?.Description }}
 
                                     <span v-if="translation" class="no-friends">
-                                        <br> <br>
-                                        Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
+                                        <sl-tooltip v-if="translation.AcceptedAt" :content="'Adaptação aceite por ' + accepter?.Username + ' no dia ' + DateFormat(translation.AcceptedAt)">
+                                            Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
+                                        </sl-tooltip>
                                     </span>
                                 </div>
                             </template>

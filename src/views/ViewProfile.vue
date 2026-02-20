@@ -29,12 +29,17 @@ import Error from '@/components/Error.vue';
 import ThreadPostHeader from '@/components/ThreadPostHeader.vue';
 import { useNotification } from '@/composables/notification';
 import UserBadge from '@/components/UserBadge.vue';
+import UpdateProfileModal from './Modals/UpdateProfileModal.vue';
+import ReportUserModal from './Modals/ReportUserModal.vue';
+
+const reportModalRef = ref<any>(null)
 
 const PENDING = 0;
 const FRIENDS = 1;
 const DECLINED = 2;
 const BLOCKED = 3;
 const NOT_RELATED = 4;
+
 
 const { notify } = useNotification()
 
@@ -128,6 +133,9 @@ const blockUser = async () => {
         notify('Não foi possível bloquear o utilizador.', 'danger')
     }
 }
+
+const editModalRef = ref<any>(null)
+
 </script>
 
 <template>
@@ -163,15 +171,14 @@ const blockUser = async () => {
 
                                 
                                 <!-- Edit profile button -->
-                                <router-link v-if="isAuthenticated && user?.ID === profile.ID" :to="'/settings/profile'">
-                                    <button
-                                        class="anime-badge"
-                                        style="background-color: #1714197b; border-radius: 50%; font-weight: bold; height: fit-content; padding: 10px 10px; border: none; cursor: pointer;"
-                                    >
-                                        <sl-icon name="pencil" label="Editar perfil" style="display: inline-flex;"></sl-icon>
-                                    </button>
-                                </router-link>
-
+                                <button
+                                    class="anime-badge"
+                                    style="background-color: #1714197b; border-radius: 50%; font-weight: bold; height: fit-content; padding: 10px 10px; border: none; cursor: pointer;"
+                                    v-if="isAuthenticated && user?.ID === profile.ID"
+                                    @click="editModalRef?.show()"
+                                >
+                                    <sl-icon name="pencil" label="Editar perfil" style="display: inline-flex;"></sl-icon>
+                                </button>
 
                                     <!-- Follow button -->
                                     <button
@@ -218,10 +225,13 @@ const blockUser = async () => {
                                     </span>
 
                                     <!-- Ellipsis dropdown -->
-                                    <sl-dropdown v-if="isAuthenticated && user?.ID !== profile.ID && friendshipState.status != BLOCKED">
+                                    <sl-dropdown v-if="isAuthenticated && user?.ID !== profile.ID">
                                         <sl-button slot="trigger">⋯</sl-button>
                                         <sl-menu>
-                                            <sl-menu-item class="danger" @click="openBlockDialog">
+                                            <sl-menu-item @click="reportModalRef?.show()">
+                                                Denunciar utilizador
+                                            </sl-menu-item>
+                                            <sl-menu-item class="danger" @click="openBlockDialog" v-if="friendshipState.status != BLOCKED">
                                                 Bloquear utilizador
                                             </sl-menu-item>
                                         </sl-menu>
@@ -320,6 +330,19 @@ const blockUser = async () => {
                 <sl-button variant="danger" @click="blockUser">Bloquear</sl-button>
             </div>
         </sl-dialog>
+
+        <UpdateProfileModal
+            v-if="profile"
+            ref="editModalRef"
+            :user="profile"
+            @updated="(updated) => profile = { ...profile!, ...updated }"
+        />
+
+        <ReportUserModal
+            v-if="profile"
+            ref="reportModalRef"
+            :user="profile"
+        />
 
     </div>
 </template>

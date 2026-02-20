@@ -43,22 +43,30 @@ const isModerator = computed(() => true)
         </router-link>
 
         <!-- Moderation section -->
-        <template v-if="isAuthenticated && isModerator">
-            <sl-dropdown hoverToOpen placement="right">
-                <div slot="trigger" class="sidebar-item">
-                    <div class="item-contents">
-                        <sl-icon library="material" name="lock"></sl-icon>
-                        <span>Moderação</span>
-                    </div>
+        <div class="sidebar-divider" v-if="isAuthenticated && isModerator"></div>
+
+        <sl-dropdown hoverToOpen placement="right" v-if="isAuthenticated && isModerator">
+            <div slot="trigger" class="sidebar-item">
+                <div class="item-contents">
+                    <sl-icon library="material" name="lock"></sl-icon>
+                    <span>Moderação</span>
                 </div>
-                <sl-menu>
-                    <sl-menu-item @click="$router.push('/moderation/translations')">
-                        <sl-icon slot="prefix" library="material" name="translate"></sl-icon>
-                        Traduções pendentes
-                    </sl-menu-item>
-                </sl-menu>
-            </sl-dropdown>
-        </template>
+            </div>
+            <sl-menu>
+                <sl-menu-item @click="$router.push('/moderation/translations')">
+                    <sl-icon slot="prefix" library="material" name="translate"></sl-icon>
+                    Traduções pendentes
+                </sl-menu-item>
+                <sl-menu-item @click="$router.push('/moderation/reports')">
+                    <sl-icon slot="prefix" library="material" name="flag"></sl-icon>
+                    Denúncias
+                </sl-menu-item>
+                <sl-menu-item @click="$router.push('/moderation/permissions')">
+                    <sl-icon slot="prefix" library="material" name="person"></sl-icon>
+                    Controlo de permissões
+                </sl-menu-item>
+            </sl-menu>
+        </sl-dropdown>
 
         <router-link
             v-if="!isAuthenticated"
@@ -110,3 +118,13 @@ const isModerator = computed(() => true)
         </div>
     </div>
 </template>
+
+<style scoped>
+sl-dropdown::part(panel) {
+    min-width: 280px;
+}
+
+sl-menu-item::part(base) {
+    white-space: nowrap;
+}
+</style>

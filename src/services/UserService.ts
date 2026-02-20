@@ -12,15 +12,45 @@ export class UserService {
 		)
 	}
 
-	async fetchAll(): Promise<User[]> {
-		const response = await this.httpService.get<User[]>('/users')
-		return response.data
-	}
+    async fetchAll(
+        pageNumber = 1,
+        pageSize = 20
+    ): Promise<{ data: User[]; pagination: Pagination }> {
+        const response = await this.httpService.get<{ data: User[]; pagination: Pagination }>(
+            `/users`,
+            { params: { pageNumber, pageSize } }
+        )
+        return response.data
+    }
+    
+    async searchByUsername(
+        query: string,
+        pageNumber = 1,
+        pageSize = 20
+    ): Promise<{ data: User[]; pagination: Pagination }> {
+        const response = await this.httpService.get<{ data: User[]; pagination: Pagination }>(
+            `/users/search`,
+            { params: { q: query, pageNumber, pageSize } }
+        )
+        return response.data
+    }
 
 	async fetchByID(uid: number): Promise<User> {
 		const response = await this.httpService.get<User>(`/users/${uid}`)
 		return response.data
 	}
+
+    async updateProfile(data: {
+        Username?: string
+        Location?: string
+        Pronouns?: string
+        Socials?: string[]
+        Birthday?: string
+        AllowsFriendRequests?: boolean
+        AllowsRecommendations?: boolean
+    }): Promise<void> {
+        await this.httpService.put(`/users`, data)
+    }
 
 	async fetchFriends(
 		uid: number,
@@ -67,6 +97,10 @@ export class UserService {
 	async blockUser(receiverId: number): Promise<void> {
 		await this.httpService.put(`/friends/block/${receiverId}`)
 	}
+
+    async restrictAccount(userID: number, canPost: boolean, canTranslate: boolean): Promise<void> {
+        await this.httpService.put(`/users/${userID}/restrict`, { CanPost: canPost, CanTranslate: canTranslate })
+    }
 }
 
 export const userService = new UserService()

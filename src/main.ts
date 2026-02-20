@@ -2,6 +2,7 @@ import './assets/main.css'
 import './assets/anime.css'
 import './assets/sidebar.css'
 import './assets/utils.css'
+import './assets/moderation.css'
 
 // Shoelace setup
 import '@shoelace-style/shoelace/dist/themes/light.css'

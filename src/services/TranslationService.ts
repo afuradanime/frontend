@@ -1,6 +1,7 @@
 import type { DescriptionTranslation } from '@/models/DescriptionTranslation'
 import { AxiosHTTPService } from './AxiosHttpService'
 import type { Pagination } from '@/models/Pagination'
+import type { User } from '@/models/User'
 
 export class TranslationService {
     private httpService: AxiosHTTPService
@@ -15,8 +16,16 @@ export class TranslationService {
         await this.httpService.post(`/translations/anime/${animeID}`, { TranslatedDescription: translatedDescription })
     }
 
-    async getAnimeTranslation(animeID: number): Promise<DescriptionTranslation> {
-        const response = await this.httpService.get<DescriptionTranslation>(`/translations/anime/${animeID}`)
+    async getAnimeTranslation(animeID: number): Promise<{
+        accepter: User,
+        translation: DescriptionTranslation,
+        translator: User
+    }> {
+        const response = await this.httpService.get<{
+            accepter: User,
+            translation: DescriptionTranslation,
+            translator: User
+        }>(`/translations/anime/${animeID}`)
         return response.data
     }
 

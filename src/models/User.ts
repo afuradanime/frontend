@@ -11,8 +11,12 @@ export interface User {
     ProviderID: string
     CreatedAt: string
     LastLogin: string
+    AllowsFriendRequests: boolean
+    AllowsRecommendations: boolean
     Roles: string
     Badges: string
+    CanPost: boolean
+    CanTranslate: boolean
 }
 
 export interface Social {
