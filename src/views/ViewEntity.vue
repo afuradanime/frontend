@@ -27,10 +27,8 @@ const fetchMap: Record<EntityType, (id: number, filter: AnimeFilter, page: numbe
 
 const activeFilter = ref<AnimeFilter>({})
 const initialLoading = ref(true)
-const pageLoading = ref(false)
 
 const loadPage = async (page: number) => {
-    pageLoading.value = true
     error.value = null
     try {
         const response = await fetchMap[props.type](id, activeFilter.value, page - 1, pageSize.value)
@@ -44,7 +42,6 @@ const loadPage = async (page: number) => {
     } catch (err) {
         error.value = `Failed to load ${props.type}`
     } finally {
-        pageLoading.value = false
         initialLoading.value = false
     }
 }
@@ -60,8 +57,7 @@ const onFilterChange = (f: AnimeFilter) => {
 </script>
 
 <template>
-    <Loading v-if="loading" />
-    <div v-else-if="error"> <Error :message="error" /> </div>
+    <div v-if="error"> <Error :message="error" /> </div>
     <div v-else class="entity-anime-view">
         <div class="entity-header">
             <h1>{{ (entity as any)?.Name }}</h1>
@@ -73,7 +69,9 @@ const onFilterChange = (f: AnimeFilter) => {
             </a>
         </div>
         <AnimeFilterBox @change="onFilterChange" />
-        <div class="anime-grid" ref="gridRef">
+        
+        <Loading v-if="animes.length == 0" />
+        <div v-else class="anime-grid" ref="gridRef">
             <router-link
                 v-for="anime in animes"
                 :key="anime.ID"

@@ -3,7 +3,8 @@
 </script>
 
 <template>
-	<div class="loading-view">
+	<div>
+        Loading...
 	</div>
 </template>
 

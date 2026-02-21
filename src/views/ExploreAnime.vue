@@ -13,8 +13,6 @@ import AnimeFilterBox from '@/components/AnimeFilterBox.vue'
 
 const { animes, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
 
-const initialLoading = ref(false)
-const pageLoading = ref(false)
 const searchQuery = ref('')
 
 const activeFilter = ref<AnimeFilterType>({})
@@ -27,7 +25,6 @@ const onFilterChange = (f: AnimeFilter) => {
 
 const loadPage = async (page: number) => {
 
-    pageLoading.value = true
     error.value = null
 
     try {
@@ -47,9 +44,6 @@ const loadPage = async (page: number) => {
     } catch (err) {
         error.value = 'Failed to load anime'
         animes.value = []
-    } finally {
-        pageLoading.value = false
-        initialLoading.value = false
     }
 }
 
@@ -60,8 +54,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <Loading v-if="initialLoading" />
-    <div v-else-if="error"> <Error :message="error" /> </div>
+    <div v-if="error"> <Error :message="error" /> </div>
     <div v-else class="entity-anime-view">
         <div class="control-header">
             <h1>Explorar</h1>
@@ -69,22 +62,16 @@ onMounted(() => {
             <AnimeFilterBox @change="onFilterChange" />
         </div>
 
-        <div v-if="!pageLoading && animes.length === 0 && !searchQuery" class="empty-state">
-            <p>Escreva algo para começar a pesquisa!</p>
-        </div>
         <div
-            v-if="!pageLoading && animes.length === 0 && searchQuery"
+            v-if="animes.length === 0 && searchQuery"
             class="empty-state"
         >
             <p>Nenhum anime encontrado.</p>
         </div>
 
-        <div
-            v-if="animes.length > 0"
-            class="grid-wrapper"
-            :class="{ dimmed: pageLoading }"
-        >
-            <div class="anime-grid" ref="gridRef">
+        <div class="grid-wrapper">
+            <Loading v-if="animes.length == 0" />
+            <div v-else class="anime-grid" ref="gridRef">
                 <router-link
                     v-for="anime in animes"
                     :key="anime.ID"

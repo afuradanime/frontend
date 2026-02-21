@@ -13,12 +13,10 @@ import AnimeFilterBox from '@/components/AnimeFilterBox.vue'
 
 const { animes, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
 
-const initialLoading = ref(true)
-const pageLoading = ref(false)
+const initialLoading = ref(false)
 const activeFilter = ref<AnimeFilter>({})
 
 const loadPage = async (page: number) => {
-    pageLoading.value = true
     error.value = null
     try {
         const response = await animeService.fetchAnimeThisSeason(activeFilter.value, page - 1, pageSize.value)
@@ -30,9 +28,7 @@ const loadPage = async (page: number) => {
         observeItems()
     } catch {
         error.value = 'Failed to load anime'
-    } finally {
-        pageLoading.value = false
-    }
+    } 
 }
 
 const onFilterChange = (f: AnimeFilter) => {
@@ -45,8 +41,7 @@ onMounted(() => loadPage(1))
 </script>
 
 <template>
-    <Loading v-if="initialLoading" />
-    <div v-else-if="error"><Error :message="error" /></div>
+    <div v-if="error"><Error :message="error" /></div>
     <div v-else class="entity-anime-view">
 
         <div class="control-header">
@@ -54,8 +49,9 @@ onMounted(() => loadPage(1))
             <AnimeFilterBox @change="onFilterChange" />
         </div>
 
-        <div class="grid-wrapper" :class="{ dimmed: pageLoading }">
-            <div class="anime-grid" ref="gridRef">
+        <div class="grid-wrapper">
+            <Loading v-if="animes.length == 0" />
+            <div v-else class="anime-grid" ref="gridRef">
                 <router-link
                     v-for="anime in animes"
                     :key="anime.ID"
