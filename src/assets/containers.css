@@ -24,7 +24,6 @@
 
 .sub-container {
 	background: var(--variation-color);
-	white-space: pre-line;
 }
 
 .genre-tag {
@@ -217,4 +216,11 @@
     font-size: 14px;
     margin-top: 20px;
     margin-left: 1rem;
+}
+
+.reply-section {
+    padding-left: 10px; 
+    margin-left: 15px; 
+    border-left: 2px solid var(--secondary-color); 
+    padding-top: 30px;
 }

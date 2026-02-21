@@ -26,7 +26,8 @@ import { DateFormat, DecodeRoleList, RoleMap } from '@/composables/utils';
 import Friend from '@/components/Friend.vue';
 import Loading from '@/components/Loading.vue';
 import Error from '@/components/Error.vue';
-import ThreadPostHeader from '@/components/ThreadPostHeader.vue';
+import PostSection from '@/components/PostSection.vue';
+import { PostParentType } from '@/models/Post';
 import { useNotification } from '@/composables/notification';
 import UserBadge from '@/components/UserBadge.vue';
 import UpdateProfileModal from './Modals/UpdateProfileModal.vue';
@@ -314,7 +315,11 @@ const editModalRef = ref<any>(null)
                     </Container>
 
                     <Container class="right-content">
-                        <!-- Thread content -->
+                        <PostSection
+                            v-if="profile"
+                            :parentId="String(profile.ID)"
+                            :parentType="PostParentType.User"
+                        />
                     </Container>
                 </div>
             </div>

@@ -2,11 +2,12 @@
 defineProps<{
     src?: string | null
     size?: number
+    radius?: number
 }>()
 </script>
 
 <template>
-    <div class="user-icon" :style="{ width: `${size ?? 24}px`, height: `${size ?? 24}px` }">
+    <div class="user-icon" :style="{ width: `${size ?? 24}px`, height: `${size ?? 24}px`, borderRadius: radius ? `${radius}px` : '50%' }">
         <img
             v-if="src"
             :src="src"
@@ -34,6 +35,5 @@ defineProps<{
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
 }
 </style>
