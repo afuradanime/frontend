@@ -16,10 +16,14 @@ import type { Anime } from '@/models/Anime'
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js'
 import '@shoelace-style/shoelace/dist/components/tab/tab.js'
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js'
+import type { User } from '@/models/User'
 
 const { notify } = useNotification()
 
-const translations = ref<DescriptionTranslation[]>([])
+const translations = ref<{
+    Translation: DescriptionTranslation,
+    Translator: User
+}[]>([])
 const pagination = ref<Pagination | null>(null)
 const currentPage = ref(1)
 const pageSize = ref(20)
@@ -31,6 +35,8 @@ const error = ref<string | null>(null)
 const selectedTranslation = ref<DescriptionTranslation | null>(null)
 const rejectDialogRef = ref<any>(null)
 
+const animeTitles = ref<Record<number, string>>({})
+
 const loadPage = async (page: number) => {
     pageLoading.value = true
     error.value = null
@@ -40,9 +46,19 @@ const loadPage = async (page: number) => {
         pagination.value = response.pagination
         currentPage.value = page
 
-        console.log(response)
+        // Fetch anime titles asynchronously after page loads
+        const uniqueAnimeIds = [...new Set(translations.value.map(t => t.Translation.Anime))]
+        uniqueAnimeIds.forEach(async (id) => {
+            if (animeTitles.value[id]) return
+            try {
+                const anime = await animeService.fetchAnimeByID(id)
+                animeTitles.value[id] = anime.Title
+            } catch {
+                animeTitles.value[id] = `Anime #${id}`
+            }
+        })
 
-    } catch (err) {
+    } catch {
         error.value = 'Não foi possível carregar as traduções pendentes.'
     } finally {
         initialLoading.value = false
@@ -69,7 +85,7 @@ const acceptTranslation = async (t: DescriptionTranslation) => {
     try {
         await translationService.acceptTranslation(t.ID)
         notify('Tradução aceite!', 'success')
-        translations.value = translations.value.filter(r => r.ID !== t.ID)
+        translations.value = translations.value.filter(r => r.Translation.ID !== t.ID)
     } catch {
         notify('Não foi possível aceitar a tradução.', 'danger')
     }
@@ -86,7 +102,7 @@ const rejectTranslation = async () => {
     try {
         await translationService.rejectTranslation(selectedTranslation.value.ID)
         notify('Tradução rejeitada.', 'warning')
-        translations.value = translations.value.filter(r => r.ID !== selectedTranslation.value!.ID)
+        translations.value = translations.value.filter(r => r.Translation.ID !== selectedTranslation.value!.ID)
     } catch {
         notify('Não foi possível rejeitar a tradução.', 'danger')
     } finally {
@@ -116,22 +132,22 @@ onMounted(() => loadPage(1))
         <div v-else class="translations-list">
             <div
                 v-for="t in translations"
-                :key="t.ID"
+                :key="t.Translation.ID"
                 class="translation-row"
             >
                 <div class="translation-meta">
-                    <span class="translation-anime">{{ readingAnime?.Title || `Anime ${t.Anime}` }}</span>
-                    <span class="translation-author">por utilizador #{{ t.CreatedBy }}</span>
-                    <span class="translation-date">{{ new Date(t.CreatedAt).toLocaleDateString('pt-PT') }}</span>
+                    <span class="translation-anime">{{ animeTitles[t.Translation.Anime] || `Anime #${t.Translation.Anime}` }}</span>
+                    <span class="translation-author">por utilizador {{ t.Translator.Username }}</span>
+                    <span class="translation-date">{{ new Date(t.Translation.CreatedAt).toLocaleDateString('pt-PT') }}</span>
                 </div>
-                <div class="translation-body clamped" @click="openReadDialog(t)">
-                    {{ t.TranslatedDescription }}
+                <div class="translation-body clamped" @click="openReadDialog(t.Translation)">
+                    {{ t.Translation.TranslatedDescription }}
                 </div>
                 <div class="translation-actions">
-                    <sl-button variant="success" size="small" @click="acceptTranslation(t)">
+                    <sl-button variant="success" size="small" @click="acceptTranslation(t.Translation)">
                         Aceitar
                     </sl-button>
-                    <sl-button variant="danger" size="small" @click="openRejectDialog(t)">
+                    <sl-button variant="danger" size="small" @click="openRejectDialog(t.Translation)">
                         Rejeitar
                     </sl-button>
                 </div>

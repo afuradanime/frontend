@@ -43,8 +43,14 @@ export class TranslationService {
     async getPendingTranslations(
         pageNumber = 1,
         pageSize = 20
-    ): Promise<{ data: DescriptionTranslation[]; pagination: Pagination }> {
-        const response = await this.httpService.get<{ data: DescriptionTranslation[]; pagination: Pagination }>(
+    ): Promise<{ data: {
+        Translation: DescriptionTranslation,
+        Translator: User
+    }[]; pagination: Pagination }> {
+        const response = await this.httpService.get<{ data: {
+            Translation: DescriptionTranslation,
+            Translator: User
+        }[]; pagination: Pagination }>(
             `/translations/pending`,
             { params: { pageNumber, pageSize } }
         )

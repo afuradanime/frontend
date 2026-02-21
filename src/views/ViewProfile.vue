@@ -186,7 +186,7 @@ const editModalRef = ref<any>(null)
                                         v-if="isAuthenticated && user?.ID !== profile.ID && (friendshipState.status == NOT_RELATED || friendshipState.status == DECLINED)"
                                         class="anime-badge"
                                         @click="followUser"
-                                        style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px; border: none; cursor: pointer;"
+                                        style="background-color: #16A085; font-weight: bold; height: fit-content; padding: 10px 15px; border: none; cursor: pointer; max-width: 500px;"
                                     >
                                         Seguir
                                     </button>
@@ -195,7 +195,7 @@ const editModalRef = ref<any>(null)
                                     <span
                                         v-else-if="friendshipState.status == PENDING && friendshipState.receiver == user?.ID"
                                         class="anime-badge"
-                                        style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                        style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px; max-width: 500px;"
                                     >
                                         Pedido recebido
                                     </span>
@@ -204,7 +204,7 @@ const editModalRef = ref<any>(null)
                                     <span
                                         v-else-if="friendshipState.status == PENDING"
                                         class="anime-badge"
-                                        style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                        style="background-color: gray; font-weight: bold; height: fit-content; padding: 10px 15px; max-width: 500px;"
                                     >
                                         Enviado
                                     </span>
@@ -212,7 +212,7 @@ const editModalRef = ref<any>(null)
                                     <span
                                         v-else-if="friendshipState.status == FRIENDS"
                                         class="anime-badge"
-                                        style="background-color: #B7A543; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                        style="background-color: #B7A543; font-weight: bold; height: fit-content; padding: 10px 15px; max-width: 500px;"
                                     >
                                         Amigo
                                     </span>
@@ -220,7 +220,7 @@ const editModalRef = ref<any>(null)
                                     <span
                                         v-else-if="friendshipState.status == BLOCKED"
                                         class="anime-badge"
-                                        style="background-color: #AA4141; font-weight: bold; height: fit-content; padding: 10px 15px;"
+                                        style="background-color: #AA4141; font-weight: bold; height: fit-content; padding: 10px 15px; max-width: 500px;"
                                     >
                                         Bloqueado
                                     </span>
@@ -246,7 +246,7 @@ const editModalRef = ref<any>(null)
                                     class="role-badge"
                                     :style="{ backgroundColor: RoleMap[role - 1]?.colour || '#888' }"
                                 >
-                                    {{ RoleMap[role - 1]?.name || 'Unknown Role' }}
+                                    {{ RoleMap[role - 1]?.name || 'Desconhecido' }}
                                 </div>
                             </div>
                         </div>

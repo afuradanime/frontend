@@ -86,7 +86,7 @@ const save = async () => {
                             :key="role"
                             class="role-badge"
                         >
-                            {{ RoleMap[role - 1]?.name || 'Unknown' }}
+                            {{ RoleMap[role - 1]?.name || 'Desconhecido' }}
                         </span>
                     </div>
                 </div>

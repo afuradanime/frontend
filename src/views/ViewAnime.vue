@@ -32,6 +32,7 @@ import { useNotification } from '@/composables/notification';
 import type { DescriptionTranslation } from '@/models/DescriptionTranslation';
 import userService from '@/services/UserService';
 import type { User } from '@/models/User';
+import authService from '@/services/AuthService';
 
 const { notify } = useNotification()
 
@@ -49,7 +50,15 @@ const translator = ref<User | null>(null)
 const accepter = ref<User | null>(null)
 const submitting = ref(false)
 
+const { user, isAuthenticated } = authService
+
 const openTranslationModal = () => {
+
+    if (!isAuthenticated.value) {
+        notify("Precisas de criar uma conta para aceder a esta funcionalidade", "warning");
+        return;
+    }
+
     translationInput.value = ''
     translationDialogRef.value?.show()
 }
@@ -215,7 +224,13 @@ onUnmounted(() => {
                             <template #outer-title>Géneros</template>
                             <template #before-content>
                                 <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
-                                    {{ tag.Name }}
+                                    <router-link 
+                                        :key="tag.ID"
+                                        :to="`/tag/${tag.ID}`"
+                                        class="info-link"
+                                    >
+                                        {{ tag.Name }}
+                                    </router-link>
                                 </GenreTag>
                             </template>
                         </Subcontainer>

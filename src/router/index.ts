@@ -19,6 +19,20 @@ const router = createRouter({
 			component: () => import('../views/ViewAnime.vue'),
 		},
         { 
+            path: '/anime/random', 
+            component: () => import('@/views/RandomAnime.vue') 
+        },
+        { 
+            path: '/tag/:id', 
+            name: 'tag',
+            component: () => import('@/views/ExploreAnimeByTag.vue') 
+        },
+        { 
+            path: '/genres', 
+            name: 'genres',
+            component: () => import('@/views/ExploreTags.vue') 
+        },
+        { 
             path: '/studio/:id',   
             name: 'studio',
             component: () => import('../views/ViewEntity.vue'),

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import { animeService } from '../services/AnimeService'
 import { getAnimeTypeName } from '../models/Anime'
 import AnimeCard from '../components/AnimeCard.vue'
@@ -8,6 +8,8 @@ import Loading from '@/components/Loading.vue'
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import { useAnimeGrid } from '@/composables/anime_grid'
 import Error from '@/components/Error.vue'
+import type { AnimeFilter, AnimeFilter as AnimeFilterType } from '@/services/AnimeService'
+import AnimeFilterBox from '@/components/AnimeFilterBox.vue'
 
 const { animes, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
 
@@ -15,15 +17,22 @@ const initialLoading = ref(false)
 const pageLoading = ref(false)
 const searchQuery = ref('')
 
+const activeFilter = ref<AnimeFilterType>({})
+
+const onFilterChange = (f: AnimeFilter) => {
+    activeFilter.value = f
+    currentPage.value = 1
+    loadPage(1)
+}
+
 const loadPage = async (page: number) => {
-    if (!searchQuery.value.trim()) return
 
     pageLoading.value = true
     error.value = null
 
     try {
         const response = await animeService.fetchAnimeFromQuery(
-            searchQuery.value,
+            activeFilter.value,
             page - 1,
             pageSize.value
         )
@@ -44,10 +53,10 @@ const loadPage = async (page: number) => {
     }
 }
 
-const onSearch = () => {
-    currentPage.value = 1
-    loadPage(1)
-}
+onMounted(() => {
+    currentPage.value = 1;
+    loadPage(1);
+});
 </script>
 
 <template>
@@ -57,17 +66,7 @@ const onSearch = () => {
         <div class="control-header">
             <h1>Explorar</h1>
 
-            <div class="filter-box">
-                <sl-input
-                    placeholder="Pesquisar"
-                    size="small"
-                    :value="searchQuery"
-                    @sl-input="searchQuery = ($event.target as any).value"
-                    @keydown.enter="onSearch"
-                >
-                    <sl-icon slot="prefix" name="search"></sl-icon>
-                </sl-input>
-            </div>
+            <AnimeFilterBox @change="onFilterChange" />
         </div>
 
         <div v-if="!pageLoading && animes.length === 0 && !searchQuery" class="empty-state">
