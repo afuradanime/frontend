@@ -139,8 +139,8 @@ const deletePost = async () => {
 }
 
 .post-content-subcontainer{
-    width: 100%;
     height: 100%;
+    width: 100%;
     margin-left: 10px;
 }
 
@@ -152,6 +152,7 @@ const deletePost = async () => {
 }
 
 .post-content-metadata{
+    width: 100%;
     height: 20px;
     display: flex;
     justify-content: space-between;
@@ -160,9 +161,13 @@ const deletePost = async () => {
 }
 
 .post-content-text{
+    width: 95%;
     text-overflow: clip;
-    overflow-wrap: break-word;
-    white-space: pre-line;
+    /* Allow very long words/URLs to wrap instead of overflowing */
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    /* Preserve newlines but allow wrapping */
+    white-space: pre-wrap;
 }
 
 .post-content-metadata-right{
