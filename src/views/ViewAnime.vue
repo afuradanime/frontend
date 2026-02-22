@@ -19,6 +19,7 @@ import '@shoelace-style/shoelace/dist/components/tag/tag.js'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/textarea/textarea.js'
+import '@shoelace-style/shoelace/dist/components/rating/rating.js'
 import Container from '@/components/Container.vue';
 import Subcontainer from '@/components/Subcontainer.vue';
 import InfoTable from '@/components/InfoTable.vue';
@@ -32,6 +33,7 @@ import { useNotification } from '@/composables/notification';
 import type { DescriptionTranslation } from '@/models/DescriptionTranslation';
 import userService from '@/services/UserService';
 import type { User } from '@/models/User';
+import AnimeListAddModal from './Modals/AnimeListAddModal.vue';
 
 const { notify } = useNotification()
 
@@ -44,6 +46,7 @@ let observer: IntersectionObserver | null = null
 const translation = ref<DescriptionTranslation | null>(null);
 
 const translationDialogRef = ref<any>(null)
+const addOrRateAnimeDialogRef = ref<any>(null)
 const translationInput = ref('')
 const translator = ref<User | null>(null)
 const accepter = ref<User | null>(null)
@@ -166,10 +169,15 @@ onUnmounted(() => {
                     <!-- Left side content, including rating, anime info, tags, statistics, etc... -->
                     <Container class="left-sidebar">
 
+                        <sl-button variant="neutral" @click="addOrRateAnimeDialogRef?.show()">
+                            Adicionar à lista
+                        </sl-button>
+
                         <!-- Placeholder for rating -->
                         <Subcontainer>
+                            <template #outer-title> As tuas avaliações </template>
                             <template #content>
-                                rating...
+                                <sl-rating label="Rating" precision="0.5" value="0"></sl-rating>
                             </template>
                         </Subcontainer>
 
@@ -318,6 +326,10 @@ onUnmounted(() => {
                         </sl-dialog>
                     </Container>
 
+                    <AnimeListAddModal 
+                        :anime="anime!" 
+                        ref="addOrRateAnimeDialogRef"
+                    />
                 </div>
             </div>
         </div>
