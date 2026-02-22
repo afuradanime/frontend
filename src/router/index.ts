@@ -60,6 +60,11 @@ const router = createRouter({
 			name: 'pending_friends',
 			component: () => import('../views/PendingRequests.vue'),
 		},
+        {
+			path: '/recommendations',
+			name: 'recommendations',
+			component: () => import('../views/ViewRecommendations.vue')
+		},
 		{
 			path: '/users',
 			name: 'users',

@@ -81,17 +81,31 @@ const isModerator = computed(() => true)
         </router-link>
 
         <div v-else class="sidebar-bottom">
-            <router-link
-                to="/friends/pending"
-                class="sidebar-item"
-                active-class="sidebar-item-active"
-            >
-                <div class="item-contents">
-                    <sl-tooltip content="Ver pedidos de amizade pendentes">
-                        <sl-icon library="material" name="list_alt"></sl-icon>
-                    </sl-tooltip>
-                </div>
-            </router-link>
+
+            <div style="display: flex;">
+                <router-link
+                    to="/friends/pending"
+                    class="sidebar-item"
+                    active-class="sidebar-item-active"
+                >
+                    <div class="item-contents">
+                        <sl-tooltip content="Ver pedidos de amizade pendentes">
+                            <sl-icon library="material" name="list_alt"></sl-icon>
+                        </sl-tooltip>
+                    </div>
+                </router-link>
+                <router-link
+                    to="/recommendations"
+                    class="sidebar-item"
+                    active-class="sidebar-item-active"
+                >
+                    <div class="item-contents">
+                        <sl-tooltip content="Ver pilha de recomendações">
+                            <sl-icon library="material" name="collections_bookmark"></sl-icon>
+                        </sl-tooltip>
+                    </div>
+                </router-link>
+            </div>
 
             <router-link
                 :to="`/profile/${user!.ID}`"

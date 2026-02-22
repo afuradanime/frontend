@@ -34,6 +34,7 @@ import userService from '@/services/UserService';
 import type { User } from '@/models/User';
 import authService from '@/services/AuthService';
 import PostTranslationModal from './Modals/PostTranslationModal.vue';
+import RecommendAnimeModal from './Modals/RecommendAnimeModal.vue';
 
 const { notify } = useNotification()
 
@@ -90,6 +91,8 @@ onUnmounted(() => {
     observer = null
 })
 
+const recommendModalRef = ref<any>(null)
+
 </script>
 
 <template>
@@ -128,6 +131,15 @@ onUnmounted(() => {
                                     :season="anime.Season.Season" 
                                     :year="anime.Season.Year"
                                 />
+
+                                <!-- Recommend button -->
+                                <sl-button
+                                    v-if="isAuthenticated"
+                                    size="medium"
+                                    @click="recommendModalRef?.show()"
+                                >
+                                    Recomendar
+                                </sl-button>
                             </div>
                         </div>
                     
@@ -304,6 +316,13 @@ onUnmounted(() => {
                             ref="translationModalRef"
                             :anime-i-d="anime.ID"
                         />
+
+                        <RecommendAnimeModal
+                            v-if="anime"
+                            ref="recommendModalRef"
+                            :anime-i-d="anime.ID"
+                        />
+
                     </Container>
 
                 </div>
