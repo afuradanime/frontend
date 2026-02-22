@@ -9,6 +9,7 @@ import { authService } from '@/services/AuthService'
 import { postService } from '@/services/PostService';
 import { useNotification } from '@/composables/notification';
 import ReportUserModal from '@/views/Modals/ReportUserModal.vue';
+import PostCreateModal from '@/views/Modals/PostCreateModal.vue';
 
 const reportModalRef = ref<any>(null)
 
@@ -17,7 +18,7 @@ const { user, isAuthenticated } = authService
 const { notify } = useNotification()
 
 var createdBy = ref<User | null>(null)
-var canDelete = ref<boolean>(false)
+const canDelete = ref<boolean>(false)
 
 const props = defineProps<{
     post: Post
@@ -32,6 +33,8 @@ onMounted(() => {
     canDelete.value = isAuthenticated.value && props.post.createdBy === user.value?.ID
 })
 
+const replyModalRef = ref<any>(null)
+
 const handleMenuSelect = async (event: any) => {
         
     const item = event.detail?.item;
@@ -39,7 +42,8 @@ const handleMenuSelect = async (event: any) => {
 
     switch (action) {
         case 'reply':
-            notify('Funcionalidade de resposta ainda não implementada.', 'warning')
+            // open reply modal bound to this post
+            replyModalRef.value?.show()
             break;
         case 'report':
             reportModalRef?.value.show()
@@ -88,7 +92,7 @@ const deletePost = async () => {
                         <sl-button slot="trigger" class="post-settings-button">⋯</sl-button>
                         <sl-menu type="module" @sl-select="handleMenuSelect($event)">
                             <sl-menu-item value="reply">Reponder</sl-menu-item>
-                            <sl-menu-item value="report">Reportar Utilizador</sl-menu-item>
+                            <sl-menu-item v-if="!canDelete" value="report">Reportar Utilizador</sl-menu-item>
                             <sl-menu-item v-if="canDelete" value="delete">Apagar</sl-menu-item>
                         </sl-menu>
                     </sl-dropdown>
@@ -105,6 +109,14 @@ const deletePost = async () => {
         v-if="createdBy"
         ref="reportModalRef"
         :user="createdBy"
+    />
+
+    <PostCreateModal
+        ref="replyModalRef"
+        :replyToPost="post"
+        :parentId="post.parentId"
+        :parentType="post.parentType"
+        @created="(p) => $emit('reply-created', p)"
     />
 
 </template>

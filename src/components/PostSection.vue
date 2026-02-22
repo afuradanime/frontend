@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import type { Post } from '@/models/Post'
 import { PostParentType } from '@/models/Post'
 import postService from '@/services/PostService'
+import PostCreateModal from '@/views/Modals/PostCreateModal.vue'
 import { useNotification } from '@/composables/notification'
 import Subcontainer from './Subcontainer.vue'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
@@ -19,6 +20,8 @@ const props = defineProps<{
 }>()
 
 const { notify } = useNotification()
+
+const postModalRef = ref<any>(null)
 
 const posts = ref<Post[]>([])
 const newPostText = ref('')
@@ -37,6 +40,8 @@ const loadPosts = async () => {
     }
 	console.log('Loaded posts:', posts.value)
 }
+
+const openCreate = () => postModalRef.value?.show()
 
 const submitPost = async () => {
     if (!newPostText.value.trim()) return
@@ -65,6 +70,16 @@ function onPostCreated(post: Post) {
     posts.value.unshift(post)
 }
 
+function onReplyCreated(reply: Post) {
+    // find parent post and add reply id to its posts list
+    const idx = posts.value.findIndex(p => p.id === reply.parentId)
+    if (idx !== -1 && posts.value[idx]) {
+        if (!posts.value[idx].posts) posts.value[idx].posts = []
+        // new replies come first (consistent with backend sort)
+        posts.value[idx].posts.unshift(reply.id)
+    }
+}
+
 onMounted(
 	() => loadPosts()
 )
@@ -72,11 +87,14 @@ onMounted(
 </script>
 
 <template>
+    <div style="margin-bottom: 12px; display:flex; justify-content:flex-end;">
+        <sl-button @click="openCreate">Novo Post</sl-button>
+    </div>
     <Subcontainer 
         v-for="post in posts" :key="post.id" style="margin-bottom: 20px;"
     >
         <template #content>
-            <PostItem :post="post" @deleted="onPostDeleted"/>
+            <PostItem :post="post" @deleted="onPostDeleted" @reply-created="onReplyCreated"/>
             <div
                 v-for="replyId in post.posts" :key="replyId"
                 class="reply-section"
@@ -85,6 +103,14 @@ onMounted(
             </div>
         </template>
     </Subcontainer>
+
+    <PostCreateModal 
+        ref="postModalRef" 
+        :parentId="props.parentId" 
+        :parentType="props.parentType" 
+        @created="onPostCreated" 
+    />
+
 </template>
 
 <style scoped>

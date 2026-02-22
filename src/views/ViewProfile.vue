@@ -168,7 +168,7 @@ const editModalRef = ref<any>(null)
                                 </div>
                                 
                                 <div style="display: flex; width: 100%; gap: 12px; align-items: center; margin-bottom: 1rem;">
-                                    <h1 class="anime-title" style="margin: 0px;">{{ profile.Username }}</h1>
+                                    <h1 class="anime-title" style="margin: 0px; white-space: nowrap;">{{ profile.Username }}</h1>
 
                                 
                                 <!-- Edit profile button -->
