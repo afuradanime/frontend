@@ -4,6 +4,7 @@ import type { Pagination } from '@/models/Pagination'
 import type { User } from '@/models/User'
 
 export class TranslationService {
+
     private httpService: AxiosHTTPService
 
     constructor(baseURL?: string) {
@@ -29,12 +30,13 @@ export class TranslationService {
         return response.data
     }
 
-    async getMyTranslations(
+    async getUserTranslations(
+        id: number,
         pageNumber = 1,
         pageSize = 20
     ): Promise<{ data: DescriptionTranslation[]; pagination: Pagination }> {
         const response = await this.httpService.get<{ data: DescriptionTranslation[]; pagination: Pagination }>(
-            `/translations/me`,
+            `/translations/user/${id}`,
             { params: { pageNumber, pageSize } }
         )
         return response.data
@@ -43,8 +45,14 @@ export class TranslationService {
     async getPendingTranslations(
         pageNumber = 1,
         pageSize = 20
-    ): Promise<{ data: DescriptionTranslation[]; pagination: Pagination }> {
-        const response = await this.httpService.get<{ data: DescriptionTranslation[]; pagination: Pagination }>(
+    ): Promise<{ data: {
+        Translation: DescriptionTranslation,
+        Translator: User
+    }[]; pagination: Pagination }> {
+        const response = await this.httpService.get<{ data: {
+            Translation: DescriptionTranslation,
+            Translator: User
+        }[]; pagination: Pagination }>(
             `/translations/pending`,
             { params: { pageNumber, pageSize } }
         )

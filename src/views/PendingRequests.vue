@@ -11,6 +11,9 @@ import PaginationComponent from '@/components/Pagination.vue'
 import { useNotification } from '@/composables/notification'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
+import UserCard from '@/components/UserCard.vue'
+import UserIcon from '@/components/UserIcon.vue'
+import { DateFormat } from '@/composables/utils'
 
 const { notify } = useNotification()
 
@@ -31,7 +34,7 @@ const loadPage = async (page: number) => {
     error.value = null
     try {
         const response = await userService.fetchPendingFriendRequests(page, pageSize.value)
-        requests.value = response.data
+        requests.value = response.data || []
         pagination.value = response.pagination
         currentPage.value = page
         initialLoading.value = false
@@ -88,21 +91,17 @@ onMounted(() => loadPage(1))
         <div v-else-if="requests.length === 0" class="empty-state">
             <p>Não tens pedidos de amizade pendentes.</p>
         </div>
-
-        <div v-else class="requests-list">
-            <div
-                v-for="user in requests"
-                :key="user.ID"
-                class="request-row"
-            >
-                <Friend :friend="user" />
+        <div v-else class="requests-grid">
+            <div v-for="user in requests" :key="user.ID" class="request-tile">
+                <div class="request-user">
+                    <router-link :to="`/profile/${user.ID}`" class="request-user-link">
+                        <UserIcon :src="user.AvatarURL" :size="36" />
+                        <span class="request-name">{{ user.Username }}</span>
+                    </router-link>
+                </div>
                 <div class="request-actions">
-                    <sl-button variant="success" size="small" @click="acceptRequest(user)">
-                        Aceitar
-                    </sl-button>
-                    <sl-button variant="danger" size="small" @click="openDeclineDialog(user)">
-                        Recusar
-                    </sl-button>
+                    <sl-button variant="success" size="small" @click="acceptRequest(user)">Aceitar</sl-button>
+                    <sl-button variant="danger" size="small" @click="openDeclineDialog(user)">Recusar</sl-button>
                 </div>
             </div>
         </div>
@@ -131,28 +130,48 @@ onMounted(() => loadPage(1))
 </template>
 
 <style scoped>
-.requests-list {
+.requests-grid {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-top: 1rem;
 }
 
-.request-row {
+.request-tile {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
     background-color: var(--secondary-color);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: var(--default-box-shadow);
+    min-width: 180px;
+}
+
+.request-user-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.request-user-link:hover .request-name {
+    text-decoration: underline;
+    text-decoration-color: var(--border-color);
+}
+
+.request-name {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .request-actions {
     display: flex;
-    gap: 8px;
-    flex-shrink: 0;
+    gap: 6px;
 }
-
 </style>

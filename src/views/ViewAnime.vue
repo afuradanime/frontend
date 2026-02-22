@@ -33,6 +33,9 @@ import { useNotification } from '@/composables/notification';
 import type { DescriptionTranslation } from '@/models/DescriptionTranslation';
 import userService from '@/services/UserService';
 import type { User } from '@/models/User';
+import authService from '@/services/AuthService';
+import PostTranslationModal from './Modals/PostTranslationModal.vue';
+import RecommendAnimeModal from './Modals/RecommendAnimeModal.vue';
 import AnimeListAddModal from './Modals/AnimeListAddModal.vue';
 
 const { notify } = useNotification()
@@ -45,31 +48,21 @@ let observer: IntersectionObserver | null = null
 
 const translation = ref<DescriptionTranslation | null>(null);
 
-const translationDialogRef = ref<any>(null)
+const translationModalRef = ref<any>(null)
 const addOrRateAnimeDialogRef = ref<any>(null)
-const translationInput = ref('')
 const translator = ref<User | null>(null)
 const accepter = ref<User | null>(null)
-const submitting = ref(false)
+
+const { user, isAuthenticated } = authService
 
 const openTranslationModal = () => {
-    translationInput.value = ''
-    translationDialogRef.value?.show()
-}
 
-const submitTranslation = async () => {
-
-    if (!translationInput.value.trim() || !anime.value) return
-    submitting.value = true
-    try {
-        await translationService.submitTranslation(anime.value.ID, translationInput.value.trim())
-        translationDialogRef.value?.hide()
-        notify('Tradução submetida com sucesso!', 'success')
-    } catch (err) {
-        notify('Não foi possível submeter a tradução. ' + (err as any).response.data, 'danger')
-    } finally {
-        submitting.value = false
+    if (!isAuthenticated.value) {
+        notify("Precisas de criar uma conta para aceder a esta funcionalidade", "warning");
+        return;
     }
+
+    translationModalRef.value?.show()
 }
 
 onMounted(async () => {
@@ -100,6 +93,8 @@ onUnmounted(() => {
     observer?.disconnect()
     observer = null
 })
+
+const recommendModalRef = ref<any>(null)
 
 </script>
 
@@ -139,6 +134,15 @@ onUnmounted(() => {
                                     :season="anime.Season.Season" 
                                     :year="anime.Season.Year"
                                 />
+
+                                <!-- Recommend button -->
+                                <sl-button
+                                    v-if="isAuthenticated"
+                                    size="medium"
+                                    @click="recommendModalRef?.show()"
+                                >
+                                    Recomendar
+                                </sl-button>
                             </div>
                         </div>
                     
@@ -223,7 +227,13 @@ onUnmounted(() => {
                             <template #outer-title>Géneros</template>
                             <template #before-content>
                                 <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
-                                    {{ tag.Name }}
+                                    <router-link 
+                                        :key="tag.ID"
+                                        :to="`/tag/${tag.ID}`"
+                                        class="info-link"
+                                    >
+                                        {{ tag.Name }}
+                                    </router-link>
                                 </GenreTag>
                             </template>
                         </Subcontainer>
@@ -310,20 +320,17 @@ onUnmounted(() => {
                             </template>
                         </Subcontainer>
                         
-                        <sl-dialog ref="translationDialogRef" label="Contribuir com tradução" style="--width: 50vw;">
-                            <p>Escreve aqui a tua adaptação da sinopse para português:</p>
-                            <sl-textarea
-                                resize="none"
-                                placeholder="Tradução da sinopse..."
-                                :rows="6"
-                                style="width: 100%;"
-                                @sl-input="translationInput = $event.target.value"
-                            ></sl-textarea>
-                            <div slot="footer" style="display: flex; gap: 8px; justify-content: flex-end;">
-                                <sl-button @click="translationDialogRef?.hide()">Cancelar</sl-button>
-                                <sl-button variant="success" @click="submitTranslation" :loading="submitting">Submeter</sl-button>
-                            </div>
-                        </sl-dialog>
+                        <PostTranslationModal
+                            ref="translationModalRef"
+                            :anime-i-d="anime.ID"
+                        />
+
+                        <RecommendAnimeModal
+                            v-if="anime"
+                            ref="recommendModalRef"
+                            :anime-i-d="anime.ID"
+                        />
+
                     </Container>
 
                     <AnimeListAddModal 

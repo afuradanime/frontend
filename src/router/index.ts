@@ -19,6 +19,20 @@ const router = createRouter({
 			component: () => import('../views/ViewAnime.vue'),
 		},
         { 
+            path: '/anime/random', 
+            component: () => import('@/views/RandomAnime.vue') 
+        },
+        { 
+            path: '/tag/:id', 
+            name: 'tag',
+            component: () => import('@/views/ExploreAnimeByTag.vue') 
+        },
+        { 
+            path: '/genres', 
+            name: 'genres',
+            component: () => import('@/views/ExploreTags.vue') 
+        },
+        { 
             path: '/studio/:id',   
             name: 'studio',
             component: () => import('../views/ViewEntity.vue'),
@@ -45,6 +59,11 @@ const router = createRouter({
 			path: '/friends/pending',
 			name: 'pending_friends',
 			component: () => import('../views/PendingRequests.vue'),
+		},
+        {
+			path: '/recommendations',
+			name: 'recommendations',
+			component: () => import('../views/ViewRecommendations.vue')
 		},
 		{
 			path: '/users',
@@ -91,7 +110,12 @@ const router = createRouter({
 				window.location.href = `${import.meta.env.VITE_API_URL}/auth/logout`
 				return false
 			}
-		}
+		},
+        // Static pages
+        {
+            path: '/info/descriptions',
+            component: () => import('@/views/Info/AboutDescriptions.vue')
+        }
 	],
 })
 

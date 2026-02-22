@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { animeService } from '../services/AnimeService'
+import { animeService, type AnimeFilter } from '../services/AnimeService'
 import AnimeCard from '../components/AnimeCard.vue'
 import Pagination from '@/components/Pagination.vue'
 import Loading from '@/components/Loading.vue'
@@ -8,6 +8,7 @@ import { getAnimeTypeName, type Licensor, type Producer, type Studio } from '../
 import { useRoute } from 'vue-router'
 import { useAnimeGrid } from '@/composables/anime_grid'
 import Error from '@/components/Error.vue'
+import AnimeFilterBox from '@/components/AnimeFilterBox.vue'
 
 type EntityType = 'studio' | 'producer' | 'licensor'
 type Entity = Studio | Producer | Licensor
@@ -18,20 +19,19 @@ const entity = ref<Entity | null>(null)
 
 const { animes, loading, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
 
-const fetchMap: Record<EntityType, (id: number, page: number, size: number) => Promise<any>> = {
-    studio:   (id, page, size) => animeService.fetchStudioByID(id, page, size),
-    producer: (id, page, size) => animeService.fetchProducerByID(id, page, size),
-    licensor: (id, page, size) => animeService.fetchLicensorByID(id, page, size),
+const fetchMap: Record<EntityType, (id: number, filter: AnimeFilter, page: number, size: number) => Promise<any>> = {
+    studio:   (id, filter, page, size) => animeService.fetchStudioByID(id, filter, page, size),
+    producer: (id, filter, page, size) => animeService.fetchProducerByID(id, filter, page, size),
+    licensor: (id, filter, page, size) => animeService.fetchLicensorByID(id, filter, page, size),
 }
 
+const activeFilter = ref<AnimeFilter>({})
 const initialLoading = ref(true)
-const pageLoading = ref(false)
 
 const loadPage = async (page: number) => {
-    pageLoading.value = true
     error.value = null
     try {
-        const response = await fetchMap[props.type](id, page - 1, pageSize.value)
+        const response = await fetchMap[props.type](id, activeFilter.value, page - 1, pageSize.value)
         entity.value = (response.studio ?? response.producer ?? response.licensor) as Entity
         animes.value = response.animes
         totalPages.value = response.pagination.TotalPages
@@ -42,17 +42,22 @@ const loadPage = async (page: number) => {
     } catch (err) {
         error.value = `Failed to load ${props.type}`
     } finally {
-        pageLoading.value = false
         initialLoading.value = false
     }
 }
 
 onMounted(() => loadPage(1))
+
+const onFilterChange = (f: AnimeFilter) => {
+    activeFilter.value = f
+    currentPage.value = 1
+    loadPage(1)
+}
+
 </script>
 
 <template>
-    <Loading v-if="loading" />
-    <div v-else-if="error"> <Error :message="error" /> </div>
+    <div v-if="error"> <Error :message="error" /> </div>
     <div v-else class="entity-anime-view">
         <div class="entity-header">
             <h1>{{ (entity as any)?.Name }}</h1>
@@ -63,7 +68,10 @@ onMounted(() => loadPage(1))
                 Ver no MAL
             </a>
         </div>
-        <div class="anime-grid" ref="gridRef">
+        <AnimeFilterBox @change="onFilterChange" />
+        
+        <Loading v-if="animes.length == 0" />
+        <div v-else class="anime-grid" ref="gridRef">
             <router-link
                 v-for="anime in animes"
                 :key="anime.ID"

@@ -11,10 +11,11 @@ onMounted(() => {
 const menuItems = [
 	{ title: 'Explorar', icon: 'public', route: '/explore' },
     { title: "Season", icon: 'calendar_today', route: '/season' },
+    { title: "Géneros", icon: 'extension', route: '/genres' },
     { title: "Utilizadores", icon: 'people', route: '/users'},
     { title: "Grupos", icon: 'group', route: '/groups' },
     { title: "Artistas", icon: 'palette', route: '/artists' },
-    { title: "Aleatório", icon: 'shuffle', route: '/random' }
+    { title: "Aleatório", icon: 'shuffle', route: '/anime/random' }
 ]
 
 </script>

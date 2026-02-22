@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import { animeService } from '../services/AnimeService'
 import { getAnimeTypeName } from '../models/Anime'
 import AnimeCard from '../components/AnimeCard.vue'
@@ -8,22 +8,28 @@ import Loading from '@/components/Loading.vue'
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import { useAnimeGrid } from '@/composables/anime_grid'
 import Error from '@/components/Error.vue'
+import type { AnimeFilter, AnimeFilter as AnimeFilterType } from '@/services/AnimeService'
+import AnimeFilterBox from '@/components/AnimeFilterBox.vue'
 
 const { animes, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
 
-const initialLoading = ref(false)
-const pageLoading = ref(false)
 const searchQuery = ref('')
 
-const loadPage = async (page: number) => {
-    if (!searchQuery.value.trim()) return
+const activeFilter = ref<AnimeFilterType>({})
 
-    pageLoading.value = true
+const onFilterChange = (f: AnimeFilter) => {
+    activeFilter.value = f
+    currentPage.value = 1
+    loadPage(1)
+}
+
+const loadPage = async (page: number) => {
+
     error.value = null
 
     try {
         const response = await animeService.fetchAnimeFromQuery(
-            searchQuery.value,
+            activeFilter.value,
             page - 1,
             pageSize.value
         )
@@ -38,54 +44,34 @@ const loadPage = async (page: number) => {
     } catch (err) {
         error.value = 'Failed to load anime'
         animes.value = []
-    } finally {
-        pageLoading.value = false
-        initialLoading.value = false
     }
 }
 
-const onSearch = () => {
-    currentPage.value = 1
-    loadPage(1)
-}
+onMounted(() => {
+    currentPage.value = 1;
+    loadPage(1);
+});
 </script>
 
 <template>
-    <Loading v-if="initialLoading" />
-    <div v-else-if="error"> <Error :message="error" /> </div>
+    <div v-if="error"> <Error :message="error" /> </div>
     <div v-else class="entity-anime-view">
         <div class="control-header">
             <h1>Explorar</h1>
 
-            <div class="filter-box">
-                <sl-input
-                    placeholder="Pesquisar"
-                    size="small"
-                    :value="searchQuery"
-                    @sl-input="searchQuery = ($event.target as any).value"
-                    @keydown.enter="onSearch"
-                >
-                    <sl-icon slot="prefix" name="search"></sl-icon>
-                </sl-input>
-            </div>
+            <AnimeFilterBox @change="onFilterChange" />
         </div>
 
-        <div v-if="!pageLoading && animes.length === 0 && !searchQuery" class="empty-state">
-            <p>Escreva algo para começar a pesquisa!</p>
-        </div>
         <div
-            v-if="!pageLoading && animes.length === 0 && searchQuery"
+            v-if="animes.length === 0 && searchQuery"
             class="empty-state"
         >
             <p>Nenhum anime encontrado.</p>
         </div>
 
-        <div
-            v-if="animes.length > 0"
-            class="grid-wrapper"
-            :class="{ dimmed: pageLoading }"
-        >
-            <div class="anime-grid" ref="gridRef">
+        <div class="grid-wrapper">
+            <Loading v-if="animes.length == 0" />
+            <div v-else class="anime-grid" ref="gridRef">
                 <router-link
                     v-for="anime in animes"
                     :key="anime.ID"

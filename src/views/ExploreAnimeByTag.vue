@@ -1,35 +1,47 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { animeService } from '../services/AnimeService'
 import type { AnimeFilter } from '@/services/AnimeService'
-import { getAnimeTypeName } from '../models/Anime'
 import AnimeCard from '../components/AnimeCard.vue'
 import Pagination from '@/components/Pagination.vue'
 import Loading from '@/components/Loading.vue'
 import Error from '@/components/Error.vue'
+import { getAnimeTypeName } from '../models/Anime'
+import { useRoute } from 'vue-router'
 import { useAnimeGrid } from '@/composables/anime_grid'
 import AnimeFilterBox from '@/components/AnimeFilterBox.vue'
+import { TagMap } from '@/composables/utils'
 
-const { animes, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
+const id = parseInt(useRoute().params.id as string)
+const tagName = useRoute().query.name as string | undefined
 
-const initialLoading = ref(false)
+const { animes, loading, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
+
 const activeFilter = ref<AnimeFilter>({})
+const initialLoading = ref(true)
+const pageLoading = ref(false)
 
 const loadPage = async (page: number) => {
+    pageLoading.value = true
     error.value = null
     try {
-        const response = await animeService.fetchAnimeThisSeason(activeFilter.value, page - 1, pageSize.value)
+        const response = await animeService.fetchAnimeFromTag(id, activeFilter.value, page - 1, pageSize.value)
         animes.value = response.animes
         totalPages.value = response.pagination.TotalPages
         currentPage.value = page
-        initialLoading.value = false
+
         await nextTick()
         observeItems()
+
     } catch {
-        error.value = 'Failed to load anime'
-    } 
+        error.value = 'Failed to load anime from tag'
+    } finally {
+        pageLoading.value = false
+        initialLoading.value = false
+    }
 }
+
+onMounted(() => loadPage(1))
 
 const onFilterChange = (f: AnimeFilter) => {
     activeFilter.value = f
@@ -37,21 +49,23 @@ const onFilterChange = (f: AnimeFilter) => {
     loadPage(1)
 }
 
-onMounted(() => loadPage(1))
 </script>
 
 <template>
-    <div v-if="error"><Error :message="error" /></div>
+    <Loading v-if="loading" />
+    <div v-else-if="error"><Error :message="error" /></div>
     <div v-else class="entity-anime-view">
 
         <div class="control-header">
-            <h1>Sazonal</h1>
+            <div class="entity-header">
+                <h1>{{ tagName ?? `Tag ${TagMap[id]}` }}</h1>
+                <span class="entity-type">Género / Tema</span>
+            </div>
             <AnimeFilterBox @change="onFilterChange" />
         </div>
 
-        <div class="grid-wrapper">
-            <Loading v-if="animes.length == 0" />
-            <div v-else class="anime-grid" ref="gridRef">
+        <div class="grid-wrapper" :class="{ dimmed: pageLoading }">
+            <div class="anime-grid" ref="gridRef">
                 <router-link
                     v-for="anime in animes"
                     :key="anime.ID"

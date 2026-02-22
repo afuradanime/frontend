@@ -10,6 +10,16 @@ export interface EntityAnimeResponse<T> {
     licensor?: T
 }
 
+export interface AnimeFilter {
+    q?: string
+    type?: number
+    status?: number
+    start_date?: number
+    end_date?: number
+    min_episodes?: number
+    max_episodes?: number
+}
+
 export class AnimeService {
     private httpService: AxiosHTTPService
 
@@ -24,45 +34,58 @@ export class AnimeService {
         return response.data
     }
 
-    async fetchAnimeFromQuery(q: string = "", pageNumber = 1, pageSize = 20): Promise<{
+    async fetchAnimeRandom(): Promise<Anime> {
+        const response = await this.httpService.get<Anime>(`/anime/random`)
+        return response.data
+    }
+
+    async fetchAnimeFromQuery(filter: AnimeFilter = {}, pageNumber = 1, pageSize = 20): Promise<{
         animes: Anime[]
         pagination: Pagination
     }> {
         const response = await this.httpService.get<{ animes: Anime[]; pagination: Pagination }>(`/anime/search`, {
-            params: { q, pageNumber, pageSize },
+            params: { ...filter, pageNumber, pageSize },
         })
         return response.data
     }
 
-    async fetchAnimeThisSeason(pageNumber = 1, pageSize = 20): Promise<{
+    async fetchAnimeThisSeason(filter: AnimeFilter = {}, pageNumber = 1, pageSize = 20): Promise<{
         animes: Anime[]
         pagination: Pagination
     }> {
-        const response = await this.httpService.get<{ animes: Anime[]; pagination: Pagination }>(
-            '/anime/seasonal'
-        , {
-            params: { pageNumber, pageSize },
+        const response = await this.httpService.get<{ animes: Anime[]; pagination: Pagination }>('/anime/seasonal', {
+            params: { ...filter, pageNumber, pageSize },
         })
         return response.data
     }
 
-    async fetchStudioByID(studioID: number, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Studio>> {
+    async fetchAnimeFromTag(tagID: number, filter: AnimeFilter = {}, pageNumber = 1, pageSize = 20): Promise<{
+        animes: Anime[]
+        pagination: Pagination
+    }> {
+        const response = await this.httpService.get<{ animes: Anime[]; pagination: Pagination }>(`/anime/tags/${tagID}`, {
+            params: { ...filter, pageNumber, pageSize },
+        })
+        return response.data
+    }
+
+    async fetchStudioByID(studioID: number, filter: AnimeFilter = {}, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Studio>> {
         const response = await this.httpService.get<EntityAnimeResponse<Studio>>(`/anime/studio/${studioID}`, {
-            params: { pageNumber, pageSize },
+            params: { ...filter, pageNumber, pageSize },
         })
         return response.data
     }
 
-    async fetchProducerByID(producerID: number, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Producer>> {
+    async fetchProducerByID(producerID: number, filter: AnimeFilter = {}, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Producer>> {
         const response = await this.httpService.get<EntityAnimeResponse<Producer>>(`/anime/producer/${producerID}`, {
-            params: { pageNumber, pageSize },
+            params: { ...filter, pageNumber, pageSize },
         })
         return response.data
     }
 
-    async fetchLicensorByID(licensorID: number, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Licensor>> {
+    async fetchLicensorByID(licensorID: number, filter: AnimeFilter = {}, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Licensor>> {
         const response = await this.httpService.get<EntityAnimeResponse<Licensor>>(`/anime/licensor/${licensorID}`, {
-            params: { pageNumber, pageSize },
+            params: { ...filter, pageNumber, pageSize },
         })
         return response.data
     }
