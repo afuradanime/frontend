@@ -12,6 +12,13 @@ const props = defineProps<{
 
 const post = ref<Post | null>(null)
 
+const onReplyCreated = (reply: Post) => {
+    if (!post.value) return
+    if (!post.value.posts) post.value.posts = []
+    // newest first
+    post.value.posts.unshift(reply.id)
+}
+
 onMounted(async () => {
     try {
         post.value = await postService.getPostById(props.postId)
@@ -23,12 +30,12 @@ onMounted(async () => {
 
 <template>
     <div v-if="post">
-        <PostItem :post="post" />
+        <PostItem :post="post" @reply-created="onReplyCreated" />
         <div
             v-for="replyId in post.posts" :key="replyId"
             class="reply-section"
         >
-            <PostReply :postId="replyId" />
+            <PostReply :postId="replyId"  />
         </div>
     </div>
 </template>
