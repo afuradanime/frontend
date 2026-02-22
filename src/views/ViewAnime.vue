@@ -33,6 +33,7 @@ import type { DescriptionTranslation } from '@/models/DescriptionTranslation';
 import userService from '@/services/UserService';
 import type { User } from '@/models/User';
 import authService from '@/services/AuthService';
+import PostTranslationModal from './Modals/PostTranslationModal.vue';
 
 const { notify } = useNotification()
 
@@ -44,11 +45,9 @@ let observer: IntersectionObserver | null = null
 
 const translation = ref<DescriptionTranslation | null>(null);
 
-const translationDialogRef = ref<any>(null)
-const translationInput = ref('')
+const translationModalRef = ref<any>(null)
 const translator = ref<User | null>(null)
 const accepter = ref<User | null>(null)
-const submitting = ref(false)
 
 const { user, isAuthenticated } = authService
 
@@ -59,23 +58,7 @@ const openTranslationModal = () => {
         return;
     }
 
-    translationInput.value = ''
-    translationDialogRef.value?.show()
-}
-
-const submitTranslation = async () => {
-
-    if (!translationInput.value.trim() || !anime.value) return
-    submitting.value = true
-    try {
-        await translationService.submitTranslation(anime.value.ID, translationInput.value.trim())
-        translationDialogRef.value?.hide()
-        notify('Tradução submetida com sucesso!', 'success')
-    } catch (err) {
-        notify('Não foi possível submeter a tradução. ' + (err as any).response.data, 'danger')
-    } finally {
-        submitting.value = false
-    }
+    translationModalRef.value?.show()
 }
 
 onMounted(async () => {
@@ -317,20 +300,10 @@ onUnmounted(() => {
                             </template>
                         </Subcontainer>
                         
-                        <sl-dialog ref="translationDialogRef" label="Contribuir com tradução" style="--width: 50vw;">
-                            <p>Escreve aqui a tua adaptação da sinopse para português:</p>
-                            <sl-textarea
-                                resize="none"
-                                placeholder="Tradução da sinopse..."
-                                :rows="6"
-                                style="width: 100%;"
-                                @sl-input="translationInput = $event.target.value"
-                            ></sl-textarea>
-                            <div slot="footer" style="display: flex; gap: 8px; justify-content: flex-end;">
-                                <sl-button @click="translationDialogRef?.hide()">Cancelar</sl-button>
-                                <sl-button variant="success" @click="submitTranslation" :loading="submitting">Submeter</sl-button>
-                            </div>
-                        </sl-dialog>
+                        <PostTranslationModal
+                            ref="translationModalRef"
+                            :anime-i-d="anime.ID"
+                        />
                     </Container>
 
                 </div>

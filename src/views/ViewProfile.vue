@@ -32,6 +32,10 @@ import { useNotification } from '@/composables/notification';
 import UserBadge from '@/components/UserBadge.vue';
 import UpdateProfileModal from './Modals/UpdateProfileModal.vue';
 import ReportUserModal from './Modals/ReportUserModal.vue';
+import translationService from '@/services/TranslationService'
+import type { DescriptionTranslation } from '@/models/DescriptionTranslation'
+import Pagination from '@/components/Pagination.vue';
+import TranslationSection from '@/components/TranslationSection.vue';
 
 const reportModalRef = ref<any>(null)
 
@@ -41,6 +45,10 @@ const DECLINED = 2;
 const BLOCKED = 3;
 const NOT_RELATED = 4;
 
+const activeTab = ref<'general' | 'animelist' | 'mangalist' | 'contributions'>('general');
+const onTabChange = (tab: typeof activeTab.value) => {
+    activeTab.value = tab;
+}
 
 const { notify } = useNotification()
 
@@ -64,6 +72,7 @@ const route = useRoute()
 onMounted(() => loadProfile())
 watch(() => route.params.id, () => {
     friends.value = []
+    activeTab.value = 'general'
     loadProfile()
 })
 
@@ -252,10 +261,26 @@ const editModalRef = ref<any>(null)
                         </div>
 
                         <div class="anime-tabs">
-                            <div class="anime-tab anime-tab-active">Geral</div>
-                            <div class="anime-tab anime-tab-inactive">Lista de Anime</div>
-                            <div class="anime-tab anime-tab-inactive">Lista de Manga</div>
-                            <div class="anime-tab anime-tab-inactive">Estatísticas</div>
+                            <div
+                                class="anime-tab"
+                                :class="activeTab === 'general' ? 'anime-tab-active' : 'anime-tab-inactive'"
+                                @click="activeTab = 'general'; onTabChange('general')"
+                            >Geral</div>
+                            <div
+                                class="anime-tab"
+                                :class="activeTab === 'animelist' ? 'anime-tab-active' : 'anime-tab-inactive'"
+                                @click="activeTab = 'animelist'; onTabChange('animelist')"
+                            >Lista de Anime</div>
+                            <div
+                                class="anime-tab"
+                                :class="activeTab === 'mangalist' ? 'anime-tab-active' : 'anime-tab-inactive'"
+                                @click="activeTab = 'mangalist'; onTabChange('mangalist')"
+                            >Lista de Manga</div>
+                            <div
+                                class="anime-tab"
+                                :class="activeTab === 'contributions' ? 'anime-tab-active' : 'anime-tab-inactive'"
+                                @click="activeTab = 'contributions'; onTabChange('contributions')"
+                            >Contribuições</div>
                         </div>
                     </div>
                 </div>
@@ -314,13 +339,42 @@ const editModalRef = ref<any>(null)
                         </Subcontainer>
                     </Container>
 
-                    <Container class="right-content">
-                        <PostSection
-                            v-if="profile"
-                            :parentId="String(profile.ID)"
-                            :parentType="PostParentType.User"
-                        />
-                    </Container>
+                    <!-- GERAL -->
+                    <template v-if="activeTab === 'general'">
+                        <Container class="right-content">
+                            <PostSection
+                                v-if="profile"
+                                :parentId="String(profile.ID)"
+                                :parentType="PostParentType.User"
+                            />
+                        </Container>
+                    </template>
+
+                    <!-- LISTA DE ANIME -->
+                    <template v-else-if="activeTab === 'animelist'">
+                        <Container class="right-content">
+                            <p>Lista de anime em breve.</p>
+                        </Container>
+                    </template>
+
+                    <!-- LISTA DE MANGA -->
+                    <template v-else-if="activeTab === 'mangalist'">
+                        <Container class="right-content">
+                            <p>Lista de manga em breve.</p>
+                        </Container>
+                    </template>
+
+                    <!-- CONTRIBUIÇÕES -->
+                    <template v-else-if="activeTab === 'contributions'">
+                        <Container class="right-content" style="width: 100%">
+                            <Subcontainer>
+                                <template #outer-title>Traduções</template>
+                                <template #content>
+                                    <TranslationSection :user-i-d="profile.ID" />
+                                </template>
+                            </Subcontainer>
+                        </Container>
+                    </template>
                 </div>
             </div>
         </div>

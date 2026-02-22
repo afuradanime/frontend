@@ -91,7 +91,7 @@ onMounted(
         <sl-button @click="openCreate">Novo Post</sl-button>
     </div>
     <Subcontainer 
-        v-for="post in posts" :key="post.id" style="margin-bottom: 20px;"
+        v-for="post in posts" :key="post.id"
     >
         <template #content>
             <PostItem :post="post" @deleted="onPostDeleted" @reply-created="onReplyCreated"/>

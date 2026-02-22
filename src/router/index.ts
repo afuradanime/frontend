@@ -105,7 +105,12 @@ const router = createRouter({
 				window.location.href = `${import.meta.env.VITE_API_URL}/auth/logout`
 				return false
 			}
-		}
+		},
+        // Static pages
+        {
+            path: '/info/descriptions',
+            component: () => import('@/views/Info/AboutDescriptions.vue')
+        }
 	],
 })
 

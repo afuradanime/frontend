@@ -35,7 +35,7 @@ const error = ref<string | null>(null)
 const selectedTranslation = ref<DescriptionTranslation | null>(null)
 const rejectDialogRef = ref<any>(null)
 
-const animeTitles = ref<Record<number, string>>({})
+const animeCache = ref<Record<number, Anime>>({})
 
 const loadPage = async (page: number) => {
     pageLoading.value = true
@@ -49,13 +49,11 @@ const loadPage = async (page: number) => {
         // Fetch anime titles asynchronously after page loads
         const uniqueAnimeIds = [...new Set(translations.value.map(t => t.Translation.Anime))]
         uniqueAnimeIds.forEach(async (id) => {
-            if (animeTitles.value[id]) return
+            if (animeCache.value[id]) return
             try {
                 const anime = await animeService.fetchAnimeByID(id)
-                animeTitles.value[id] = anime.Title
-            } catch {
-                animeTitles.value[id] = `Anime #${id}`
-            }
+                animeCache.value[id] = anime
+            } catch {}
         })
 
     } catch {
@@ -135,21 +133,30 @@ onMounted(() => loadPage(1))
                 :key="t.Translation.ID"
                 class="translation-row"
             >
-                <div class="translation-meta">
-                    <span class="translation-anime">{{ animeTitles[t.Translation.Anime] || `Anime #${t.Translation.Anime}` }}</span>
-                    <span class="translation-author">por utilizador {{ t.Translator.Username }}</span>
-                    <span class="translation-date">{{ new Date(t.Translation.CreatedAt).toLocaleDateString('pt-PT') }}</span>
-                </div>
-                <div class="translation-body clamped" @click="openReadDialog(t.Translation)">
-                    {{ t.Translation.TranslatedDescription }}
-                </div>
-                <div class="translation-actions">
-                    <sl-button variant="success" size="small" @click="acceptTranslation(t.Translation)">
-                        Aceitar
-                    </sl-button>
-                    <sl-button variant="danger" size="small" @click="openRejectDialog(t.Translation)">
-                        Rejeitar
-                    </sl-button>
+                <!-- Anime cover -->
+                <router-link :to="`/anime/${t.Translation.Anime}`" class="translation-cover-link">
+                    <img
+                        v-if="animeCache[t.Translation.Anime]?.SmallImageURL"
+                        :src="animeCache[t.Translation.Anime]?.SmallImageURL"
+                        :alt="animeCache[t.Translation.Anime]?.Title"
+                        class="anime-thumbnail"
+                    />
+                    <div v-else class="anime-thumbnail-placeholder" />
+                </router-link>
+
+                <div class="translation-row-content">
+                    <div class="translation-meta">
+                        <span class="translation-anime">{{ animeCache[t.Translation.Anime]?.Title || `Anime #${t.Translation.Anime}` }}</span>
+                        <span class="translation-author">por {{ t.Translator.Username }}</span>
+                        <span class="translation-date">{{ new Date(t.Translation.CreatedAt).toLocaleDateString('pt-PT') }}</span>
+                    </div>
+                    <div class="translation-body clamped" @click="openReadDialog(t.Translation)">
+                        {{ t.Translation.TranslatedDescription }}
+                    </div>
+                    <div class="translation-actions">
+                        <sl-button variant="success" size="small" @click="acceptTranslation(t.Translation)">Aceitar</sl-button>
+                        <sl-button variant="danger" size="small" @click="openRejectDialog(t.Translation)">Rejeitar</sl-button>
+                    </div>
                 </div>
             </div>
         </div>
