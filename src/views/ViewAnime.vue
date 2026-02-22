@@ -135,14 +135,6 @@ const recommendModalRef = ref<any>(null)
                                     :year="anime.Season.Year"
                                 />
 
-                                <!-- Recommend button -->
-                                <sl-button
-                                    v-if="isAuthenticated"
-                                    size="medium"
-                                    @click="recommendModalRef?.show()"
-                                >
-                                    Recomendar
-                                </sl-button>
                             </div>
                         </div>
                     
@@ -173,9 +165,19 @@ const recommendModalRef = ref<any>(null)
                     <!-- Left side content, including rating, anime info, tags, statistics, etc... -->
                     <Container class="left-sidebar">
 
-                        <sl-button variant="neutral" @click="addOrRateAnimeDialogRef?.show()">
-                            Adicionar à lista
-                        </sl-button>
+                        <div style="display: flex; flex-wrap: wrap;">
+                            <sl-button class="button-uh" variant="neutral" @click="addOrRateAnimeDialogRef?.show()">
+                                Adicionar à lista
+                            </sl-button>
+                            <sl-button
+                                class="button-uh"
+                                v-if="isAuthenticated"
+                                size="medium"
+                                @click="recommendModalRef?.show()"
+                            >
+                                Recomendar
+                            </sl-button>
+                        </div>
 
                         <!-- Placeholder for rating -->
                         <Subcontainer>
@@ -352,6 +354,12 @@ const recommendModalRef = ref<any>(null)
 
 .about-header img {
     width: 25px;
+}
+
+.button-uh{
+    flex:45%;
+    box-shadow: var(--default-box-shadow);
+    background-color: var(--primary-color);
 }
 
 </style>
