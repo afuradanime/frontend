@@ -23,6 +23,7 @@ const text = ref<string>('')
 const submitting = ref(false)
 
 const show = () => {
+	submitting.value = false
     text.value = ''
     dialogRef.value?.show()
 }
@@ -32,6 +33,7 @@ const hide = () => dialogRef.value?.hide()
 defineExpose({ show, hide })
 
 const submit = async () => {
+    if (submitting.value) return
     if (!text.value.trim()) return
     submitting.value = true
     try {
@@ -52,8 +54,6 @@ const submit = async () => {
             'Não foi possível publicar o post. ' + (status ? `status=${status} ` : '') + (body ?? err.message ?? ''),
             'danger'
         )
-    } finally {
-        submitting.value = false
     }
 }
 
@@ -76,7 +76,7 @@ const handleInput = (e: any) => {
         ></sl-textarea>
         <div slot="footer" style="display: flex; gap: 8px; justify-content: flex-end;">
             <sl-button @click="hide">Cancelar</sl-button>
-            <sl-button variant="primary" :loading="submitting" @click="submit">
+            <sl-button variant="primary" :loading="submitting" :disabled="submitting" @click="submit">
 				{{ props.replyToPost ? 'Responder' : 'Publicar' }}
 			</sl-button>
         </div>
