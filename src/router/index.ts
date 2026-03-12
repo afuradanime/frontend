@@ -4,6 +4,11 @@ const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
         {
+            path: '/',
+            name: 'home',
+            component: () => import('../views/Homepage.vue')
+        },
+        {
             path: '/explore',
             name: 'explore',
             component: () => import('../views/ExploreAnime.vue'),
@@ -92,6 +97,14 @@ const router = createRouter({
         { 
             path: '/moderation/permissions', 
             component: () => import('@/views/Moderation/ControlUsers.vue') 
+        },
+        { 
+            path: '/groups', 
+            component: () => import('@/views/ComingSoon.vue') 
+        },
+        { 
+            path: '/artists', 
+            component: () => import('@/views/ComingSoon.vue') 
         },
 		{
 			path: '/auth/google/login',

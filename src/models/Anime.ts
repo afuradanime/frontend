@@ -4,7 +4,7 @@ export interface Anime {
   Title: string
 
   Synonyms: string[]
-  Descriptions: Description[]
+  Descriptions: Description
 
   Type: number
   Source: string

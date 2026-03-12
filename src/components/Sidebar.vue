@@ -6,6 +6,7 @@ import '@shoelace-style/shoelace/dist/components/menu/menu.js'
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js'
 import '@shoelace-style/shoelace/dist/components/icon/icon.js'
 import { computed } from 'vue'
+import { DecodeRoleList } from '@/composables/utils'
 
 interface MenuItem {
     title: string
@@ -19,7 +20,7 @@ defineProps<{
 
 const { user, isAuthenticated } = authService
 
-const isModerator = computed(() => true)
+const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.value!.Roles).includes(1))
 
 </script>
 

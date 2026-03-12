@@ -37,6 +37,8 @@ import authService from '@/services/AuthService';
 import PostTranslationModal from './Modals/PostTranslationModal.vue';
 import RecommendAnimeModal from './Modals/RecommendAnimeModal.vue';
 import AnimeListAddModal from './Modals/AnimeListAddModal.vue';
+import type { RatingCache } from '@/models/Rating';
+import ratingCacheService from '@/services/RatingService';
 
 const { notify } = useNotification()
 
@@ -48,6 +50,7 @@ let observer: IntersectionObserver | null = null
 
 const translation = ref<DescriptionTranslation | null>(null);
 
+const ratingCache = ref<RatingCache | null>(null)
 const translationModalRef = ref<any>(null)
 const addOrRateAnimeDialogRef = ref<any>(null)
 const translator = ref<User | null>(null)
@@ -74,6 +77,7 @@ onMounted(async () => {
     error.value = null
     try {
         anime.value = await animeService.fetchAnimeByID(parseInt(animeId));
+        console.log(anime.value)
 
         // Get translation async
         translationService.getAnimeTranslation(parseInt(animeId)).then((result) => {
@@ -81,6 +85,11 @@ onMounted(async () => {
             translator.value = result.translator
             accepter.value = result.accepter
         })
+
+        ratingCacheService.getRatingCache(parseInt(animeId)).then((result) => {
+            ratingCache.value = result
+        }).catch(() => {})
+
     } catch (err) {
         error.value = 'Failed to load anime'
         console.error('Error loading anime: ', err)
@@ -181,12 +190,34 @@ const recommendModalRef = ref<any>(null)
 
                         <!-- Placeholder for rating -->
                         <Subcontainer>
-                            <template #outer-title> As tuas avaliações </template>
+                            <template #outer-title>Avaliações da comunidade</template>
                             <template #content>
-                                <sl-rating label="Rating" precision="0.5" value="0"></sl-rating>
+                                <div v-if="ratingCache && ratingCache.user_counter > 0">
+                                    <InfoTable>
+                                        <tr>
+                                            <td>História</td>
+                                            <td style="text-align: right;">
+                                                <sl-rating label="História" precision="0.5" :value="ratingCache.story / ratingCache.user_counter / 2" readonly></sl-rating>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Visuais</td>
+                                            <td style="text-align: right;">
+                                                <sl-rating label="Visuais" precision="0.5" :value="ratingCache.visuals / ratingCache.user_counter / 2" readonly></sl-rating>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banda Sonora</td>
+                                            <td style="text-align: right;">
+                                                <sl-rating label="Banda Sonora" precision="0.5" :value="ratingCache.soundtrack / ratingCache.user_counter / 2" readonly></sl-rating>
+                                            </td>
+                                        </tr>
+                                    </InfoTable>
+                                    <span class="no-friends">{{ ratingCache.user_counter }} avaliações</span>
+                                </div>
+                                <span v-else class="no-friends">Sem avaliações ainda</span>
                             </template>
                         </Subcontainer>
-
                         <!-- Anime information -->
                         <Subcontainer>
                             <template #outer-title> Informações </template>
@@ -311,7 +342,7 @@ const recommendModalRef = ref<any>(null)
                             </template>
                             <template #content>
                                 <div class="synopsis-content">
-                                    {{ translation?.TranslatedDescription || anime.Descriptions[0]?.Description }}
+                                    {{ translation?.TranslatedDescription || anime.Descriptions?.Description }}
 
                                     <span v-if="translation" class="no-friends">
                                         <sl-tooltip v-if="translation.AcceptedAt" :content="'Adaptação aceite por ' + accepter?.Username + ' no dia ' + DateFormat(translation.AcceptedAt)">
