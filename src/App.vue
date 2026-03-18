@@ -1,38 +1,39 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import Sidebar from './components/Sidebar.vue'
 import { authService } from './services/AuthService'
-import Toast from './components/Toast.vue'
+import Sidebar from './components/navigation/Sidebar.vue'
+import Toast from './components/ui/Toast.vue'
 
 onMounted(() => {
 	authService.fetchCurrentUser()
 })
 
-const menuItems = [
-	{ title: 'Explorar', icon: 'public', route: '/explore' },
-    { title: "Season", icon: 'calendar_today', route: '/season' },
-    { title: "Géneros", icon: 'extension', route: '/genres' },
-    { title: "Utilizadores", icon: 'people', route: '/users'},
-    { title: "Grupos", icon: 'group', route: '/groups' },
-    { title: "Artistas", icon: 'palette', route: '/artists' },
-    { title: "Aleatório", icon: 'shuffle', route: '/anime/random' }
-]
-
 </script>
 
 <template>
 
-	<div class="app-container">
-        <Toast />
-		<Sidebar :menuItems="menuItems" />
-		<RouterView id="content"/>
+	<div class="viewport">
+		<Sidebar />
+		<div class="main-content-wrapper">
+			<RouterView />
+        	<Toast />
+		</div>
 	</div>
 
 </template>
 
 <style scoped>
-	.app-container {
+	.viewport {
+		height: 100%;
 		display: flex;
 		flex-direction: row;
+	}
+
+	.main-content-wrapper{
+		width: calc(100% - var(--sidebar-width));
+		margin-left: var(--sidebar-width);
+		box-shadow: inset 0 0 var(--def-shadow-s) var(--def-shadow-c);
+		min-height: 100vh;
+		height: fit-content;
 	}
 </style>

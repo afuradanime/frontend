@@ -1,14 +1,18 @@
-import './assets/main.css'
+import './styles/main.css'
 import './assets/anime.css'
-import './assets/sidebar.css'
-import './assets/utils.css'
 import './assets/moderation.css'
 
 // Shoelace setup
 import '@shoelace-style/shoelace/dist/themes/light.css'
+import '@shoelace-style/shoelace/dist/themes/dark.css'
+import '@shoelace-style/shoelace/dist/components/icon/icon.js'
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js'
 import { registerIconLibrary } from '@shoelace-style/shoelace/dist/utilities/icon-library.js'
-import '@shoelace-style/shoelace/dist/components/icon/icon.js'
+
+import { useTheme } from './composables/useTheme'
+
+const { initTheme } = useTheme()
+initTheme()
 
 setBasePath('https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/')
 

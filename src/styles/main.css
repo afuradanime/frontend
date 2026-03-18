@@ -1,0 +1,56 @@
+:root{
+	/* Theme specific */
+	--bg-color: #f3f3f3;
+	--bg-color-rgb: 243, 243, 243;
+	--bg-color-sub: #b1acac30;
+	--txt-color-main: #606060;
+	--txt-color-sub: #303030;
+	--accent-color: #2269ba;
+
+	/* General */
+	--def-font: 'Roboto', sans-serif;
+	--normal-font-weight: 400;
+	--medium-font-weight: 500;
+	--bold-font-weight: 700;
+	--def-border: 2px solid var(--bg-color-sub);
+	--def-shadow-s: 10px;
+	--def-shadow-c: rgba(0,0,0,0.2);
+	--def-gap: 6px;
+	--component-gap: 24px;
+
+	/* Sidebar */
+	--logo-size: 40%;
+	--sidebar-width: 180px;
+	--sidebar-bg: rgba(0,0,0,0.03);
+}
+
+:root.dark{
+	/* Theme specific */
+	--bg-color: #171419;
+	--bg-color-rgb: 23, 20, 25;
+	--bg-color-sub: #3c3c3c30;
+	--txt-color-main: #a1a0a0;
+	--txt-color-sub: #cacaca;
+	--accent-color: #63a9f8;
+
+	/* General */
+	--def-shadow-c: rgba(0,0,0,0.5);
+}
+
+*{
+	outline:none;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.title{
+	font-size: 1.5em;
+	font-family: 'Convergence', sans-serif;
+}
+
+body{
+	background: var(--bg-color);
+	background-image: url(../assets/noise-strong.png);
+	font-family: var(--def-font);
+}

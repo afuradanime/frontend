@@ -19,10 +19,6 @@
 	gap: 1rem;
 }
 
-.title{
-	margin: 0 0 1rem 0;
-}
-
 .sub-container {
 	background: var(--variation-color);
 }

@@ -6,105 +6,105 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: () => import('../views/Homepage.vue')
+            component: () => import('../pages/Homepage.vue')
         },
         {
             path: '/explore',
             name: 'explore',
-            component: () => import('../views/ExploreAnime.vue'),
+            component: () => import('../pages/ExploreAnime.vue'),
         },
 		{
 			path: '/season',
 			name: 'season',
-			component: () => import('../views/SeasonalAnime.vue'),
+			component: () => import('../pages/SeasonalAnime.vue'),
 		},
 		{
 			path: '/anime/:id',
 			name: 'anime',
-			component: () => import('../views/ViewAnime.vue'),
+			component: () => import('../pages/ViewAnime.vue'),
 		},
         { 
             path: '/anime/random', 
-            component: () => import('@/views/RandomAnime.vue') 
+            component: () => import('@/pages/RandomAnime.vue') 
         },
         { 
             path: '/tag/:id', 
             name: 'tag',
-            component: () => import('@/views/ExploreAnimeByTag.vue') 
+            component: () => import('@/pages/ExploreAnimeByTag.vue') 
         },
         { 
             path: '/genres', 
             name: 'genres',
-            component: () => import('@/views/ExploreTags.vue') 
+            component: () => import('@/pages/ExploreTags.vue') 
         },
         { 
             path: '/studio/:id',   
             name: 'studio',
-            component: () => import('../views/ViewEntity.vue'),
+            component: () => import('../pages/ViewEntity.vue'),
             props: r => ({ type: 'studio' }) 
         },
         {
             path: '/producer/:id',
             name: 'producer',
-            component: () => import('../views/ViewEntity.vue'),
+            component: () => import('../pages/ViewEntity.vue'),
             props: r => ({type: 'producer' })
         },
         {
             path: '/licensor/:id',
             name: 'licensor',
-            component: () => import('../views/ViewEntity.vue'),
+            component: () => import('../pages/ViewEntity.vue'),
             props: r => ({ type: 'licensor' })
         },
 		{
 			path: '/profile/:id',
 			name: 'profile',
-			component: () => import('../views/ViewProfile.vue'),
+			component: () => import('../pages/ViewProfile.vue'),
 		},
         {
 			path: '/friends/pending',
 			name: 'pending_friends',
-			component: () => import('../views/PendingRequests.vue'),
+			component: () => import('../pages/PendingRequests.vue'),
 		},
         {
 			path: '/recommendations',
 			name: 'recommendations',
-			component: () => import('../views/ViewRecommendations.vue')
+			component: () => import('../pages/ViewRecommendations.vue')
 		},
 		{
 			path: '/users',
 			name: 'users',
-			component: () => import('../views/ExploreUsers.vue'),
+			component: () => import('../pages/ExploreUsers.vue'),
 		},
         {
             path: '/moderation/translations',
             name: 'translations',
-            component: () => import('../views/Moderation/PendingTranslations.vue')
+            component: () => import('../pages/Moderation/PendingTranslations.vue')
         },
         {
             path: '/moderation/reports',
             name: 'reports',
-            component: () => import('@/views/Moderation/ViewReports.vue'),
+            component: () => import('@/pages/Moderation/ViewReports.vue'),
         },
         {
             path: '/moderation/reports/user/:userID',
             name: 'user reports',
-            component: () => import('@/views/Moderation/ViewUserReports.vue'),
+            component: () => import('@/pages/Moderation/ViewUserReports.vue'),
         },
         {
             path: '/moderation/users/:id',
-            component: () => import('@/views/Moderation/ManageUser.vue'),
+            component: () => import('@/pages/Moderation/ManageUser.vue'),
         },
         { 
             path: '/moderation/permissions', 
-            component: () => import('@/views/Moderation/ControlUsers.vue') 
+            component: () => import('@/pages/Moderation/ControlUsers.vue') 
         },
         { 
             path: '/groups', 
-            component: () => import('@/views/ComingSoon.vue') 
+            component: () => import('@/pages/ComingSoon.vue') 
         },
         { 
             path: '/artists', 
-            component: () => import('@/views/ComingSoon.vue') 
+            component: () => import('@/pages/ComingSoon.vue') 
         },
 		{
 			path: '/auth/google/login',
@@ -127,7 +127,7 @@ const router = createRouter({
         // Static pages
         {
             path: '/info/descriptions',
-            component: () => import('@/views/Info/AboutDescriptions.vue')
+            component: () => import('@/pages/Info/AboutDescriptions.vue')
         }
 	],
 })
