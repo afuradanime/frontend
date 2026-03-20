@@ -5,11 +5,14 @@ import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js'
 import '@shoelace-style/shoelace/dist/components/radio/radio.js'
 import { useTheme } from '@/composables/useTheme'
+import { useNavigation } from '@/composables/useNavigation'
 
 const dialogRef = ref<any>(null)
 const { theme, applyTheme } = useTheme()
+const { navigation, applyNavigation } = useNavigation()
 
 const isDarkMode = computed(() => theme.value === 'dark')
+const isTopbar = computed(() => navigation.value === 'topbar')
 
 const show = () => {
     dialogRef.value?.show()
@@ -24,16 +27,29 @@ const setTheme = (event: Event) => {
         applyTheme(newTheme)
     }
 }
+
+const setNavigation = (event: Event) => {
+    const newNavigation = (event.target as HTMLInputElement).value
+    if (newNavigation === 'sidebar' || newNavigation === 'topbar') {
+        applyNavigation(newNavigation)
+    }
+}
+
 </script>
 
 <template>
-    <sl-dialog ref="dialogRef" label="Settings" style="--width: 50vw;">
+    <sl-dialog ref="dialogRef" label="Definições" style="--width: 50vw;">
         <div class="settings-form">
             <div class="field">
-                <label>Theme</label>
-                <sl-radio-group label="Theme" :value="theme" @sl-change="setTheme">
-                    <sl-radio value="light">Light</sl-radio>
-                    <sl-radio value="dark">Dark</sl-radio>
+                <sl-radio-group label="Tema" :value="theme" @sl-change="setTheme">
+                    <sl-radio value="light">Claro</sl-radio>
+                    <sl-radio value="dark">Escuro</sl-radio>
+                </sl-radio-group>
+            </div>
+            <div class="field">
+                <sl-radio-group label="Estilo de navegação" :value="navigation" @sl-change="setNavigation">
+                    <sl-radio value="sidebar">Lateral</sl-radio>
+                    <sl-radio value="topbar">Superior</sl-radio>
                 </sl-radio-group>
             </div>
         </div>

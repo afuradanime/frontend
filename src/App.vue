@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { authService } from './services/AuthService'
-import Sidebar from './components/navigation/Sidebar.vue'
 import Toast from './components/ui/Toast.vue'
+import Navbars from './components/navigation/Navbars.vue'
 
 onMounted(() => {
 	authService.fetchCurrentUser()
@@ -13,7 +13,7 @@ onMounted(() => {
 <template>
 
 	<div class="viewport">
-		<Sidebar />
+		<Navbars />
 		<div class="main-content-wrapper">
 			<RouterView />
         	<Toast />
@@ -26,13 +26,13 @@ onMounted(() => {
 	.viewport {
 		height: 100%;
 		display: flex;
-		flex-direction: row;
+		flex-direction: var(--app-direction);
 	}
 
 	.main-content-wrapper{
 		width: calc(100% - var(--sidebar-width));
 		margin-left: var(--sidebar-width);
-		box-shadow: inset 0 0 var(--def-shadow-s) var(--def-shadow-c);
+		margin-top: var(--topbar-height);
 		min-height: 100vh;
 		height: fit-content;
 	}

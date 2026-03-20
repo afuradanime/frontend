@@ -18,10 +18,19 @@
 	--def-gap: 6px;
 	--component-gap: 24px;
 
-	/* Sidebar */
+	/* Nav */
 	--logo-size: 40%;
 	--sidebar-width: 180px;
+	--topbar-height: 0px;
 	--sidebar-bg: rgba(0,0,0,0.03);
+	--app-direction: row;
+}
+
+:root.topbar{
+	--sidebar-width: 0px;
+	--topbar-height: 60px;
+	--topbar-bg: rgba(var(--bg-color-rgb), 0.9);
+	--app-direction: column;
 }
 
 :root.dark{
@@ -50,6 +59,7 @@
 }
 
 body{
+	color: var(--txt-color-main);
 	background: var(--bg-color);
 	background-image: url(../assets/noise-strong.png);
 	font-family: var(--def-font);

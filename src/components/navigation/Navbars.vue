@@ -6,6 +6,11 @@ import SettingsModal from '../modals/SettingsModal.vue'
 
 const settingsModal = ref<any>(null)
 
+import { useNavigation } from '@/composables/useNavigation'
+
+const { initNavigation, navigation } = useNavigation()
+initNavigation()
+
 interface MenuItem {
     icon: string
     label: string
@@ -31,7 +36,7 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
 </script>
 
 <template>
-    <aside class="sidebar">
+    <aside v-if="navigation === 'sidebar'" class="sidebar">
         <div class="sidebar-top">
             <router-link to="/" class="sidebar-logo">
                 <img src="../../../public/favicon.ico" alt="">
@@ -89,6 +94,12 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
         <div class="sidebar-bottom">
 
             <div v-if="!isAuthenticated">
+                <div class="sidebar-profile-section">
+                    <a @click="settingsModal?.show()" class="sidebar-profile-item spi-small" style="cursor: pointer;">
+                        <sl-icon library="material" name="settings"></sl-icon>
+                    </a>
+                </div>
+
                 <router-link
                     to="/auth/google/login"
                     class="sidebar-item"
@@ -128,10 +139,156 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
             </div>
         </div>
     </aside>
+
+    <!-- Topbar -->
+    <aside v-else-if="navigation === 'topbar'" class="topbar">
+        <div class="topbar-left">
+            <router-link
+                to="/"
+                class="topbar-logo"
+            >
+                <img src="../../../public/favicon.ico" alt="">
+            </router-link>
+            <router-link
+                v-for="item in menuItems"
+                :key="item.routeTo"
+                :to="item.routeTo"
+                class="topbar-item"
+                active-class="topbar-item-active"
+            >
+                <sl-icon library="material" :name="item.icon" class="topbar-item-content"/>
+                <div class="topbar-item-content">{{ item.label }}</div>
+            </router-link>
+            <div v-if="isAuthenticated && isModerator">
+                <hr>
+                <router-link
+                    to="/moderation"
+                    class="topbar-item"
+                    active-class="topbar-item-active"
+                >
+                    <sl-icon library="material" name="admin_panel_settings" class="topbar-item-content"></sl-icon>
+                    <span class="topbar-item-content">Moderação</span>
+                </router-link>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <section v-if="!isAuthenticated" class="topbar-right">
+                <a @click="settingsModal?.show()" class="sidebar-profile-item topbar-profile-item spi-small" style="cursor: pointer;">
+                    <sl-icon library="material" name="settings" class="topbar-item-content"></sl-icon>
+                </a>
+                
+                <router-link
+                    to="/auth/google/login"
+                    class="topbar-item"
+                    active-class="topbar-item-active"
+                >
+                    <sl-icon library="material" name="login" class="topbar-item-content"></sl-icon>
+                    <span class="topbar-item-content">Login</span>
+                </router-link>
+            </section>
+
+            <section v-else class="topbar-right">
+                <div class="topbar-profile-section">
+                    <router-link :to="`/notifications`" class="sidebar-profile-item topbar-profile-item spi-small">
+                        <sl-icon library="material" name="notifications" class="topbar-item-content"></sl-icon>
+                    </router-link>
+
+                    <router-link :to="`/profile/${user?.ID}`" class="sidebar-profile-item topbar-profile-item">
+                        <img v-if="user?.AvatarURL" :src="user?.AvatarURL" alt="avatar" style="height: 24px; border-radius: 40%;">
+                        <sl-icon v-else library="material" name="person" class="topbar-item-content"></sl-icon>
+                    </router-link>
+
+                    <a @click="settingsModal?.show()" class="sidebar-profile-item topbar-profile-item spi-small" style="cursor: pointer;">
+                        <sl-icon library="material" name="settings" class="topbar-item-content"></sl-icon>
+                    </a>
+                </div>
+
+                <router-link
+                    to="/logout"
+                    class="topbar-item"
+                    active-class="topbar-item-active"
+                >
+                    <sl-icon name="box-arrow-right" class="topbar-item-content"></sl-icon>
+                    <span class="topbar-item-content">Logout</span>
+                </router-link>
+            </section>
+        </div>
+    </aside>
     <SettingsModal ref="settingsModal" />
 </template>
 
 <style scoped>
+
+.topbar{
+    z-index: 200;
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: var(--topbar-height);
+    background: var(--topbar-bg);
+    box-shadow: 0 0 var(--def-shadow-s) var(--def-shadow-c);
+}
+
+.topbar-left, .topbar-right{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--def-gap);
+}
+
+.topbar-logo{
+    display: flex;
+    justify-content: center;
+    padding: 0px 20px;
+}
+
+.topbar-logo img{
+    height: calc(var(--topbar-height) - 20px);
+}
+
+.topbar-item{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: var(--txt-color-main);
+    font-weight: var(--normal-font-weight);
+    transition: all ease 0.1s;
+}
+
+.topbar-item:hover:not(.topbar-item-active){
+    color: var(--txt-color-sub);
+    font-weight: var(--medium-font-weight);
+}
+
+.topbar-item-active{
+    color: var(--accent-color);
+    font-weight: var(--medium-font-weight);
+    border-bottom: 3px solid var(--accent-color);
+}
+
+.topbar-item-content{
+    display: flex;
+    align-items: center;
+    padding: 0 var(--def-gap);
+}
+
+.topbar-profile-section{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-right: var(--def-gap);
+}
+
+.topbar-profile-item{
+    margin-right: 10px;
+}
+
+.topbar-profile-item img{
+    width: 24px !important;
+}
 
 .sidebar-profile-section{
     display: flex;
@@ -180,6 +337,7 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
     background: var(--sidebar-bg);
     gap: var(--def-gap);
     height: 100vh;
+    box-shadow: inset 0 0 var(--def-shadow-s) var(--def-shadow-c);
 }
 
 .sidebar-logo{

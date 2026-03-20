@@ -3,13 +3,13 @@ import type { Post } from '@/models/Post';
 import { type User } from '@/models/User';
 import { onMounted, ref } from 'vue';
 import userService from '@/services/UserService';
-import UserIcon from './UserIcon.vue';
+import UserIcon from '../capsules/UserIcon.vue';
 import '@shoelace-style/shoelace/dist/components/relative-time/relative-time.js'
 import { authService } from '@/services/AuthService'
 import { postService } from '@/services/PostService';
 import { useNotification } from '@/composables/notification';
-import ReportUserModal from '@/views/Modals/ReportUserModal.vue';
-import PostCreateModal from '@/views/Modals/PostCreateModal.vue';
+import ReportUserModal from '@/components/modals/ReportUserModal.vue';
+import PostCreateModal from '@/components/modals/PostCreateModal.vue';
 
 const reportModalRef = ref<any>(null)
 
