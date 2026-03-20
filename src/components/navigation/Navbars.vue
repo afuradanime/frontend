@@ -23,7 +23,7 @@ const menuItems: MenuItem[] = [
     { icon: 'calendar_today_round', label: 'Season', routeTo: '/season' },
     { icon: 'extension_round', label: 'Géneros', routeTo: '/genres' },
     { icon: 'person_round', label: 'Utilizadores', routeTo: '/users' },
-    { icon: 'group_round', label: 'Grupos', routeTo: '/groups' },
+    { icon: 'group_round', label: 'Grupos', routeTo: '/groups', enabled: false},
     { icon: 'palette', label: 'Artistas', routeTo: '/artists', enabled: false},
     { icon: 'shuffle', label: 'Aleatório', routeTo: '/anime/random' }
 ]
@@ -44,8 +44,8 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
             <router-link
                 v-for="item in menuItems"
                 :key="item.routeTo"
-                :to="item.routeTo"
-                class="sidebar-item"
+                :to="item.enabled !== false ? item.routeTo : '#'"
+                :class="`sidebar-item` + (item.enabled !== false ? '' : ' disabled')"
                 active-class="sidebar-item-active"
             >
                 <sl-icon library="material" :name="item.icon" class="sidebar-item-content"/>
@@ -152,8 +152,8 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
             <router-link
                 v-for="item in menuItems"
                 :key="item.routeTo"
-                :to="item.routeTo"
-                class="topbar-item"
+                :to="item.enabled !== false ? item.routeTo : '#'"
+                :class="`topbar-item` + (item.enabled !== false ? '' : ' disabled')"
                 active-class="topbar-item-active"
             >
                 <sl-icon library="material" :name="item.icon" class="topbar-item-content"/>
@@ -218,6 +218,13 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
 </template>
 
 <style scoped>
+
+.disabled {
+    cursor: not-allowed;
+    border: 0 !important;
+    color: var(--txt-color-sub) !important;
+    opacity: 0.5;
+}
 
 .topbar{
     z-index: 200;
