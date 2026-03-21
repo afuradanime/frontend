@@ -410,7 +410,7 @@ const editModalRef = ref<any>(null)
     justify-content: center;
     padding: 2px 10px;
     border-radius: 12px;
-    color: white;
+    color: var(--txt-color-sub);
     font-size: 0.9rem;
     background: rgb(from var(--primary-color) r g b / 50%) !important;
     border: 1px solid var(--variation-color);

@@ -1,4 +1,4 @@
-:root{
+:root {
 	/* Theme specific */
 	--bg-color: #f3f3f3;
 	--bg-color-rgb: 243, 243, 243;
@@ -14,7 +14,7 @@
 	--bold-font-weight: 700;
 	--def-border: 2px solid var(--bg-color-sub);
 	--def-shadow-s: 10px;
-	--def-shadow-c: rgba(0,0,0,0.2);
+	--def-shadow-c: rgba(0, 0, 0, 0.2);
 	--def-gap: 6px;
 	--component-gap: 24px;
 
@@ -22,7 +22,7 @@
 	--logo-size: 40%;
 	--sidebar-width: 180px;
 	--topbar-height: 0px;
-	--sidebar-bg: rgba(0,0,0,0.03);
+	--sidebar-bg: rgba(0, 0, 0, 0.03);
 	--app-direction: row;
 
 	/* Legacy variable aliases → theme-aware */
@@ -35,14 +35,14 @@
 	--default-box-shadow: 0 0 var(--def-shadow-s) var(--def-shadow-c);
 }
 
-:root.topbar{
+:root.topbar {
 	--sidebar-width: 0px;
 	--topbar-height: 60px;
 	--topbar-bg: rgba(var(--bg-color-rgb), 0.9);
 	--app-direction: column;
 }
 
-:root.dark{
+:root.dark {
 	/* Theme specific */
 	--bg-color: #171419;
 	--bg-color-rgb: 23, 20, 25;
@@ -52,22 +52,22 @@
 	--accent-color: #63a9f8;
 
 	/* General */
-	--def-shadow-c: rgba(0,0,0,0.5);
+	--def-shadow-c: rgba(0, 0, 0, 0.5);
 }
 
-*{
-	outline:none;
+* {
+	outline: none;
 	text-decoration: none;
 	margin: 0;
 	padding: 0;
 }
 
-.title{
+.filter-page-title {
 	font-size: 1.5em;
 	font-family: 'Convergence', sans-serif;
 }
 
-body{
+body {
 	color: var(--txt-color-main);
 	background: var(--bg-color);
 	background-image: url(../assets/noise-strong.png);

@@ -313,10 +313,7 @@ const recommendModalRef = ref<any>(null)
                                     <span>Sinopse</span>
                                     <sl-tooltip :content="'Este anime não tem tradução para português, podes contribuir com a tua tradução aqui.'" v-if="!translation">
                                         <span class="flag-btn" @click="!translation && openTranslationModal()">
-                                            <img src="/icons/portugal.webp" alt="Bandeira portuguesa">
-                                            <span v-if="!translation" class="flag-warning">
-                                                <sl-icon class="material-icon" library="material" name="warning"></sl-icon>
-                                            </span>
+                                            <img src="../assets/portugal_warn.svg" alt="Bandeira portuguesa">
                                         </span>
                                     </sl-tooltip>
                                 </div>

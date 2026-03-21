@@ -60,7 +60,7 @@ onMounted(() => {
     
     <PageWithFilter v-else >
         <template #filter-section>
-            <h2 class="title">Explorar</h2>
+            <h2 class="filter-page-title">Explorar</h2>
             <AnimeFilterBox @change="onFilterChange" />
         </template>
 
