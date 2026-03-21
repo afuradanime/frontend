@@ -12,7 +12,7 @@ import AnimeFilterBox from '@/components/forms/AnimeFilterBox.vue'
 import PageWithFilter from '@/components/layout/PageWithFilter.vue'
 import AnimeGrid from '@/components/ui/containers/AnimeGrid.vue'
 
-const { animes, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
+const { animes, error, currentPage, pageSize, totalPages, observeItems } = useAnimeGrid()
 
 const searchQuery = ref('')
 
@@ -67,7 +67,6 @@ onMounted(() => {
         <template #main-section>
             <AnimeGrid
                 :animes="animes"
-                :grid-ref="gridRef"
             />
             <Pagination
                 v-if="totalPages > 1"

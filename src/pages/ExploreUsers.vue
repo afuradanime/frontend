@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import type { User } from '@/models/User'
 import type { Pagination } from '@/models/Pagination'
 import userService from '@/services/UserService'
@@ -8,6 +8,8 @@ import Error from '@/components/ui/Error.vue'
 import Loading from '@/components/ui/Loading.vue'
 import PaginationComponent from '@/components/ui/Pagination.vue'
 import '@shoelace-style/shoelace/dist/components/input/input.js'
+import PageWithFilter from '@/components/layout/PageWithFilter.vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
 
 const users = ref<User[]>([])
 const pagination = ref<Pagination | null>(null)
@@ -17,14 +19,14 @@ const searchQuery = ref('')
 
 const loading = ref(false)
 const error = ref<string | null>(null)
-let observer: IntersectionObserver | null = null
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-const observeItems = () => {
-    setTimeout(() => {
-        document.querySelectorAll('.user-item').forEach(el => observer?.observe(el))
-    }, 0)
-}
+const containerRef = ref<HTMLElement | null>(null)
+const { observeItems } = useScrollReveal(containerRef, {
+    itemSelector: '.user-item',
+    threshold: 0.1,
+    rootMargin: '20px',
+})
 
 const loadPage = async (page: number) => {
     loading.value = true
@@ -37,38 +39,34 @@ const loadPage = async (page: number) => {
         users.value = result.data ?? []
         pagination.value = result.pagination
         currentPage.value = page
-        observeItems()
     } catch {
         error.value = 'Não foi possível carregar os utilizadores.'
     } finally {
         loading.value = false
     }
+    // Wait for loading=false to render the v-else (containerRef), then observe
+    await nextTick()
+    observeItems()
 }
 
 onMounted(() => {
-    observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible')
-                observer?.unobserve(entry.target)
-            }
-        })
-    }, { threshold: 0.1, rootMargin: '20px' })
-
     loadPage(1)
 })
 
 onUnmounted(() => {
-    observer?.disconnect()
-    observer = null
     if (searchTimeout) clearTimeout(searchTimeout)
 })
 </script>
 
 <template>
-    <div class="explore-users-view">
-        <div class="control-header">
-            <h1>Utilizadores</h1>
+    <Loading v-if="loading" />
+    <div v-else-if="error">
+        <Error :message="error" />
+    </div>
+
+    <PageWithFilter v-else>
+        <template #filter-section>
+            <h2 class="title">Utilizadores</h2>
             <div class="filter-box">
                 <sl-input
                     placeholder="Pesquisar por nome"
@@ -78,19 +76,15 @@ onUnmounted(() => {
                     @keydown.enter="loadPage(1)"
                 >
                     <sl-icon slot="prefix" name="search"></sl-icon>
-            </sl-input>
+                </sl-input>
             </div>
-        </div>
+        </template>
 
-        <Loading v-if="loading" />
-        <div v-else-if="error">
-            <Error :message="error" />
-        </div>
-        <div v-else>
+        <template #main-section>
             <div v-if="users.length === 0" class="empty-state">
                 <p>Nenhum utilizador encontrado.</p>
             </div>
-            <div v-else class="user-grid">
+            <div v-else class="user-grid" ref="containerRef">
                 <router-link
                     v-for="user in users"
                     :key="user.ID"
@@ -111,17 +105,11 @@ onUnmounted(() => {
                 :total="pagination.TotalPages * pageSize"
                 @page-change="loadPage"
             />
-        </div>
-    </div>
+        </template>
+    </PageWithFilter>
 </template>
 
 <style scoped>
-.explore-users-view {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-}
-
 .user-grid {
     width: 100%;
     display: flex;

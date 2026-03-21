@@ -2,7 +2,7 @@
 	/* Theme specific */
 	--bg-color: #f3f3f3;
 	--bg-color-rgb: 243, 243, 243;
-	--bg-color-sub: #b1acac30;
+	--bg-color-sub: rgba(177, 172, 172, 0.2);
 	--txt-color-main: #606060;
 	--txt-color-sub: #303030;
 	--accent-color: #2269ba;
@@ -24,6 +24,15 @@
 	--topbar-height: 0px;
 	--sidebar-bg: rgba(0,0,0,0.03);
 	--app-direction: row;
+
+	/* Legacy variable aliases → theme-aware */
+	--primary-color: var(--bg-color);
+	--variation-color: var(--bg-color-sub);
+	--secondary-color: var(--bg-color-sub);
+	--border-color: var(--bg-color-sub);
+	--text-color: var(--txt-color-sub);
+	--text-color-secondary: var(--txt-color-main);
+	--default-box-shadow: 0 0 var(--def-shadow-s) var(--def-shadow-c);
 }
 
 :root.topbar{
@@ -37,7 +46,7 @@
 	/* Theme specific */
 	--bg-color: #171419;
 	--bg-color-rgb: 23, 20, 25;
-	--bg-color-sub: #3c3c3c30;
+	--bg-color-sub: rgba(60, 60, 60, 0.3);
 	--txt-color-main: #a1a0a0;
 	--txt-color-sub: #cacaca;
 	--accent-color: #63a9f8;

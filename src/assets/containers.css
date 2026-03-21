@@ -44,7 +44,7 @@
     height: calc(350px + 40px);
     position: relative;
     overflow: hidden;
-    border-bottom: 2px solid #111111;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .anime-header-background {
@@ -116,7 +116,7 @@
 
 .anime-tabs {
     margin-left: calc(225px / 1.2 + 50px);
-    background-color: #171419;
+    background-color: var(--primary-color);
     width: 100%;
     height: 40px;
     display: flex;
@@ -128,7 +128,7 @@
     align-items: center;
     justify-content: center;
     padding: 0px 30px;
-    border-right: 2px solid #111111;
+    border-right: 2px solid var(--border-color);
 }
 
 .anime-tab:hover {

@@ -146,10 +146,6 @@ const recommendModalRef = ref<any>(null)
                                 Estatísticas
                             </div>
                         </div>
-
-                        <div style="width: auto;">
-                            {{ getAnimeTypeName(anime.Type || 0) }}
-                        </div>
                     </div>
                
                 </div>

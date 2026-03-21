@@ -344,7 +344,7 @@ const isModerator = computed(() => !user.value ? false : DecodeRoleList(user.val
     background: var(--sidebar-bg);
     gap: var(--def-gap);
     height: 100vh;
-    box-shadow: inset 0 0 var(--def-shadow-s) var(--def-shadow-c);
+    box-shadow: 0 0 var(--def-shadow-s) var(--def-shadow-c);
 }
 
 .sidebar-logo{

@@ -1,6 +1,6 @@
-// composables/useAnimeGrid.ts
-import { ref, nextTick, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import type { Anime } from '../models/Anime'
+import { useScrollReveal } from './useScrollReveal'
 
 export function useAnimeGrid() {
     const animes = ref<Anime[]>([])
@@ -11,30 +11,10 @@ export function useAnimeGrid() {
     const totalPages = ref(0)
     const gridRef = ref<HTMLElement | null>(null)
 
-    let observer: IntersectionObserver | null = null
-
-    const observeItems = () => {
-        observer?.disconnect()
-        observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible')
-                    observer?.unobserve(entry.target)
-                }
-            })
-        }, { threshold: 0.1, rootMargin: '20px' })
-
-        nextTick(() => {
-            gridRef.value?.querySelectorAll('.anime-item').forEach(el => {
-                el.classList.remove('visible')
-                observer?.observe(el)
-            })
-        })
-    }
-
-    onUnmounted(() => {
-        observer?.disconnect()
-        observer = null
+    const { observeItems } = useScrollReveal(gridRef, {
+        itemSelector: '.anime-item',
+        threshold: 0.05,
+        rootMargin: '20px',
     })
 
     return { animes, loading, error, currentPage, pageSize, totalPages, gridRef, observeItems }
