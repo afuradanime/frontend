@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Post } from '@/models/Post';
 import { type User } from '@/models/User';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import userService from '@/services/UserService';
 import UserIcon from '../capsules/UserIcon.vue';
 import '@shoelace-style/shoelace/dist/components/relative-time/relative-time.js'
@@ -26,14 +26,24 @@ const props = defineProps<{
     post: Post
 }>()
 
-onMounted(() => {
+const emit = defineEmits<{
+    (e: 'reply-created', post: Post): void
+    (e: 'deleted', postId: string): void
+}>();
+
+const loadUser = () => {
     if (props.post.createdBy) {
         userService.fetchByID(props.post.createdBy).then(u => {
             createdBy.value = u
         })
+    } else {
+        createdBy.value = null
     }
     canDelete.value = isAuthenticated.value && props.post.createdBy === user.value?.ID
-})
+}
+
+onMounted(loadUser)
+watch(() => props.post.createdBy, loadUser)
 
 const replyModalRef = ref<any>(null)
 
@@ -60,6 +70,7 @@ const handleMenuSelect = async (event: any) => {
 const deletePost = async () => {
     try{
         await postService.deletePost(props.post.id)
+        emit('deleted', props.post.id) 
         notify('Post apagado com sucesso.', 'success')
     }catch(err){
         notify('Ocorreu um erro ao apagar o post.\n'+(err as any).response.data, 'danger')

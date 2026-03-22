@@ -24,8 +24,11 @@ import RecommendAnimeModal from '@/components/modals/RecommendAnimeModal.vue';
 import AnimeListAddModal from '@/components/modals/AnimeListAddModal.vue';
 import type { RatingCache } from '@/models/Rating';
 import ratingCacheService from '@/services/RatingService';
+import PostSection from '@/components/ui/PostSection.vue'
+import { PostParentType } from '@/models/Post'
 
 const { notify } = useNotification()
+const activeTab = ref<'geral' | 'opinioes' | 'forum' | 'estatisticas'>('geral')
 
 const anime = ref<Anime>();
 
@@ -133,18 +136,10 @@ const recommendModalRef = ref<any>(null)
                         </div>
                     
                         <div class="anime-tabs">
-                            <div class="anime-tab anime-tab-active">
-                                Geral
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Opiniões
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Fórum
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Estatísticas
-                            </div>
+                            <div class="anime-tab" :class="activeTab === 'geral' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'geral'">Geral</div>
+                            <div class="anime-tab" :class="activeTab === 'opinioes' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'opinioes'">Opiniões</div>
+                            <div class="anime-tab" :class="activeTab === 'forum' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'forum'">Fórum</div>
+                            <div class="anime-tab" :class="activeTab === 'estatisticas' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'estatisticas'">Estatísticas</div>
                         </div>
                     </div>
                
@@ -306,43 +301,66 @@ const recommendModalRef = ref<any>(null)
                     </Container>
 
                     <!-- Right side content, including synopsis, etc... -->
-                    <Container class="right-content">
-                        <Subcontainer>
-                            <template #inner-title>
-                                <div class="about-header">
-                                    <span>Sinopse</span>
-                                    <sl-tooltip :content="'Este anime não tem tradução para português, podes contribuir com a tua tradução aqui.'" v-if="!translation">
-                                        <span class="flag-btn" @click="!translation && openTranslationModal()">
-                                            <img src="../assets/portugal_warn.svg" alt="Bandeira portuguesa">
-                                        </span>
-                                    </sl-tooltip>
-                                </div>
-                            </template>
-                            <template #content>
-                                <div class="synopsis-content">
-                                    {{ translation?.TranslatedDescription || anime.Descriptions?.Description }}
-
-                                    <span v-if="translation" class="no-friends">
-                                        <sl-tooltip v-if="translation.AcceptedAt" :content="'Adaptação aceite por ' + accepter?.Username + ' no dia ' + DateFormat(translation.AcceptedAt)">
-                                            Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
+                    <template v-if="activeTab === 'geral'">
+                        <Container class="right-content">
+                            <Subcontainer>
+                                <template #inner-title>
+                                    <div class="about-header">
+                                        <span>Sinopse</span>
+                                        <sl-tooltip :content="'Este anime não tem tradução para português, podes contribuir com a tua tradução aqui.'" v-if="!translation">
+                                            <span class="flag-btn" @click="!translation && openTranslationModal()">
+                                                <img src="../assets/portugal_warn.svg" alt="Bandeira portuguesa">
+                                            </span>
                                         </sl-tooltip>
-                                    </span>
-                                </div>
-                            </template>
-                        </Subcontainer>
-                        
-                        <PostTranslationModal
-                            ref="translationModalRef"
-                            :anime-i-d="anime.ID"
-                        />
+                                    </div>
+                                </template>
+                                <template #content>
+                                    <div class="synopsis-content">
+                                        {{ translation?.TranslatedDescription || anime.Descriptions?.Description }}
 
-                        <RecommendAnimeModal
-                            v-if="anime"
-                            ref="recommendModalRef"
-                            :anime-i-d="anime.ID"
-                        />
+                                        <span v-if="translation" class="no-friends">
+                                            <sl-tooltip v-if="translation.AcceptedAt" :content="'Adaptação aceite por ' + accepter?.Username + ' no dia ' + DateFormat(translation.AcceptedAt)">
+                                                Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
+                                            </sl-tooltip>
+                                        </span>
+                                    </div>
+                                </template>
+                            </Subcontainer>
+                            
+                            <PostTranslationModal
+                                ref="translationModalRef"
+                                :anime-i-d="anime.ID"
+                            />
 
-                    </Container>
+                            <RecommendAnimeModal
+                                v-if="anime"
+                                ref="recommendModalRef"
+                                :anime-i-d="anime.ID"
+                            />
+
+                        </Container>
+                    </template>
+
+                    <template v-else-if="activeTab === 'forum'">
+                        <Container class="right-content">
+                            <PostSection
+                                :parentId="String(anime.ID)"
+                                :parentType="PostParentType.Thread"
+                            />
+                        </Container>
+                    </template>
+                
+                    <template v-else-if="activeTab === 'opinioes'">
+                        <Container class="right-content">
+                            <p>Opiniões em breve.</p>
+                        </Container>
+                    </template>
+                
+                    <template v-else-if="activeTab === 'estatisticas'">
+                        <Container class="right-content">
+                            <p>Estatísticas em breve.</p>
+                        </Container>
+                    </template>
 
                     <AnimeListAddModal 
                         :anime="anime!" 
