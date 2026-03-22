@@ -23,7 +23,7 @@ const menuItems: MenuItem[] = [
     { icon: 'calendar_today_round', label: 'Season', routeTo: '/season' },
     { icon: 'extension_round', label: 'Géneros', routeTo: '/genres' },
     { icon: 'person_round', label: 'Utilizadores', routeTo: '/users' },
-    { icon: 'group_round', label: 'Grupos', routeTo: '/groups', enabled: false},
+    { icon: 'group_round', label: 'Grupos', routeTo: '/groups'},
     { icon: 'palette', label: 'Artistas', routeTo: '/artists', enabled: false},
     { icon: 'shuffle', label: 'Aleatório', routeTo: '/anime/random' }
 ]

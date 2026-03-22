@@ -100,7 +100,11 @@ const router = createRouter({
         },
         { 
             path: '/groups', 
-            component: () => import('@/pages/ComingSoon.vue') 
+            component: () => import('@/pages/ExploreGroups.vue') 
+        },
+        { 
+            path: '/groups/:id', 
+            component: () => import('@/pages/ViewGroup.vue') 
         },
         { 
             path: '/artists', 

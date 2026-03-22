@@ -18,6 +18,7 @@ defineOptions({ name: 'PostSection' })
 const props = defineProps<{
     parentId: string
     parentType: PostParentType
+    readOnly?: boolean
 }>()
 
 const { notify } = useNotification()
@@ -89,7 +90,7 @@ onMounted(
 
 <template>
     <div style="margin-bottom: 12px; display:flex; justify-content:flex-end;">
-        <sl-button @click="openCreate">Novo Post</sl-button>
+        <sl-button v-if="!props.readOnly" @click="openCreate">Novo Post</sl-button>
     </div>
     
     <Loading v-if="loading" />
