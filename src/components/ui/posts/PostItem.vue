@@ -10,12 +10,14 @@ import { postService } from '@/services/PostService';
 import { useNotification } from '@/composables/notification';
 import ReportUserModal from '@/components/modals/ReportUserModal.vue';
 import PostCreateModal from '@/components/modals/PostCreateModal.vue';
+import { useCustomMdRenderer } from '@/composables/useCustomMdRenderer';
 
 const reportModalRef = ref<any>(null)
 
 const { user, isAuthenticated } = authService
 
 const { notify } = useNotification()
+const { parseMarkdown } = useCustomMdRenderer();
 
 var createdBy = ref<User | null>(null)
 const canDelete = ref<boolean>(false)
@@ -99,9 +101,7 @@ const deletePost = async () => {
                 </span>
             </div>
             <!-- Text Row -->
-            <div class="post-content-text">
-                {{ post.text ?? 'Post removido' }}
-            </div>
+            <div class="post-content-text" v-html="parseMarkdown(post.text ?? 'Post removido')" />
         </div>
     </div>
 
@@ -158,16 +158,6 @@ const deletePost = async () => {
     justify-content: space-between;
     font-size: 18px;
     margin-bottom: 5px;
-}
-
-.post-content-text{
-    width: 95%;
-    text-overflow: clip;
-    /* Allow very long words/URLs to wrap instead of overflowing */
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    /* Preserve newlines but allow wrapping */
-    white-space: pre-wrap;
 }
 
 .post-content-metadata-right{
