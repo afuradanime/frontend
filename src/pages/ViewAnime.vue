@@ -43,6 +43,7 @@ const translationModalRef = ref<any>(null)
 const addOrRateAnimeDialogRef = ref<any>(null)
 const translator = ref<User | null>(null)
 const accepter = ref<User | null>(null)
+const showLarge = ref(false)
 
 const { user, isAuthenticated } = authService
 
@@ -77,6 +78,12 @@ onMounted(async () => {
         ratingCacheService.getRatingCache(parseInt(animeId)).then((result) => {
             ratingCache.value = result
         }).catch(() => {})
+
+        if (anime.value?.LargeImageURL) {
+            const img = new Image()
+            img.src = anime.value.LargeImageURL
+            img.onload = () => { showLarge.value = true }
+        }
 
     } catch (err) {
         error.value = 'Failed to load anime'
@@ -114,10 +121,16 @@ const recommendModalRef = ref<any>(null)
                         <!-- Halftone dot pattern overlay -->
                         <div class="anime-header-overlay"></div>
 
-                        <div 
-                            class="anime-poster"
-                            :style="{backgroundImage: `url(${anime?.LargeImageURL})`}"
-                        ></div>
+                        <div class="anime-poster-wrapper">
+                            <div 
+                                class="anime-poster"
+                                :style="{ backgroundImage: `url(${anime.ImageURL})` }"
+                            />
+                            <div 
+                                class="anime-poster anime-poster-large"
+                                :style="{ backgroundImage: `url(${anime.LargeImageURL})`, opacity: showLarge ? 1 : 0 }"
+                            />
+                        </div>
 
                         <div class="anime-header-content">
                             <h1 class="anime-title">{{ anime?.Title }}</h1>
@@ -387,6 +400,20 @@ const recommendModalRef = ref<any>(null)
     flex:45%;
     box-shadow: var(--default-box-shadow);
     background-color: var(--primary-color);
+}
+
+.anime-poster-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    width: calc(225px / 1.2);
+    height: calc(319px / 1.2);
+}
+
+.anime-poster-large {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.6s ease;
 }
 
 </style>
