@@ -31,8 +31,8 @@ onMounted(async () => {
     try {
         const result = await groupService.getGroups()
         const all = result.data ?? []
-        pinned.value = all.filter(g => PINNED_IDS.includes(g.ID))
-        groups.value = all.filter(g => !PINNED_IDS.includes(g.ID))
+        pinned.value = all.filter(g => PINNED_IDS.includes(parseInt(g.ID)))
+        groups.value = all.filter(g => !PINNED_IDS.includes(parseInt(g.ID)))
     } catch {
         error.value = 'Não foi possível carregar os grupos.'
     } finally {

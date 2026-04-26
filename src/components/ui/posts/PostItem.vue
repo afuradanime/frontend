@@ -10,7 +10,7 @@ import { postService } from '@/services/PostService';
 import { useNotification } from '@/composables/notification';
 import ReportUserModal from '@/components/modals/ReportUserModal.vue';
 import PostCreateModal from '@/components/modals/PostCreateModal.vue';
-import { useCustomMdRenderer } from '@/composables/useCustomMdRenderer';
+import { useCustomMdRenderer } from '@/composables/custom_md_renderer';
 
 const reportModalRef = ref<any>(null)
 

@@ -181,28 +181,16 @@ const recommendModalRef = ref<any>(null)
                         <Subcontainer>
                             <template #outer-title>Avaliações da comunidade</template>
                             <template #content>
-                                <div v-if="ratingCache && ratingCache.user_counter > 0">
-                                    <InfoTable>
-                                        <tr>
-                                            <td>História</td>
-                                            <td style="text-align: right;">
-                                                <sl-rating label="História" precision="0.5" :value="ratingCache.story / ratingCache.user_counter / 2" readonly></sl-rating>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Visuais</td>
-                                            <td style="text-align: right;">
-                                                <sl-rating label="Visuais" precision="0.5" :value="ratingCache.visuals / ratingCache.user_counter / 2" readonly></sl-rating>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Banda Sonora</td>
-                                            <td style="text-align: right;">
-                                                <sl-rating label="Banda Sonora" precision="0.5" :value="ratingCache.soundtrack / ratingCache.user_counter / 2" readonly></sl-rating>
-                                            </td>
-                                        </tr>
-                                    </InfoTable>
-                                    <span class="no-friends">{{ ratingCache.user_counter }} avaliações</span>
+                                <div v-if="ratingCache && ratingCache.user_counter > 0" class="stats-row">
+                                    <div class="stat-item">
+                                        <p class="stat-label">Nota média</p>
+                                        <p class="stat-value">{{ (ratingCache.overall).toFixed(1) }} <img class="star" src="/icons/star.webp" /></p>
+                                    </div>
+                                    <div class="stat-divider"></div>
+                                    <div class="stat-item">
+                                        <p class="stat-label">Avaliações</p>
+                                        <p class="stat-value">{{ ratingCache.user_counter }}</p>
+                                    </div>
                                 </div>
                                 <span v-else class="no-friends">Sem avaliações ainda</span>
                             </template>
@@ -248,15 +236,13 @@ const recommendModalRef = ref<any>(null)
                         <Subcontainer v-if="anime.Tags && anime.Tags.length > 0">
                             <template #outer-title>Géneros</template>
                             <template #before-content>
-                                <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
-                                    <router-link 
-                                        :key="tag.ID"
-                                        :to="`/tag/${tag.ID}`"
-                                        class="info-link"
-                                    >
-                                        {{ tag.Name }}
-                                    </router-link>
-                                </GenreTag>
+                                <div class="genre-list">
+                                    <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
+                                        <router-link :to="`/tag/${tag.ID}`" class="info-link">
+                                            {{ tag.Name }}
+                                        </router-link>
+                                    </GenreTag>
+                                </div>
                             </template>
                         </Subcontainer>
 
@@ -371,7 +357,41 @@ const recommendModalRef = ref<any>(null)
                 
                     <template v-else-if="activeTab === 'estatisticas'">
                         <Container class="right-content">
-                            <p>Estatísticas em breve.</p>
+                            <div class="rating-list">
+                                <div class="rating-row">
+                                    <span>História: </span>
+                                    <span>{{ ((ratingCache?.story || 0) / (ratingCache?.user_counter || 1)).toFixed(1) }}</span>
+                                </div>
+                                <div class="rating-row">
+                                    <span>Visuais: </span>
+                                    <span>{{ ((ratingCache?.visuals || 0) / (ratingCache?.user_counter || 1)).toFixed(1) }}</span>
+                                </div>
+                                <div class="rating-row">
+                                    <span>Banda Sonora: </span>
+                                    <span>{{ ((ratingCache?.soundtrack || 0) / (ratingCache?.user_counter || 1)).toFixed(1) }}</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>
+                                    <span>Avaliações: {{ ratingCache?.user_counter || 0 }}</span>
+                                </p>
+                            </div>
+                            
+                            <hr>
+                            <div>
+                                <p>
+                                    <span>Avaliações recentes</span>
+                                </p>
+                            </div>
+
+                            <hr>
+                            <div>
+                                <p>
+                                    <span>Avaliações de amigos</span>
+                                </p>
+                            </div>
+
                         </Container>
                     </template>
 

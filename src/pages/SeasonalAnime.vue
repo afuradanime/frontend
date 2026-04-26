@@ -10,19 +10,19 @@ import PageWithFilter from '@/components/layout/PageWithFilter.vue'
 import AnimeGrid from '@/components/ui/containers/AnimeGrid.vue'
 import { type Season } from '@/models/Anime'
 import { getSeasonColor, getSeasonDisplayName, getSeasonIcon } from '@/models/Season'
+import { getCurrentSeason } from '@/composables/utils'
 
 const { animes, error, currentPage, pageSize, totalPages, gridRef, observeItems } = useAnimeGrid()
 
 const initialLoading = ref(false)
 const activeFilter = ref<AnimeFilter>({})
-const season = ref<Season | undefined>()
+const season = ref<Season | undefined>(getCurrentSeason())
 
 const loadPage = async (page: number) => {
     error.value = null
     try {
         const response = await animeService.fetchAnimeThisSeason(activeFilter.value, page - 1, pageSize.value)
         animes.value = response.animes
-        season.value = response.animes.length > 0 ? response.animes[0]?.Season : undefined
         totalPages.value = response.pagination.TotalPages
         currentPage.value = page
         initialLoading.value = false

@@ -9,7 +9,7 @@ import Loading from '@/components/ui/Loading.vue'
 import PaginationComponent from '@/components/ui/Pagination.vue'
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import PageWithFilter from '@/components/layout/PageWithFilter.vue'
-import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useScrollReveal } from '@/composables/scroll_reveal'
 
 const users = ref<User[]>([])
 const pagination = ref<Pagination | null>(null)

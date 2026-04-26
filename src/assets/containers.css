@@ -20,10 +20,16 @@
 }
 
 
+.genre-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 0;
+}
+
 .genre-tag {
     display: inline-block;
     padding: 5px 10px;
-    margin-left: 5px;
     background-color: var(--variation-color);
     border-radius: 4px;
     font-size: 14px;
@@ -156,6 +162,32 @@
     color: var(--text-color-secondary);
 }
 
+.stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.star {
+    width: 0.8em;
+    margin: auto;
+}
+
 .main-content-section {
     display: flex;
     gap: 20px;
@@ -195,6 +227,8 @@
     list-style: none;
     padding: 0;
     gap: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 .social-link {

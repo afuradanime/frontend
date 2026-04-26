@@ -20,9 +20,12 @@ import '@shoelace-style/shoelace/dist/components/menu/menu.js'
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js'
 import type { Group } from '@/models/Group'
 import UpdateGroupModal from '@/components/modals/UpdateGroupModal.vue'
+import { useCustomMdRenderer } from '@/composables/custom_md_renderer'
 
 const route = useRoute()
 const { user, isAuthenticated } = authService
+
+const { parseMarkdown } = useCustomMdRenderer();
 
 const group = ref<Group | null>(null)
 const loading = ref(false)
@@ -135,13 +138,6 @@ const canPost = () => group.value?.Public || isMod.value
                             <span class="no-friends">{{ group.Description }}</span>
                         </template>
                     </Subcontainer>
-
-                    <Subcontainer v-if="group.Rules">
-                        <template #outer-title>Regras</template>
-                        <template #content>
-                            <span class="no-friends">{{ group.Rules }}</span>
-                        </template>
-                    </Subcontainer>
                 </Container>
 
                 <!-- FÓRUM -->
@@ -171,7 +167,7 @@ const canPost = () => group.value?.Public || isMod.value
                         <Subcontainer v-if="group.Rules">
                             <template #outer-title>Regras</template>
                             <template #content>
-                                <p>{{ group.Rules }}</p>
+                                <div class="post-content-text" v-html="parseMarkdown(group.Rules ?? 'Sem regras')" />
                             </template>
                         </Subcontainer>
                     </Container>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PageWithFilter from '@/components/layout/PageWithFilter.vue'
 import { TagMap } from '@/composables/utils'
 import { useRouter } from 'vue-router'
 
@@ -35,24 +36,29 @@ const goToTag = (id: number) => {
 </script>
 
 <template>
-    <div class="entity-anime-view">
-        <div class="control-header">
-            <h1>Géneros</h1>
-            <p class="genres-subtitle">Explora anime por género</p>
-        </div>
+    <div>
 
-        <div class="genres-grid">
-            <div
-                v-for="genre in mainGenres"
-                :key="genre.id"
-                class="genre-tile"
-                @click="goToTag(genre.id)"
-            >
-                <img :src="genre.image" :alt="TagMap[genre.id]" class="genre-bg" />
-                <div class="genre-overlay" />
-                <span class="genre-name">{{ TagMap[genre.id] }}</span>
-            </div>
-        </div>
+        <PageWithFilter >
+            <template #filter-section>
+                <h2 class="filter-page-title">Explora anime por género</h2>
+            </template>
+
+            <template #main-section>
+                <div class="genres-grid">
+                    <div
+                        v-for="genre in mainGenres"
+                        :key="genre.id"
+                        class="genre-tile"
+                        @click="goToTag(genre.id)"
+                    >
+                        <img :src="genre.image" :alt="TagMap[genre.id]" class="genre-bg" />
+                        <div class="genre-overlay" />
+                        <span class="genre-name">{{ TagMap[genre.id] }}</span>
+                    </div>
+                </div>
+            </template>
+        </PageWithFilter>
+
     </div>
 </template>
 

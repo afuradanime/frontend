@@ -1,3 +1,5 @@
+import { SeasonType, type Season } from "@/models/Anime";
+
 function DateFormat(date: string) {
     
     const d = new Date(date);
@@ -144,11 +146,27 @@ const TagMap = [
     "Villainess",
 ]
 
+function getCurrentSeason(): Season {
+    const now = new Date()
+    const month = now.getMonth() + 1
+    const day = now.getDate()
+    const year = now.getFullYear()
+
+    let season: SeasonType
+    if ((month == 3 && day >= 20) || (month > 3 && month < 6) || (month == 6 && day < 21)) season = SeasonType.Spring
+    else if ((month == 6 && day >= 21) || (month > 6 && month < 9) || (month == 9 && day < 23)) season = SeasonType.Summer
+    else if ((month == 9 && day >= 23) || (month > 9 && month < 12) || (month == 12 && day < 22)) season = SeasonType.Fall
+    else season = SeasonType.Winter
+
+    return { Season: season, Year: year }
+}
+
 export { 
     DateFormat, 
     DecodeRoleList,
     TranslateDayOfWeek,
     TranslateDuration,
     RoleMap,
+    getCurrentSeason,
     TagMap
 }

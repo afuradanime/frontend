@@ -10,7 +10,7 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js'
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js'
 import { registerIconLibrary } from '@shoelace-style/shoelace/dist/utilities/icon-library.js'
 
-import { useTheme } from './composables/useTheme'
+import { useTheme } from './composables/theme'
 
 const { initTheme } = useTheme()
 initTheme()

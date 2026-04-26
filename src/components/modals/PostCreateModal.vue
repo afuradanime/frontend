@@ -10,7 +10,7 @@ import '@shoelace-style/shoelace/dist/components/textarea/textarea.js'
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js'
 import '@shoelace-style/shoelace/dist/components/tab/tab.js'
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js'
-import { useCustomMdRenderer } from '@/composables/useCustomMdRenderer'
+import { useCustomMdRenderer } from '@/composables/custom_md_renderer'
 
 const props = defineProps<{
     parentId: string,
