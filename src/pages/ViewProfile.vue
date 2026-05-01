@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import type { Friendship, User } from '@/models/User';
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import '@shoelace-style/shoelace/dist/components/select/select.js'
@@ -33,8 +33,13 @@ import UserBadge from '@/components/ui/capsules/UserBadge.vue';
 import UpdateProfileModal from '@/components/modals/UpdateProfileModal.vue';
 import ReportUserModal from '@/components/modals/ReportUserModal.vue';
 import TranslationSection from '@/components/ui/TranslationSection.vue';
+import AnimeList from '@/components/ui/AnimeList.vue';
+import { useScrollReveal } from '@/composables/useScrollReveal';
 
 const reportModalRef = ref<any>(null)
+
+const route = useRoute()
+const router = useRouter()
 
 const PENDING = 0;
 const FRIENDS = 1;
@@ -43,8 +48,19 @@ const BLOCKED = 3;
 const NOT_RELATED = 4;
 
 const activeTab = ref<'general' | 'animelist' | 'mangalist' | 'contributions'>('general');
+
+watch(() => route.query.tab, (newTab) => {
+    if (newTab && ['general', 'animelist', 'mangalist', 'contributions'].includes(newTab as string)) {
+        activeTab.value = newTab as any
+    } else {
+        activeTab.value = 'general'
+    }
+}, { immediate: true })
+
 const onTabChange = (tab: typeof activeTab.value) => {
-    activeTab.value = tab;
+    if (route.query.tab !== tab) {
+        router.replace({ query: { ...route.query, tab } }).catch(() => {})
+    }
 }
 
 const { notify } = useNotification()
@@ -64,13 +80,17 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const blockDialogRef = ref<any>(null)
 
-const route = useRoute()
-
 onMounted(() => loadProfile())
-watch(() => route.params.id, () => {
-    friends.value = []
-    activeTab.value = 'general'
-    loadProfile()
+watch(() => route.params.id, (newId, oldId) => {
+    if (newId !== oldId) {
+        friends.value = []
+        if (route.query.tab) {
+            router.replace({ query: { ...route.query, tab: undefined } }).catch(() => {})
+        } else {
+            activeTab.value = 'general'
+        }
+        loadProfile()
+    }
 })
 
 const loadProfile = async () => {
@@ -142,11 +162,21 @@ const blockUser = async () => {
 }
 
 const editModalRef = ref<any>(null)
+const profileContainer = ref<HTMLElement | null>(null)
+const { observeItems } = useScrollReveal(profileContainer, { itemSelector: '.reveal-item', threshold: 0 })
+
+watch(() => profile.value, () => {
+    setTimeout(observeItems, 100)
+}, { deep: true })
+
+watch(() => activeTab.value, () => {
+    setTimeout(observeItems, 100)
+})
 
 </script>
 
 <template>
-    <div class="explore-anime-view">
+    <div class="explore-anime-view" ref="profileContainer">
 
         <Loading v-if="loading" />
 
@@ -283,62 +313,62 @@ const editModalRef = ref<any>(null)
                 </div>
 
                 <div class="main-content-section">
-                    <Container class="left-sidebar">
-                        <Subcontainer>
-                            <template #outer-title>Informações</template>
-                            <template #content>
-                                <InfoTable>
-                                    <tr>
-                                        <td>Juntou-se em:</td>
-                                        <td style="text-align: right;">{{ DateFormat(profile.CreatedAt) || 'N/A' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Localização</td>
-                                        <td style="text-align: right;">{{ profile.Location || 'N/A' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Aniversário</td>
-                                        <td style="text-align: right;">{{ DateFormat(profile.Birthday) || 'N/A' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Pronomes</td>
-                                        <td style="text-align: right;">{{ profile.Pronouns || 'N/A' }}</td>
-                                    </tr>
-                                </InfoTable>
-                            </template>
-                        </Subcontainer>
-
-                        <Subcontainer v-if="profile.Socials">
-                            <template #outer-title>Contactos</template>
-                            <template #before-content>
-                                <div class="social-list">
-                                    <ul>
-                                        <li v-for="link in profile.Socials">
-                                            <a :href="link" target="_blank" rel="noopener noreferrer" class="social-link">
-                                                {{ link }}
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </Subcontainer>
-
-                        <Subcontainer v-if="friends">
-                            <template #outer-title>Amigos</template>
-                            <template #before-content>
-                                <div v-if="friends.length > 0" class="friends-list">
-                                    <Friend v-for="friend in friends" :key="friend.ID" :friend="friend" />
-                                </div>
-                                <div v-else class="no-friends">
-                                    {{ profile.Username }} ainda não tem amigos, sê o primeiro a adicionar!
-                                </div>
-                            </template>
-                        </Subcontainer>
-                    </Container>
 
                     <!-- GERAL -->
                     <template v-if="activeTab === 'general'">
-                        <Container class="right-content">
+                        <Container class="left-sidebar reveal-item">
+                            <Subcontainer>
+                                <template #outer-title>Informações</template>
+                                <template #content>
+                                    <InfoTable>
+                                        <tr>
+                                            <td>Juntou-se em:</td>
+                                            <td style="text-align: right;">{{ DateFormat(profile.CreatedAt) || 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Localização</td>
+                                            <td style="text-align: right;">{{ profile.Location || 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Aniversário</td>
+                                            <td style="text-align: right;">{{ DateFormat(profile.Birthday) || 'N/A' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pronomes</td>
+                                            <td style="text-align: right;">{{ profile.Pronouns || 'N/A' }}</td>
+                                        </tr>
+                                    </InfoTable>
+                                </template>
+                            </Subcontainer>
+
+                            <Subcontainer v-if="profile.Socials">
+                                <template #outer-title>Contactos</template>
+                                <template #before-content>
+                                    <div class="social-list">
+                                        <ul>
+                                            <li v-for="link in profile.Socials">
+                                                <a :href="link" target="_blank" rel="noopener noreferrer" class="social-link">
+                                                    {{ link }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </template>
+                            </Subcontainer>
+
+                            <Subcontainer v-if="friends">
+                                <template #outer-title>Amigos</template>
+                                <template #before-content>
+                                    <div v-if="friends.length > 0" class="friends-list">
+                                        <Friend v-for="friend in friends" :key="friend.ID" :friend="friend" />
+                                    </div>
+                                    <div v-else class="no-friends">
+                                        {{ profile.Username }} ainda não tem amigos, sê o primeiro a adicionar!
+                                    </div>
+                                </template>
+                            </Subcontainer>
+                        </Container>
+                        <Container class="right-content reveal-item">
                             <PostSection
                                 v-if="profile"
                                 :parentId="String(profile.ID)"
@@ -349,22 +379,22 @@ const editModalRef = ref<any>(null)
 
                     <!-- LISTA DE ANIME -->
                     <template v-else-if="activeTab === 'animelist'">
-                        <Container class="right-content">
-                            <p>Lista de anime em breve.</p>
+                        <Container class="full-container reveal-item">
+                            <AnimeList :userId="profile.ID" :isOwnList="isAuthenticated && user?.ID === profile.ID" />
                         </Container>
                     </template>
 
                     <!-- LISTA DE MANGA -->
                     <template v-else-if="activeTab === 'mangalist'">
-                        <Container class="right-content">
+                        <Container class="full-container reveal-item">
                             <p>Lista de manga em breve.</p>
                         </Container>
                     </template>
 
                     <!-- CONTRIBUIÇÕES -->
                     <template v-else-if="activeTab === 'contributions'">
-                        <Container class="right-content" style="width: 100%">
-                            <Subcontainer>
+                        <Container class="full-container reveal-item">
+                            <Subcontainer :no-border="true">
                                 <template #outer-title>Traduções</template>
                                 <template #content>
                                     <TranslationSection :user-i-d="profile.ID" />
@@ -415,5 +445,16 @@ const editModalRef = ref<any>(null)
     background: rgb(from var(--primary-color) r g b / 50%) !important;
     border: 1px solid var(--variation-color);
     box-shadow: var(--default-box-shadow);
+}
+
+.reveal-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.reveal-item.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 </style>

@@ -24,10 +24,13 @@ import RecommendAnimeModal from '@/components/modals/RecommendAnimeModal.vue';
 import AnimeListAddModal from '@/components/modals/AnimeListAddModal.vue';
 import type { RatingCache } from '@/models/Rating';
 import ratingCacheService from '@/services/RatingService';
+import { animeListService } from '@/services/AnimeListService';
+import type { UserListItemDTO } from '@/models/AnimeList';
 
 const { notify } = useNotification()
 
 const anime = ref<Anime>();
+const userListItem = ref<UserListItemDTO | null>(null);
 
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -74,6 +77,15 @@ onMounted(async () => {
         ratingCacheService.getRatingCache(parseInt(animeId)).then((result) => {
             ratingCache.value = result
         }).catch(() => {})
+
+        if (isAuthenticated.value && user.value) {
+            animeListService.fetchUserList(user.value.ID).then(list => {
+                const item = list.userListItems.find(i => i.animeId === parseInt(animeId))
+                if (item) {
+                    userListItem.value = item
+                }
+            })
+        }
 
     } catch (err) {
         error.value = 'Failed to load anime'
@@ -157,7 +169,7 @@ const recommendModalRef = ref<any>(null)
 
                         <div style="display: flex; flex-wrap: wrap;">
                             <sl-button class="button-uh" variant="neutral" @click="addOrRateAnimeDialogRef?.show()">
-                                Adicionar à lista
+                                {{ userListItem ? 'Editar na lista' : 'Adicionar à lista' }}
                             </sl-button>
                             <sl-button
                                 class="button-uh"
@@ -307,7 +319,7 @@ const recommendModalRef = ref<any>(null)
 
                     <!-- Right side content, including synopsis, etc... -->
                     <Container class="right-content">
-                        <Subcontainer>
+                        <Subcontainer :noBorder="true">
                             <template #inner-title>
                                 <div class="about-header">
                                     <span>Sinopse</span>
@@ -344,10 +356,17 @@ const recommendModalRef = ref<any>(null)
 
                     </Container>
 
-                    <AnimeListAddModal 
-                        :anime="anime!" 
-                        ref="addOrRateAnimeDialogRef"
-                    />
+                    <teleport to="body">
+                        <AnimeListAddModal 
+                            :anime="anime!" 
+                            :existingEntry="userListItem || undefined"
+                            :userId="user?.ID"
+                            @created="item => userListItem = item"
+                            @updated="item => userListItem = item"
+                            @removed="userListItem = null"
+                            ref="addOrRateAnimeDialogRef"
+                        />
+                    </teleport>
                 </div>
             </div>
         </div>

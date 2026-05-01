@@ -56,10 +56,8 @@
 }
 
 * {
-	outline: none;
 	text-decoration: none;
-	margin: 0;
-	padding: 0;
+	outline: none;
 }
 
 .filter-page-title {
@@ -68,6 +66,8 @@
 }
 
 body {
+	margin: 0;
+	padding: 0;
 	color: var(--txt-color-main);
 	background: var(--bg-color);
 	background-image: url(../assets/noise-strong.png);

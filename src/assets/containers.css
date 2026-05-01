@@ -1,14 +1,7 @@
-.main-content-section {
-    display: flex;
-    justify-content: space-around;
-    padding-top: 2%;
-}
-
 .container-styling {
     padding: 1rem;
     border-radius: 0.5rem;
     background: var(--primary-color);
-    box-shadow: var(--default-box-shadow);
     border: 2px solid var(--border-color);
 }
 
@@ -16,9 +9,13 @@
     height: fit-content;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--default-box-shadow);
     gap: 1rem;
 }
 
+.no-border {
+    border: none !important;
+}
 
 .genre-tag {
     display: inline-block;
@@ -154,7 +151,11 @@
 .main-content-section {
     display: flex;
     gap: 20px;
-    padding: 20px;
+    padding: 2rem 3rem;
+}
+
+.full-container {
+    width: 100%;
 }
 
 .left-sidebar {
@@ -162,7 +163,7 @@
 }
 
 .right-content {
-    width: 70%;
+    width: 80%;
 }
 
 .synopsis-content {

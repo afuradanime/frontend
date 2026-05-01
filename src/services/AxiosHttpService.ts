@@ -62,6 +62,13 @@ export class AxiosHTTPService {
 		return this.toResponse(res)
 	}
 
+	async patch<T>(url: string, data?: any, options?: IPostOptions): Promise<Response<T>> {
+		const res = await this.axiosInstance.patch<T>(url, data, {
+			headers: options?.headers,
+		})
+		return this.toResponse(res)
+	}
+
 	async delete<T>(url: string, options?: IGetOptions): Promise<Response<T>> {
 		const res = await this.axiosInstance.delete<T>(url, {
 			params: options?.params,

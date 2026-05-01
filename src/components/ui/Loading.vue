@@ -22,6 +22,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-left: var(--sidebar-width);
+    margin-top: var(--topbar-height);
     background: rgba(var(--bg-color-rgb), 0.7);
 }
 

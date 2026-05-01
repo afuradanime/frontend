@@ -114,7 +114,6 @@ watch(() => props.userID, () => {
     background: var(--primary-color, #1a1a1a);
     border-radius: 8px;
     padding: 12px;
-    border: 1px solid var(--border-color, #333);
 }
 
 .anime-thumbnail {

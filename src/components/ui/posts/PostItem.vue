@@ -91,7 +91,7 @@ const deletePost = async () => {
                     <sl-dropdown>
                         <sl-button slot="trigger" class="post-settings-button">⋯</sl-button>
                         <sl-menu type="module" @sl-select="handleMenuSelect($event)">
-                            <sl-menu-item value="reply">Reponder</sl-menu-item>
+                            <sl-menu-item value="reply">Responder</sl-menu-item>
                             <sl-menu-item v-if="!canDelete" value="report">Reportar Utilizador</sl-menu-item>
                             <sl-menu-item v-if="canDelete" value="delete">Apagar</sl-menu-item>
                         </sl-menu>
@@ -105,19 +105,21 @@ const deletePost = async () => {
         </div>
     </div>
 
-    <ReportUserModal
-        v-if="createdBy"
-        ref="reportModalRef"
-        :user="createdBy"
-    />
+    <teleport to="body">
+        <ReportUserModal
+            v-if="createdBy"
+            ref="reportModalRef"
+            :user="createdBy"
+        />
 
-    <PostCreateModal
-        ref="replyModalRef"
-        :replyToPost="post"
-        :parentId="post.parentId"
-        :parentType="post.parentType"
-        @created="(p) => $emit('reply-created', p)"
-    />
+        <PostCreateModal
+            ref="replyModalRef"
+            :replyToPost="post"
+            :parentId="post.parentId"
+            :parentType="post.parentType"
+            @created="(p) => $emit('reply-created', p)"
+        />
+    </teleport>
 
 </template>
 

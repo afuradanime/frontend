@@ -2,6 +2,10 @@
 
 import '@/assets/containers.css';
 
+const props = defineProps<{
+    noBorder?: boolean
+}>()
+
 </script>
 
 <template>
@@ -13,7 +17,7 @@ import '@/assets/containers.css';
 		<div>
 			<slot name="before-content"/>
 		</div>
-		<div class="sub-container container-styling" v-if="$slots['content']">
+		<div :class="['sub-container', 'container-styling', { 'no-border': noBorder }]" v-if="$slots['content']">
 			<h3 class="title" v-if="$slots['inner-title']">
 				<slot name="inner-title"></slot>
 			</h3>

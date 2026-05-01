@@ -104,12 +104,14 @@ onMounted(
         </template>
     </Subcontainer>
 
-    <PostCreateModal 
-        ref="postModalRef" 
-        :parentId="props.parentId" 
-        :parentType="props.parentType" 
-        @created="onPostCreated" 
-    />
+    <teleport to="body">
+        <PostCreateModal 
+            ref="postModalRef" 
+            :parentId="props.parentId" 
+            :parentType="props.parentType" 
+            @created="onPostCreated" 
+        />
+    </teleport>
 
 </template>
 

@@ -6,6 +6,8 @@ import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js'
 import '@shoelace-style/shoelace/dist/components/radio/radio.js'
 import { useTheme } from '@/composables/useTheme'
 import { useNavigation } from '@/composables/useNavigation'
+import { usePreferences } from '@/composables/usePreferences'
+import '@shoelace-style/shoelace/dist/components/switch/switch.js'
 
 const dialogRef = ref<any>(null)
 const { theme, applyTheme } = useTheme()
@@ -35,6 +37,13 @@ const setNavigation = (event: Event) => {
     }
 }
 
+const { alwaysExpandRatings, toggleExpandRatings } = usePreferences()
+
+const setExpandRatings = (event: Event) => {
+    const isChecked = (event.target as HTMLInputElement).checked
+    toggleExpandRatings(isChecked)
+}
+
 </script>
 
 <template>
@@ -51,6 +60,12 @@ const setNavigation = (event: Event) => {
                     <sl-radio value="sidebar">Lateral</sl-radio>
                     <sl-radio value="topbar">Superior</sl-radio>
                 </sl-radio-group>
+            </div>
+            
+            <div class="field" style="margin-top: 1rem;">
+                <sl-switch :checked="alwaysExpandRatings" @sl-change="setExpandRatings">
+                    Expandir sempre avaliações na lista de anime
+                </sl-switch>
             </div>
         </div>
         <div slot="footer">
