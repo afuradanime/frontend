@@ -1,9 +1,9 @@
 
 export interface RatingCache {
-    anime_id: number
-    user_counter: number
+    animeId: number
     overall: number
     story: number
     visuals: number
     soundtrack: number
+    user_counter: number
 }

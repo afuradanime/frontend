@@ -6,7 +6,7 @@ import SettingsModal from '../modals/SettingsModal.vue'
 
 const settingsModal = ref<any>(null)
 
-import { useNavigation } from '@/composables/useNavigation'
+import { useNavigation } from '@/composables/navigation'
 
 const { initNavigation, navigation } = useNavigation()
 initNavigation()
@@ -21,9 +21,11 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
     { icon: 'public', label: 'Explorar', routeTo: '/explore' },
     { icon: 'calendar_today_round', label: 'Season', routeTo: '/season' },
+    { icon: 'trending_up', label: 'Top', routeTo: '/top' },
+    { icon: 'star', label: 'Populares', routeTo: '/popular' },
     { icon: 'extension_round', label: 'Géneros', routeTo: '/genres' },
     { icon: 'person_round', label: 'Utilizadores', routeTo: '/users' },
-    { icon: 'group_round', label: 'Grupos', routeTo: '/groups', enabled: false},
+    { icon: 'group_round', label: 'Grupos', routeTo: '/groups'},
     { icon: 'palette', label: 'Artistas', routeTo: '/artists', enabled: false},
     { icon: 'shuffle', label: 'Aleatório', routeTo: '/anime/random' }
 ]

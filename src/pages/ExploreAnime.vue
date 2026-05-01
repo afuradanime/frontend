@@ -57,7 +57,6 @@ onMounted(() => {
 <template>
     <div v-if="error"> <Error :message="error" /> </div>
 
-    
     <PageWithFilter v-else >
         <template #filter-section>
             <h2 class="filter-page-title">Explorar</h2>
@@ -77,45 +76,4 @@ onMounted(() => {
             />
         </template>
     </PageWithFilter>
-    <!--
-    <div v-else class="entity-anime-view">
-        <div class="control-header">
-            <h1>Explorar</h1>
-
-            <AnimeFilterBox @change="onFilterChange" />
-        </div>
-
-        <div
-            v-if="animes.length === 0 && searchQuery"
-            class="empty-state"
-        >
-            <p>Nenhum anime encontrado.</p>
-        </div>
-
-        <div class="grid-wrapper">
-            <Loading v-if="animes.length == 0" />
-            <div v-else class="anime-grid" ref="gridRef">
-                <router-link
-                    v-for="anime in animes"
-                    :key="anime.ID"
-                    :to="`/anime/${anime.ID}`"
-                    class="anime-item"
-                >
-                    <AnimeCard
-                        :picture="anime.ImageURL"
-                        :title="anime.Title"
-                        :type="getAnimeTypeName(anime.Type)"
-                    />
-                </router-link>
-            </div>
-        </div>
-
-        <Pagination
-            v-if="totalPages > 1"
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :total="totalPages * pageSize"
-            @page-change="loadPage"
-        />
-    </div> -->
 </template>

@@ -19,9 +19,8 @@
                 <ul>
                     <li>Não te prendas ao texto original, estás à vontade para escrever a tua própria sinopse.</li>
                     <li>Se fizeste apenas uma tradução, mantém a fonte original (e.g. "[Escrito por MAL Rewrite]").</li>
-                    <li>Adapta o texto para português de forma natural, não é uma tradução literal.</li>
                     <li>Evita spoilers.</li>
-                    <li>Evita usar tradutores automáticos como o Google Tradutor e o DeepL.</li>
+                    <li>Evita usar tradutores automáticos como o Google Tradutor, o DeepL, modelos de inteligência artificial, etc.</li>
                     <li>Evita comentários subjectivos ou opiniões sobre o anime</li>
                     <li>Revê o texto antes de submeter, <strong>depois de submetido não podes voltar atrás!</strong></li>
                 </ul>

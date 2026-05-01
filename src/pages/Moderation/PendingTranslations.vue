@@ -193,7 +193,7 @@ onMounted(() => loadPage(1))
         
                 <sl-tab-panel name="original">
                     <div class="full-translation" v-if="readingAnime">
-                        {{ readingAnime.Descriptions?.[0]?.Description ?? 'Sem descrição original disponível.' }}
+                        {{ readingAnime.Descriptions?.Description ?? 'Sem descrição original disponível.' }}
                     </div>
                     <div v-else class="full-translation" style="opacity: 0.5;">
                         A carregar...

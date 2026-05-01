@@ -61,13 +61,14 @@ const reset = () => {
                 <sl-icon slot="prefix" name="search"></sl-icon>
             </sl-input>
 
-            <div class="filter-field">
+            <div class="filter-field labeled-select">
                 <sl-select
                     size="small"
-                    placeholder="Tipo"
+                    :placeholder="type ? '' : 'Qualquer'"
                     :value="type"
                     @sl-change="type = ($event.target as any).value; apply()"
                 >
+                    <span slot="prefix" class="select-prefix">Tipo</span>
                     <sl-option value="">Qualquer</sl-option>
                     <sl-option value="1">TV</sl-option>
                     <sl-option value="2">OVA</sl-option>
@@ -78,13 +79,14 @@ const reset = () => {
                 </sl-select>
             </div>
 
-            <div class="filter-field">
+            <div class="filter-field labeled-select">
                 <sl-select
                     size="small"
-                    placeholder="Estado"
+                    :placeholder="status ? '' : 'Qualquer'"
                     :value="status"
                     @sl-change="status = ($event.target as any).value; apply()"
                 >
+                    <span slot="prefix" class="select-prefix">Estado</span>
                     <sl-option value="">Qualquer</sl-option>
                     <sl-option value="1">Terminado</sl-option>
                     <sl-option value="2">A sair</sl-option>
@@ -187,7 +189,7 @@ const reset = () => {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    min-width: 130px;
+    min-width: 200px;
 }
 
 .filter-field label {

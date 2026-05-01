@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Post } from '@/models/Post';
 import { type User } from '@/models/User';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import userService from '@/services/UserService';
 import UserIcon from '../capsules/UserIcon.vue';
 import '@shoelace-style/shoelace/dist/components/relative-time/relative-time.js'
@@ -10,12 +10,14 @@ import { postService } from '@/services/PostService';
 import { useNotification } from '@/composables/notification';
 import ReportUserModal from '@/components/modals/ReportUserModal.vue';
 import PostCreateModal from '@/components/modals/PostCreateModal.vue';
+import { useCustomMdRenderer } from '@/composables/custom_md_renderer';
 
 const reportModalRef = ref<any>(null)
 
 const { user, isAuthenticated } = authService
 
 const { notify } = useNotification()
+const { parseMarkdown } = useCustomMdRenderer();
 
 var createdBy = ref<User | null>(null)
 const canDelete = ref<boolean>(false)
@@ -24,14 +26,24 @@ const props = defineProps<{
     post: Post
 }>()
 
-onMounted(() => {
+const emit = defineEmits<{
+    (e: 'reply-created', post: Post): void
+    (e: 'deleted', postId: string): void
+}>();
+
+const loadUser = () => {
     if (props.post.createdBy) {
         userService.fetchByID(props.post.createdBy).then(u => {
             createdBy.value = u
         })
+    } else {
+        createdBy.value = null
     }
     canDelete.value = isAuthenticated.value && props.post.createdBy === user.value?.ID
-})
+}
+
+onMounted(loadUser)
+watch(() => props.post.createdBy, loadUser)
 
 const replyModalRef = ref<any>(null)
 
@@ -58,6 +70,7 @@ const handleMenuSelect = async (event: any) => {
 const deletePost = async () => {
     try{
         await postService.deletePost(props.post.id)
+        emit('deleted', props.post.id) 
         notify('Post apagado com sucesso.', 'success')
     }catch(err){
         notify('Ocorreu um erro ao apagar o post.\n'+(err as any).response.data, 'danger')
@@ -99,9 +112,7 @@ const deletePost = async () => {
                 </span>
             </div>
             <!-- Text Row -->
-            <div class="post-content-text">
-                {{ post.text ?? 'Post removido' }}
-            </div>
+            <div class="post-content-text" v-html="parseMarkdown(post.text ?? 'Post removido')" />
         </div>
     </div>
 
@@ -160,16 +171,6 @@ const deletePost = async () => {
     justify-content: space-between;
     font-size: 18px;
     margin-bottom: 5px;
-}
-
-.post-content-text{
-    width: 95%;
-    text-overflow: clip;
-    /* Allow very long words/URLs to wrap instead of overflowing */
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    /* Preserve newlines but allow wrapping */
-    white-space: pre-wrap;
 }
 
 .post-content-metadata-right{

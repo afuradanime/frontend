@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { getAnimeTypeName, type Anime } from '@/models/Anime';
 import AnimeCard from '../cards/AnimeCard.vue';
-import { useScrollReveal } from '@/composables/useScrollReveal';
+import { useScrollReveal } from '@/composables/scroll_reveal';
 
 const props = defineProps<{
 	animes: Anime[]

@@ -16,8 +16,10 @@ export class PostService {
         return response.data
     }
 
-    async getPostReplies(parentId: string): Promise<Post[]> {
-        const response = await this.httpService.get<Post[]>(`/posts/${parentId}/replies`)
+    async getPostReplies(parentId: string, parentType: PostParentType): Promise<Post[]> {
+        const response = await this.httpService.get<Post[]>(
+            `/posts/${parentId}/replies?parent_type=${parentType}`
+        )
         return response.data
     }
 

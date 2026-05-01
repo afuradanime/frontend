@@ -1,3 +1,4 @@
+import { useWelcome } from '@/composables/welcome'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -17,6 +18,16 @@ const router = createRouter({
 			path: '/season',
 			name: 'season',
 			component: () => import('../pages/SeasonalAnime.vue'),
+		},
+        {
+			path: '/top',
+			name: 'top',
+			component: () => import('../pages/TopAnime.vue'),
+		},
+        {
+			path: '/popular',
+			name: 'popular',
+			component: () => import('../pages/PopularAnime.vue'),
 		},
 		{
 			path: '/anime/:id',
@@ -100,7 +111,11 @@ const router = createRouter({
         },
         { 
             path: '/groups', 
-            component: () => import('@/pages/ComingSoon.vue') 
+            component: () => import('@/pages/ExploreGroups.vue') 
+        },
+        { 
+            path: '/groups/:id', 
+            component: () => import('@/pages/ViewGroup.vue') 
         },
         { 
             path: '/artists', 
@@ -128,8 +143,30 @@ const router = createRouter({
         {
             path: '/info/descriptions',
             component: () => import('@/pages/Info/AboutDescriptions.vue')
+        },
+        {
+            path: '/info/terms',
+            component: () => import('@/pages/Info/AboutService.vue')
         }
 	],
 })
+
+router.afterEach((to) => {
+    const cookies = document.cookie.split(';').reduce((acc: Record<string, string>, c) => {
+        const [key, val] = c.trim().split('=')
+        if (key && val) {
+            acc[key] = val
+        }
+        return acc
+    }, {})
+
+    if (cookies['first_login'] === 'true') {
+
+        useWelcome().showWelcome.value = true;
+
+        // Delete it after reading
+        document.cookie = 'first_login=; Max-Age=0; path=/';
+    }
+});
 
 export default router

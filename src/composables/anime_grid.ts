@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import type { Anime } from '../models/Anime'
-import { useScrollReveal } from './useScrollReveal'
+import { useScrollReveal } from './scroll_reveal'
 
 export function useAnimeGrid() {
     const animes = ref<Anime[]>([])

@@ -26,8 +26,11 @@ import type { RatingCache } from '@/models/Rating';
 import ratingCacheService from '@/services/RatingService';
 import { animeListService } from '@/services/AnimeListService';
 import type { UserListItemDTO } from '@/models/AnimeList';
+import PostSection from '@/components/ui/PostSection.vue'
+import { PostParentType } from '@/models/Post'
 
 const { notify } = useNotification()
+const activeTab = ref<'geral' | 'opinioes' | 'forum' | 'estatisticas'>('geral')
 
 const anime = ref<Anime>();
 const userListItem = ref<UserListItemDTO | null>(null);
@@ -43,6 +46,7 @@ const translationModalRef = ref<any>(null)
 const addOrRateAnimeDialogRef = ref<any>(null)
 const translator = ref<User | null>(null)
 const accepter = ref<User | null>(null)
+const showLarge = ref(false)
 
 const { user, isAuthenticated } = authService
 
@@ -85,6 +89,10 @@ onMounted(async () => {
                     userListItem.value = item
                 }
             })
+        if (anime.value?.LargeImageURL) {
+            const img = new Image()
+            img.src = anime.value.LargeImageURL
+            img.onload = () => { showLarge.value = true }
         }
 
     } catch (err) {
@@ -123,10 +131,16 @@ const recommendModalRef = ref<any>(null)
                         <!-- Halftone dot pattern overlay -->
                         <div class="anime-header-overlay"></div>
 
-                        <div 
-                            class="anime-poster"
-                            :style="{backgroundImage: `url(${anime?.LargeImageURL})`}"
-                        ></div>
+                        <div class="anime-poster-wrapper">
+                            <div 
+                                class="anime-poster"
+                                :style="{ backgroundImage: `url(${anime.ImageURL})` }"
+                            />
+                            <div 
+                                class="anime-poster anime-poster-large"
+                                :style="{ backgroundImage: `url(${anime.LargeImageURL})`, opacity: showLarge ? 1 : 0 }"
+                            />
+                        </div>
 
                         <div class="anime-header-content">
                             <h1 class="anime-title">{{ anime?.Title }}</h1>
@@ -145,18 +159,10 @@ const recommendModalRef = ref<any>(null)
                         </div>
                     
                         <div class="anime-tabs">
-                            <div class="anime-tab anime-tab-active">
-                                Geral
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Opiniões
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Fórum
-                            </div>
-                            <div class="anime-tab anime-tab-inactive">
-                                Estatísticas
-                            </div>
+                            <div class="anime-tab" :class="activeTab === 'geral' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'geral'">Geral</div>
+                            <div class="anime-tab" :class="activeTab === 'opinioes' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'opinioes'">Opiniões</div>
+                            <div class="anime-tab" :class="activeTab === 'forum' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'forum'">Fórum</div>
+                            <div class="anime-tab" :class="activeTab === 'estatisticas' ? 'anime-tab-active' : 'anime-tab-inactive'" @click="activeTab = 'estatisticas'">Estatísticas</div>
                         </div>
                     </div>
                
@@ -185,28 +191,16 @@ const recommendModalRef = ref<any>(null)
                         <Subcontainer>
                             <template #outer-title>Avaliações da comunidade</template>
                             <template #content>
-                                <div v-if="ratingCache && ratingCache.user_counter > 0">
-                                    <InfoTable>
-                                        <tr>
-                                            <td>História</td>
-                                            <td style="text-align: right;">
-                                                <sl-rating label="História" precision="0.5" :value="ratingCache.story / ratingCache.user_counter / 2" readonly></sl-rating>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Visuais</td>
-                                            <td style="text-align: right;">
-                                                <sl-rating label="Visuais" precision="0.5" :value="ratingCache.visuals / ratingCache.user_counter / 2" readonly></sl-rating>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Banda Sonora</td>
-                                            <td style="text-align: right;">
-                                                <sl-rating label="Banda Sonora" precision="0.5" :value="ratingCache.soundtrack / ratingCache.user_counter / 2" readonly></sl-rating>
-                                            </td>
-                                        </tr>
-                                    </InfoTable>
-                                    <span class="no-friends">{{ ratingCache.user_counter }} avaliações</span>
+                                <div v-if="ratingCache && ratingCache.user_counter > 0" class="stats-row">
+                                    <div class="stat-item">
+                                        <p class="stat-label">Nota média</p>
+                                        <p class="stat-value">{{ (ratingCache.overall).toFixed(1) }} <img class="star" src="/icons/star.webp" /></p>
+                                    </div>
+                                    <div class="stat-divider"></div>
+                                    <div class="stat-item">
+                                        <p class="stat-label">Avaliações</p>
+                                        <p class="stat-value">{{ ratingCache.user_counter }}</p>
+                                    </div>
                                 </div>
                                 <span v-else class="no-friends">Sem avaliações ainda</span>
                             </template>
@@ -252,15 +246,13 @@ const recommendModalRef = ref<any>(null)
                         <Subcontainer v-if="anime.Tags && anime.Tags.length > 0">
                             <template #outer-title>Géneros</template>
                             <template #before-content>
-                                <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
-                                    <router-link 
-                                        :key="tag.ID"
-                                        :to="`/tag/${tag.ID}`"
-                                        class="info-link"
-                                    >
-                                        {{ tag.Name }}
-                                    </router-link>
-                                </GenreTag>
+                                <div class="genre-list">
+                                    <GenreTag v-for="tag in anime.Tags" :key="tag.ID">
+                                        <router-link :to="`/tag/${tag.ID}`" class="info-link">
+                                            {{ tag.Name }}
+                                        </router-link>
+                                    </GenreTag>
+                                </div>
                             </template>
                         </Subcontainer>
 
@@ -338,23 +330,89 @@ const recommendModalRef = ref<any>(null)
                                         <sl-tooltip v-if="translation.AcceptedAt" :content="'Adaptação aceite por ' + accepter?.Username + ' no dia ' + DateFormat(translation.AcceptedAt)">
                                             Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
                                         </sl-tooltip>
-                                    </span>
+                                    </div>
+                                </template>
+                                <template #content>
+                                    <div class="synopsis-content">
+                                        {{ translation?.TranslatedDescription || anime.Descriptions?.Description }}
+
+                                        <span v-if="translation" class="no-friends">
+                                            <sl-tooltip v-if="translation.AcceptedAt" :content="'Adaptação aceite por ' + accepter?.Username + ' no dia ' + DateFormat(translation.AcceptedAt)">
+                                                Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
+                                            </sl-tooltip>
+                                        </span>
+                                    </div>
+                                </template>
+                            </Subcontainer>
+                            
+                            <PostTranslationModal
+                                ref="translationModalRef"
+                                :anime-i-d="anime.ID"
+                            />
+
+                            <RecommendAnimeModal
+                                v-if="anime"
+                                ref="recommendModalRef"
+                                :anime-i-d="anime.ID"
+                            />
+
+                        </Container>
+                    </template>
+
+                    <template v-else-if="activeTab === 'forum'">
+                        <Container class="right-content">
+                            <PostSection
+                                :parentId="String(anime.ID)"
+                                :parentType="PostParentType.Thread"
+                            />
+                        </Container>
+                    </template>
+                
+                    <template v-else-if="activeTab === 'opinioes'">
+                        <Container class="right-content">
+                            <p>Opiniões em breve.</p>
+                        </Container>
+                    </template>
+                
+                    <template v-else-if="activeTab === 'estatisticas'">
+                        <Container class="right-content">
+                            <div class="rating-list">
+                                <div class="rating-row">
+                                    <span>História: </span>
+                                    <span>{{ ((ratingCache?.story || 0) / (ratingCache?.user_counter || 1)).toFixed(1) }}</span>
                                 </div>
-                            </template>
-                        </Subcontainer>
-                        
-                        <PostTranslationModal
-                            ref="translationModalRef"
-                            :anime-i-d="anime.ID"
-                        />
+                                <div class="rating-row">
+                                    <span>Visuais: </span>
+                                    <span>{{ ((ratingCache?.visuals || 0) / (ratingCache?.user_counter || 1)).toFixed(1) }}</span>
+                                </div>
+                                <div class="rating-row">
+                                    <span>Banda Sonora: </span>
+                                    <span>{{ ((ratingCache?.soundtrack || 0) / (ratingCache?.user_counter || 1)).toFixed(1) }}</span>
+                                </div>
+                            </div>
 
-                        <RecommendAnimeModal
-                            v-if="anime"
-                            ref="recommendModalRef"
-                            :anime-i-d="anime.ID"
-                        />
+                            <div>
+                                <p>
+                                    <span>Avaliações: {{ ratingCache?.user_counter || 0 }}</span>
+                                </p>
+                            </div>
+                            
+                            <hr>
+                            <div>
+                                <p>
+                                    <span>Avaliações recentes</span>
+                                </p>
+                            </div>
 
-                    </Container>
+                            <hr>
+                            <div>
+                                <p>
+                                    <span>Avaliações de amigos</span>
+                                </p>
+                            </div>
+
+                        </Container>
+                    </template>
 
                     <teleport to="body">
                         <AnimeListAddModal 
@@ -388,6 +446,20 @@ const recommendModalRef = ref<any>(null)
     flex:45%;
     box-shadow: var(--default-box-shadow);
     background-color: var(--primary-color);
+}
+
+.anime-poster-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    width: calc(225px / 1.2);
+    height: calc(319px / 1.2);
+}
+
+.anime-poster-large {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.6s ease;
 }
 
 </style>

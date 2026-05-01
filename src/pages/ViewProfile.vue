@@ -34,7 +34,7 @@ import UpdateProfileModal from '@/components/modals/UpdateProfileModal.vue';
 import ReportUserModal from '@/components/modals/ReportUserModal.vue';
 import TranslationSection from '@/components/ui/TranslationSection.vue';
 import AnimeList from '@/components/ui/AnimeList.vue';
-import { useScrollReveal } from '@/composables/useScrollReveal';
+import { useScrollReveal } from '@/composables/scroll_reveal';
 
 const reportModalRef = ref<any>(null)
 
@@ -93,6 +93,8 @@ watch(() => route.params.id, (newId, oldId) => {
     }
 })
 
+const isOnline = ref(0)
+
 const loadProfile = async () => {
     const userId = route.params.id as string
 
@@ -120,6 +122,12 @@ const loadProfile = async () => {
                 friendshipState.value.status = NOT_RELATED
             })
         }
+
+        userService.isOnline(parseInt(userId)).then(result => {
+            isOnline.value = result - 1;
+        }).catch(() => {
+            isOnline.value = 0
+        })
 
     } catch (err) {
         error.value = 'Erro ao carregar o perfil'
@@ -194,7 +202,9 @@ watch(() => activeTab.value, () => {
                         <div
                             class="user-picture"
                             :style="{ backgroundImage: `url(${avatar})`, bottom: '60px' }"
-                        ></div>
+                        >
+                            <span class="online-indicator" :class="isOnline == 1 ? 'online' : (isOnline == 2 ? 'idle' : 'offline')"></span>
+                        </div>
 
                         <div class="anime-header-content">
                             <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -457,4 +467,25 @@ watch(() => activeTab.value, () => {
     opacity: 1;
     transform: translateY(0);
 }
+.online-indicator {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+.online-indicator.online {
+    background: radial-gradient(circle at 35% 35%, #5fffaa, #1a9e52);
+}
+
+.online-indicator.offline {
+    background: radial-gradient(circle at 35% 35%, #999, #3a3a3a);
+}
+
+.online-indicator.idle {
+    background: radial-gradient(circle at 35% 35%, #efff5f, #9e7f1a);
+}
+
 </style>

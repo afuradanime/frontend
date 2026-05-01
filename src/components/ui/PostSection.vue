@@ -11,12 +11,14 @@ import '@shoelace-style/shoelace/dist/components/textarea/textarea.js'
 import '@shoelace-style/shoelace/dist/components/icon/icon.js'
 import PostItem from './posts/PostItem.vue'
 import PostReply from './posts/PostReply.vue'
+import Loading from './Loading.vue'
 
 defineOptions({ name: 'PostSection' })
 
 const props = defineProps<{
     parentId: string
     parentType: PostParentType
+    readOnly?: boolean
 }>()
 
 const { notify } = useNotification()
@@ -31,7 +33,7 @@ const submitting = ref(false)
 const loadPosts = async () => {
     loading.value = true
     try {
-        const result = await postService.getPostReplies(props.parentId)
+        const result = await postService.getPostReplies(props.parentId, props.parentType)
         posts.value = result ?? []
     } catch {
         posts.value = []
@@ -62,7 +64,7 @@ const onPostDeleted = (postId: string) => {
     const idx = posts.value.findIndex(p => p.id === postId)
     if (idx !== -1) {
         const old = posts.value[idx]
-        posts.value[idx] = { ...old, text: undefined, createdBy: undefined } as Post
+        posts.value.splice(idx, 1, { ...old, text: undefined, createdBy: undefined } as Post)
     }
 }
 
@@ -88,8 +90,10 @@ onMounted(
 
 <template>
     <div style="margin-bottom: 12px; display:flex; justify-content:flex-end;">
-        <sl-button @click="openCreate">Novo Post</sl-button>
+        <sl-button v-if="!props.readOnly" @click="openCreate">Novo Post</sl-button>
     </div>
+    
+    <Loading v-if="loading" />
     <Subcontainer 
         v-for="post in posts" :key="post.id"
     >

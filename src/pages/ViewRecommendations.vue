@@ -126,7 +126,7 @@ onMounted(() => loadPage(1))
                         </span>
                     </div>
                     <div class="recommendation-body">
-                        {{ animeCache[rec.Anime]?.Descriptions?.[0]?.Description }}
+                        {{ animeCache[rec.Anime]?.Descriptions?.Description }}
                     </div>
                     <div class="recommendation-actions">
                         <sl-button size="small" @click="">Adicionar à minha lista</sl-button>
