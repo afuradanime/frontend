@@ -89,6 +89,8 @@ onMounted(async () => {
                     userListItem.value = item
                 }
             })
+        }
+        
         if (anime.value?.LargeImageURL) {
             const img = new Image()
             img.src = anime.value.LargeImageURL

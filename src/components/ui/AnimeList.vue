@@ -2,7 +2,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { animeListService } from '@/services/AnimeListService'
 import { AnimeListItemStatus, type UserListItemDTO, getAnimeListStatusLabel as getStatusLabel, getAnimeListStatusHex as getStatusHex } from '@/models/AnimeList'
-import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useScrollReveal } from '@/composables/scroll_reveal'
 import { usePreferences } from '@/composables/usePreferences'
 import Loading from '@/components/ui/Loading.vue'
 import Error from '@/components/ui/Error.vue'
