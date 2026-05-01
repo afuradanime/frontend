@@ -312,25 +312,16 @@ const recommendModalRef = ref<any>(null)
                     </Container>
 
                     <!-- Right side content, including synopsis, etc... -->
-                    <Container class="right-content">
-                        <Subcontainer :noBorder="true">
-                            <template #inner-title>
-                                <div class="about-header">
-                                    <span>Sinopse</span>
-                                    <sl-tooltip :content="'Este anime não tem tradução para português, podes contribuir com a tua tradução aqui.'" v-if="!translation">
-                                        <span class="flag-btn" @click="!translation && openTranslationModal()">
-                                            <img src="../assets/portugal_warn.svg" alt="Bandeira portuguesa">
-                                        </span>
-                                    </sl-tooltip>
-                                </div>
-                            </template>
-                            <template #content>
-                                <div class="synopsis-content">
-                                    {{ translation?.TranslatedDescription || anime.Descriptions?.Description }}
-
-                                    <span v-if="translation" class="no-friends">
-                                        <sl-tooltip v-if="translation.AcceptedAt" :content="'Adaptação aceite por ' + accepter?.Username + ' no dia ' + DateFormat(translation.AcceptedAt)">
-                                            Adaptado por <a :href="`/profile/${translator?.ID}`">{{ translator?.Username || "..." }}</a>
+                    <template v-if="activeTab === 'geral'">
+                        <Container class="right-content">
+                            <Subcontainer :noBorder="true">
+                                <template #inner-title>
+                                    <div class="about-header">
+                                        <span>Sinopse</span>
+                                        <sl-tooltip :content="'Este anime não tem tradução para português, podes contribuir com a tua tradução aqui.'" v-if="!translation">
+                                            <span class="flag-btn" @click="!translation && openTranslationModal()">
+                                                <img src="../assets/portugal_warn.svg" alt="Bandeira portuguesa">
+                                            </span>
                                         </sl-tooltip>
                                     </div>
                                 </template>
