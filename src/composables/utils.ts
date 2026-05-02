@@ -45,15 +45,15 @@ function TranslateDuration(duration: string): string {
 
 const RoleMap = [
     {
-        name: "Admin",
+        name: "Administrador",
         colour: "#EA7B7B"
     },
     {
-        name: "Moderator",
+        name: "Moderador",
         colour: "#5A9CB5"
     },
     {
-        name: "User",
+        name: "Utilizador",
         colour: "#97A87A"
     }
 ]

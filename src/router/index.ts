@@ -86,6 +86,16 @@ const router = createRouter({
 			name: 'users',
 			component: () => import('../pages/ExploreUsers.vue'),
 		},
+        { 
+            path: '/post/:id', 
+            name: 'post', 
+            component: () => import('@/pages/ViewPost.vue') 
+        },
+        {
+            path: '/moderation',
+            name: 'moderation',
+            component: () => import('../pages/Moderation/ViewModeration.vue')
+        },
         {
             path: '/moderation/translations',
             name: 'translations',
@@ -147,6 +157,10 @@ const router = createRouter({
         {
             path: '/info/terms',
             component: () => import('@/pages/Info/AboutService.vue')
+        },
+        {
+            path: '/info/version',
+            component: () => import('@/pages/Info/AboutVersion.vue')
         }
 	],
 })

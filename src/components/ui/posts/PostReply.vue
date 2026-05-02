@@ -8,6 +8,7 @@ defineOptions({ name: 'PostReply' })
 
 const props = defineProps<{
     postId: string
+    full: boolean
 }>()
 
 const post = ref<Post | null>(null)
@@ -30,12 +31,12 @@ onMounted(async () => {
 
 <template>
     <div v-if="post">
-        <PostItem :post="post" @reply-created="onReplyCreated" />
+        <PostItem :post="post" @reply-created="onReplyCreated" :full="full" />
         <div
             v-for="replyId in post.posts" :key="replyId"
             class="reply-section"
         >
-            <PostReply :postId="replyId"  />
+            <PostReply :postId="replyId" :full="full" />
         </div>
     </div>
 </template>

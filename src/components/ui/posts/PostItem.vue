@@ -11,6 +11,7 @@ import { useNotification } from '@/composables/notification';
 import ReportUserModal from '@/components/modals/ReportUserModal.vue';
 import PostCreateModal from '@/components/modals/PostCreateModal.vue';
 import { useCustomMdRenderer } from '@/composables/custom_md_renderer';
+import { useRouter } from 'vue-router';
 
 const reportModalRef = ref<any>(null)
 
@@ -22,8 +23,16 @@ const { parseMarkdown } = useCustomMdRenderer();
 var createdBy = ref<User | null>(null)
 const canDelete = ref<boolean>(false)
 
+const router = useRouter()
+const goToPost = () => router.push(`/post/${props.post.id}`)
+
+const contentRef = ref<HTMLElement | null>(null)
+const isClamped = ref(false)
+const MAX_HEIGHT = 320 // px
+
 const props = defineProps<{
     post: Post
+    full: boolean
 }>()
 
 const emit = defineEmits<{
@@ -42,7 +51,13 @@ const loadUser = () => {
     canDelete.value = isAuthenticated.value && props.post.createdBy === user.value?.ID
 }
 
-onMounted(loadUser)
+onMounted(() => {
+    loadUser();
+
+    if (contentRef.value && contentRef.value.scrollHeight > MAX_HEIGHT) {
+        isClamped.value = true
+    }
+})
 watch(() => props.post.createdBy, loadUser)
 
 const replyModalRef = ref<any>(null)
@@ -54,7 +69,6 @@ const handleMenuSelect = async (event: any) => {
 
     switch (action) {
         case 'reply':
-            // open reply modal bound to this post
             replyModalRef.value?.show()
             break;
         case 'report':
@@ -112,7 +126,15 @@ const deletePost = async () => {
                 </span>
             </div>
             <!-- Text Row -->
-            <div class="post-content-text" v-html="parseMarkdown(post.text ?? 'Post removido')" />
+            <div class="post-content-text-wrapper" :class="{ clamped: isClamped && !full }"  @click="goToPost" style="cursor: pointer;" >
+                <div
+                    class="post-content-text"
+                    ref="contentRef"
+                    v-html="parseMarkdown(post.text ?? 'Post removido')"
+                />
+                <div v-if="isClamped && !full" class="post-fade" />
+            </div>
+            <button v-if="isClamped && !full" class="ver-mais" @click="goToPost">Ver mais</button>
         </div>
     </div>
 
@@ -187,6 +209,39 @@ const deletePost = async () => {
 
 .post-settings-button::part(base) {
     padding: 0 !important;
+}
+
+.post-content-text-wrapper {
+    position: relative;
+}
+
+.post-content-text-wrapper.clamped {
+    max-height: 300px;
+    overflow: hidden;
+}
+
+.post-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--primary-color));
+    pointer-events: none;
+}
+
+.ver-mais {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 4px 0;
+    margin-top: 2px;
+}
+
+.ver-mais:hover {
+    text-decoration: underline;
 }
 
 </style>

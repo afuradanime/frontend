@@ -1,36 +1,42 @@
-<template>
+<script setup lang="ts">
+import BetaWidget from '@/components/layout/widgets/BetaWidget.vue';
+import DocsWidget from '@/components/layout/widgets/DocsWidget.vue';
+import SoftwareWidget from '@/components/layout/widgets/SoftwareWidget.vue';
 
+</script>
+
+<template>
     <div class="homepage-wrap">
-        <div class="entity-anime-view">
-            <img src="../assets/name_logo_shadow.png" alt="Afuradanime" width="500" /> <br>
-            <p>Bem vindo(a) à <b>closed-beta</b> do Afuradanime.</p> <br>
-            <p>Se encontrares:</p>
-            - Erros visuais no site <br>
-            - Mensagens de erro que não deviam aparecer <br>
-            - Interfaces que aches user unfriendly <br>
-            - Erros de funcionamento da aplicação <br>
-            - Vulnerabilidades de segurança <br>
-            - Funcionalidades que não percebes como usar/preferias que fossem feitas de outra maneira <br>
-            - Ou ideias de como melhorar o site funcionalmente ou visualmente <br> <br>
-            <p>Fala connosco (Kray ou Taiko) por dm ou abre uma issue <a href="https://github.com/afuradanime/backend/issues">aqui</a>!</p>
+        <div class="homepage-header">
+            <img src="../assets/name_logo_shadow.png" alt="Afuradanime" width="400" />
+        </div>
+        <div class="widget-grid">
+            <BetaWidget />
+            <!-- <DocsWidget />
+            <SoftwareWidget /> -->
         </div>
     </div>
 </template>
 
 <style scoped>
-
-.homepage-wrap{
+.homepage-wrap {
     color: var(--txt-color-main);
     width: 100%;
-    height: 100vh;
     display: flex;
-    justify-content: center
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    gap: 2rem;
 }
-
-.entity-anime-view{
-    width: 30%;
-    height: fit-content;
-    margin-top: 5%;
+.homepage-header {
+    text-align: center;
 }
-
+.widget-grid {
+    display: grid;
+    /* grid-template-columns: repeat(2, 1fr); */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    width: 100%;
+    max-width: 900px;
+}
 </style>

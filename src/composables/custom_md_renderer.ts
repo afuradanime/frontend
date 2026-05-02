@@ -29,7 +29,7 @@ const unescape = (text: string): string => {
 
 export function useCustomMdRenderer() {
     if (!initialized) {
-        marked.use({ renderer, gfm: true, breaks: false })
+        marked.use({ renderer, gfm: true, breaks: true })
         initialized = true
     }
 
