@@ -6,6 +6,14 @@ import '@shoelace-style/shoelace/dist/components/option/option.js'
 import '@shoelace-style/shoelace/dist/components/input/input.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js'
+import DatePicker from './DatePicker.vue'
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+const debouncedApply = () => {
+    if (debounceTimer) clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => apply(), 400)
+}
 
 const emit = defineEmits<{ (e: 'change', filter: AnimeFilter): void }>()
 
@@ -17,18 +25,6 @@ const maxEpisodes = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const showAdvanced = ref(false)
-
-const buildFilter = (): AnimeFilter => {
-    const f: AnimeFilter = {}
-    if (query.value.trim()) f.q = query.value.trim()
-    if (type.value) f.type = parseInt(type.value)
-    if (status.value) f.status = parseInt(status.value)
-    if (minEpisodes.value) f.min_episodes = parseInt(minEpisodes.value)
-    if (maxEpisodes.value) f.max_episodes = parseInt(maxEpisodes.value)
-    if (startDate.value) f.start_date = Math.floor(new Date(startDate.value).getTime() / 1000)
-    if (endDate.value) f.end_date = Math.floor(new Date(endDate.value).getTime() / 1000)
-    return f
-}
 
 const apply = () => emit('change', buildFilter())
 
@@ -43,6 +39,23 @@ const reset = () => {
     showAdvanced.value = false
     emit('change', {})
 }
+
+const buildFilter = (): AnimeFilter => {
+    const f: AnimeFilter = {}
+    if (query.value.trim()) f.q = query.value.trim()
+    if (type.value) f.type = parseInt(type.value)
+    if (status.value) f.status = parseInt(status.value)
+    if (minEpisodes.value) f.min_episodes = parseInt(minEpisodes.value)
+    if (maxEpisodes.value) f.max_episodes = parseInt(maxEpisodes.value)
+    if (startDate.value) {
+        f.start_date = Math.floor(new Date(startDate.value + 'T00:00:00').getTime() / 1000)
+    }
+    if (endDate.value) {
+        f.end_date = Math.floor(new Date(endDate.value + 'T23:59:59').getTime() / 1000)
+    }
+    return f
+}
+
 </script>
 
 <template>
@@ -51,11 +64,10 @@ const reset = () => {
         <!-- Main row -->
         <div class="filter-main-row">
             <sl-input
-            size="small"
+                size="small"
                 placeholder="Pesquisar"
                 :value="query"
-                @sl-input="query = ($event.target as any).value"
-                @keydown.enter="apply"
+                @sl-input="query = ($event.target as any).value; debouncedApply()"
                 style="flex: 1;"
             >
                 <sl-icon slot="prefix" name="search"></sl-icon>
@@ -95,6 +107,7 @@ const reset = () => {
             </div>
 
             <sl-icon-button
+                slot="suffix"
                 :name="showAdvanced ? 'funnel-fill' : 'funnel'"
                 @click="showAdvanced = !showAdvanced"
                 :style="{ color: showAdvanced ? 'var(--sl-color-primary-600)' : 'var(--text-color-secondary)' }"
@@ -112,7 +125,7 @@ const reset = () => {
                         type="number"
                         placeholder="0"
                         :value="minEpisodes"
-                        @sl-input="minEpisodes = ($event.target as any).value"
+                        @sl-input="minEpisodes = ($event.target as any).value; debouncedApply()"
                     />
                 </div>
 
@@ -123,32 +136,21 @@ const reset = () => {
                         type="number"
                         placeholder="∞"
                         :value="maxEpisodes"
-                        @sl-input="maxEpisodes = ($event.target as any).value"
+                        @sl-input="maxEpisodes = ($event.target as any).value; debouncedApply()"
                     />
                 </div>
 
                 <div class="filter-field">
                     <label>Data início</label>
-                    <sl-input
-                        size="small"
-                        type="date"
-                        :value="startDate"
-                        @sl-input="startDate = ($event.target as any).value"
-                    />
+                    <DatePicker :value="startDate" @change="startDate = $event; apply()" />
                 </div>
 
                 <div class="filter-field">
                     <label>Data fim</label>
-                    <sl-input
-                        size="small"
-                        type="date"
-                        :value="endDate"
-                        @sl-input="endDate = ($event.target as any).value"
-                    />
+                    <DatePicker :value="endDate" @change="endDate = $event; apply()" />
                 </div>
 
                 <sl-button size="small" @click="reset" style="margin-top: auto;">Limpar</sl-button>
-                <sl-button size="small" @click="apply" style="margin-top: auto;">Pesquisar</sl-button>
             </div>
         </Transition>
 
@@ -159,8 +161,8 @@ const reset = () => {
 .anime-filter {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 100%;
+    gap: var(--component-gap);
+    padding: 0 var(--component-gap);
 }
 
 .filter-main-row {

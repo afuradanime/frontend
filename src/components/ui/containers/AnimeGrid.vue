@@ -39,11 +39,12 @@ watch(() => props.animes, () => {
 </template>
  
 <style scoped>
-.anime-grid-wrapper{
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: var(--component-gap);
-	padding: var(--component-gap);
+.anime-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 200px));
+    gap: var(--component-gap);
+    padding: var(--component-gap);
+    justify-content: space-around;
 }
 
 .anime-item {

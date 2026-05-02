@@ -5,6 +5,7 @@ const props = defineProps<{
     currentPage: number
     pageSize: number
     total: number
+    alwaysVisible: boolean
 }>()
 
 const emit = defineEmits<{
@@ -35,7 +36,11 @@ const visiblePages = computed(() => {
 </script>
 
 <template>
-    <div class="pagination-component" v-if="totalPages > 1">
+    <div 
+        class="pagination-component" 
+        v-if="totalPages > 1"
+        :class="{ 'always-visible': alwaysVisible }"
+    >
         <button
             class="page-btn nav-btn"
             :disabled="currentPage === 1"
@@ -143,4 +148,8 @@ const visiblePages = computed(() => {
     user-select: none;
 }
 
+.pagination-component.always-visible {
+    opacity: 1;
+    bottom: 10px;
+}
 </style>
