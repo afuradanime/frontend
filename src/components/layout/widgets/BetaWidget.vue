@@ -15,6 +15,9 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js'
             - Funcionalidades que não percebes como usar/preferias que fossem feitas de outra maneira <br>
             - Ou ideias de como melhorar o site funcionalmente ou visualmente <br> <br>
             <p>Fala connosco (Kray ou Taiko) por dm ou abre uma issue <a href="https://github.com/afuradanime/backend/issues">aqui</a>!</p>
+
+            <br>
+            <p><strong>Aviso:</strong> tudo o que postares vai (provavelmente) ser apagado no final do periodo beta</p>
         </div>
     </div>
 </template>

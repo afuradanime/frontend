@@ -369,7 +369,7 @@ const recommendModalRef = ref<any>(null)
                 
                     <template v-else-if="activeTab === 'estatisticas'">
                         <Container class="right-content">
-                            <div class="rating-list">
+                            <!-- <div class="rating-list">
                                 <div class="rating-row">
                                     <span>História: </span>
                                     <span>{{ ((ratingCache?.story || 0) / (ratingCache?.user_counter || 1)).toFixed(1) }}</span>
@@ -402,7 +402,9 @@ const recommendModalRef = ref<any>(null)
                                 <p>
                                     <span>Avaliações de amigos</span>
                                 </p>
-                            </div>
+                            </div> -->
+
+                            Estatisticas em breve
 
                         </Container>
                     </template>
