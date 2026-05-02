@@ -3,12 +3,16 @@ import { ref, onMounted } from 'vue'
 import type { Post } from '@/models/Post'
 import postService from '@/services/PostService'
 import PostItem from './PostItem.vue'
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js'
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js'
+import '@shoelace-style/shoelace/dist/components/menu/menu.js'
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js'
 
 defineOptions({ name: 'PostReply' })
 
 const props = defineProps<{
     postId: string
-    full: boolean
+    full?: boolean
 }>()
 
 const post = ref<Post | null>(null)
@@ -30,13 +34,20 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div v-if="post">
-        <PostItem :post="post" @reply-created="onReplyCreated" :full="full" />
-        <div
-            v-for="replyId in post.posts" :key="replyId"
-            class="reply-section"
-        >
-            <PostReply :postId="replyId" :full="full" />
+    <transition name="fade" mode="out-in">
+        <div v-if="post" key="post">
+            <PostItem :post="post" @reply-created="onReplyCreated" :full="full" />
+            <div v-for="replyId in post.posts" :key="replyId" class="reply-section">
+                <PostReply :postId="replyId" :full="full" />
+            </div>
         </div>
-    </div>
+
+        <div v-else key="skeleton" class="post-skeleton">
+            <sl-skeleton class="skeleton-avatar" effect="sheen"></sl-skeleton>
+            <div class="skeleton-body">
+                <sl-skeleton class="skeleton-name" effect="sheen"></sl-skeleton>
+                <sl-skeleton class="skeleton-line" effect="sheen"></sl-skeleton>
+            </div>
+        </div>
+    </transition>
 </template>

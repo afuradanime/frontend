@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import type { Friendship, User } from '@/models/User';
 import { useRoute, useRouter } from "vue-router";
 
@@ -178,7 +178,7 @@ watch(() => profile.value, () => {
 }, { deep: true })
 
 watch(() => activeTab.value, () => {
-    setTimeout(observeItems, 100)
+    nextTick(() => observeItems())
 })
 
 </script>

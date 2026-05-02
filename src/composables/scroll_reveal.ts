@@ -1,4 +1,5 @@
 import { type Ref, nextTick, onUnmounted } from 'vue'
+import { usePreferences } from './usePreferences'
 
 export interface ScrollRevealOptions {
     /** CSS selector for items inside the container to observe */
@@ -26,6 +27,7 @@ export function useScrollReveal(
     containerRef: Ref<HTMLElement | null>,
     options: ScrollRevealOptions
 ) {
+    const { scrollRevealEnabled } = usePreferences()
     const {
         itemSelector,
         threshold = 0.05,
@@ -37,6 +39,17 @@ export function useScrollReveal(
 
     const observeItems = () => {
         observer?.disconnect()
+
+        if (!scrollRevealEnabled.value) {
+            // make all items visible immediately
+            nextTick(() => {
+                containerRef.value?.querySelectorAll(itemSelector).forEach((el) => {
+                    el.classList.add(visibleClass)
+                })
+            })
+            return
+        }
+
         observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -51,9 +64,10 @@ export function useScrollReveal(
 
         nextTick(() => {
             containerRef.value?.querySelectorAll(itemSelector).forEach((el) => {
-                el.classList.remove(visibleClass)
-                observer?.observe(el)
-            })
+                if (!el.classList.contains(visibleClass)) {
+                    observer?.observe(el)
+                }
+        })
         })
     }
 

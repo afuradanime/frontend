@@ -5,6 +5,9 @@ import { onMounted, ref, watch } from 'vue';
 import userService from '@/services/UserService';
 import UserIcon from '../capsules/UserIcon.vue';
 import '@shoelace-style/shoelace/dist/components/relative-time/relative-time.js'
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js'
+import '@shoelace-style/shoelace/dist/components/menu/menu.js'
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js'
 import { authService } from '@/services/AuthService'
 import { postService } from '@/services/PostService';
 import { useNotification } from '@/composables/notification';
@@ -32,7 +35,7 @@ const MAX_HEIGHT = 320 // px
 
 const props = defineProps<{
     post: Post
-    full: boolean
+    full?: boolean
 }>()
 
 const emit = defineEmits<{

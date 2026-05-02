@@ -37,17 +37,22 @@ const setNavigation = (event: Event) => {
     }
 }
 
-const { alwaysExpandRatings, toggleExpandRatings } = usePreferences()
+const { alwaysExpandRatings, toggleExpandRatings, scrollRevealEnabled, toggleScrollReveal } = usePreferences()
 
 const setExpandRatings = (event: Event) => {
     const isChecked = (event.target as HTMLInputElement).checked
     toggleExpandRatings(isChecked)
 }
 
+const setScrollReveal = (event: Event) => {
+    const value = (event.target as HTMLInputElement).value
+    toggleScrollReveal(value === 'full')
+}
+
 </script>
 
 <template>
-    <sl-dialog ref="dialogRef" label="Definições" style="--width: 50vw;">
+    <sl-dialog ref="dialogRef" label="Definições">
         <div class="settings-form">
             <div class="field">
                 <sl-radio-group label="Tema" :value="theme" @sl-change="setTheme">
@@ -66,6 +71,12 @@ const setExpandRatings = (event: Event) => {
                 <sl-switch :checked="alwaysExpandRatings" @sl-change="setExpandRatings">
                     Expandir sempre avaliações na lista de anime
                 </sl-switch>
+            </div>
+            <div class="field">
+                <sl-radio-group label="Animações" :value="scrollRevealEnabled ? 'full' : 'reduced'" @sl-change="setScrollReveal">
+                    <sl-radio value="full">Todas</sl-radio>
+                    <sl-radio value="reduced">Reduzidas</sl-radio>
+                </sl-radio-group>
             </div>
         </div>
         <div slot="footer">

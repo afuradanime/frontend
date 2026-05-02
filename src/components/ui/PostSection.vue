@@ -11,7 +11,7 @@ import '@shoelace-style/shoelace/dist/components/textarea/textarea.js'
 import '@shoelace-style/shoelace/dist/components/icon/icon.js'
 import PostItem from './posts/PostItem.vue'
 import PostReply from './posts/PostReply.vue'
-import Loading from './Loading.vue'
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js'
 
 defineOptions({ name: 'PostSection' })
 
@@ -93,20 +93,33 @@ onMounted(
         <sl-button v-if="!props.readOnly" @click="openCreate">Novo Post</sl-button>
     </div>
     
-    <Loading v-if="loading" />
-    <Subcontainer 
-        v-for="post in posts" :key="post.id"
-    >
-        <template #content>
-            <PostItem :post="post" @deleted="onPostDeleted" @reply-created="onReplyCreated"/>
-            <div
-                v-for="replyId in post.posts" :key="replyId"
-                class="reply-section"
-            >
-                <PostReply :postId="replyId" />
-            </div>
-        </template>
-    </Subcontainer>
+    <transition name="fade" mode="out-in">
+        <div v-if="loading" key="skeleton">
+            <Subcontainer v-for="i in 3" :key="i">
+                <template #content>
+                    <div class="post-skeleton">
+                        <sl-skeleton class="skeleton-avatar" effect="sheen"></sl-skeleton>
+                        <div class="skeleton-body">
+                            <sl-skeleton class="skeleton-name" effect="sheen"></sl-skeleton>
+                            <sl-skeleton class="skeleton-line" effect="sheen"></sl-skeleton>
+                            <sl-skeleton class="skeleton-line short" effect="sheen"></sl-skeleton>
+                        </div>
+                    </div>
+                </template>
+            </Subcontainer>
+        </div>
+
+        <div v-else key="posts">
+            <Subcontainer v-for="post in posts" :key="post.id">
+                <template #content>
+                    <PostItem :post="post" @deleted="onPostDeleted" @reply-created="onReplyCreated"/>
+                    <div v-for="replyId in post.posts" :key="replyId" class="reply-section">
+                        <PostReply :postId="replyId" />
+                    </div>
+                </template>
+            </Subcontainer>
+        </div>
+    </transition>
 
     <teleport to="body">
         <PostCreateModal 
@@ -116,7 +129,6 @@ onMounted(
             @created="onPostCreated" 
         />
     </teleport>
-
 </template>
 
 <style scoped>
