@@ -390,10 +390,14 @@ watch(() => activeTab.value, () => {
                     <!-- LISTA DE ANIME -->
                     <template v-else-if="activeTab === 'animelist'">
                         <Container class="full-container reveal-item">
-                            <AnimeList :userId="profile.ID" :isOwnList="isAuthenticated && user?.ID === profile.ID" />
+                            <div v-if="profile.PrivateAnimeList && user?.ID !== profile.ID" class="private-list-message">
+                                <sl-icon library="material" name="lock"></sl-icon>
+                                <p>Este utilizador tem a lista privada.</p>
+                            </div>
+                            <AnimeList v-else :userId="profile.ID" :isOwnList="isAuthenticated && user?.ID === profile.ID" />
                         </Container>
                     </template>
-
+                    
                     <!-- LISTA DE MANGA -->
                     <template v-else-if="activeTab === 'mangalist'">
                         <Container class="full-container reveal-item">
@@ -487,5 +491,14 @@ watch(() => activeTab.value, () => {
 .online-indicator.idle {
     background: radial-gradient(circle at 35% 35%, #efff5f, #9e7f1a);
 }
+
+.private-list-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-color-secondary);
+}
+
 
 </style>

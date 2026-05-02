@@ -36,6 +36,7 @@ const form = ref({
     Birthday: '',
     AllowsFriendRequests: true,
     AllowsRecommendations: true,
+    ListPrivate: false,
 })
 
 watch(() => props.user, (u) => {
@@ -52,6 +53,7 @@ watch(() => props.user, (u) => {
         Birthday: u.Birthday ? new Date(u.Birthday).toISOString().split('T')[0] : '',
         AllowsFriendRequests: u.AllowsFriendRequests ?? true,
         AllowsRecommendations: u.AllowsRecommendations ?? true,
+        ListPrivate: u.PrivateAnimeList ?? false,
     } as any
 }, { immediate: true })
 
@@ -76,6 +78,7 @@ const save = async () => {
             Birthday: form.value.Birthday || undefined,
             AllowsFriendRequests: form.value.AllowsFriendRequests,
             AllowsRecommendations: form.value.AllowsRecommendations,
+            ListPrivate: form.value.ListPrivate
         })
         notify('Perfil atualizado!', 'success')
         emit('updated', {
@@ -85,6 +88,7 @@ const save = async () => {
             Pronouns: form.value.Pronouns === 'Outro' ? form.value.PronounsCustom : form.value.Pronouns,
             AllowsFriendRequests: form.value.AllowsFriendRequests,
             AllowsRecommendations: form.value.AllowsRecommendations,
+            PrivateAnimeList: form.value.ListPrivate,
         })
         hide()
     } catch (err: any) {
@@ -174,6 +178,12 @@ const save = async () => {
                         @sl-change="form.AllowsRecommendations = ($event.target as any).checked"
                     >
                         Permitir recomendações de amigos
+                    </sl-checkbox>
+                    <sl-checkbox
+                        :checked="form.ListPrivate"
+                        @sl-change="form.ListPrivate = ($event.target as any).checked"
+                    >
+                        Lista privada
                     </sl-checkbox>
                 </div>
             </div>

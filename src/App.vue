@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { authService } from './services/AuthService'
 import Toast from './components/ui/Toast.vue'
 import Navbars from './components/navigation/Navbars.vue'
 import { useWelcome } from './composables/welcome'
 import WelcomeModal from './components/modals/WelcomeModal.vue'
+import { useTosPrompt } from './composables/tos'
+import TosModal from './components/modals/TosModal.vue'
 
 const { showWelcome } = useWelcome()
 const welcomeModalRef = ref<any>(null)
@@ -20,6 +22,8 @@ watch(showWelcome, (val) => {
     }
 })
 
+const { pending, dismiss } = useTosPrompt()
+
 </script>
 
 <template>
@@ -34,6 +38,7 @@ watch(showWelcome, (val) => {
 			:user="authService.user.value" 
 			ref="welcomeModalRef"
 		/>
+		<TosModal v-if="pending" @accepted="dismiss" @dismissed="dismiss" />
 	</div>
 
 </template>

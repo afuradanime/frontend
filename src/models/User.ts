@@ -13,6 +13,7 @@ export interface User {
     LastLogin: string
     AllowsFriendRequests: boolean
     AllowsRecommendations: boolean
+    PrivateAnimeList: boolean
     Roles: string
     Badges: string
     CanPost: boolean

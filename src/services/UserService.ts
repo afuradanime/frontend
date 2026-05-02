@@ -50,6 +50,7 @@ export class UserService {
         AllowsRecommendations?: boolean
 		AvatarURL?: string
 		AcceptedTermsOfService?: boolean
+		ListPrivate?: boolean
     }): Promise<void> {
         await this.httpService.put(`/users`, data)
     }
