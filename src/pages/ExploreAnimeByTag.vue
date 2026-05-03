@@ -87,6 +87,7 @@ const onFilterChange = (f: AnimeFilter) => {
             :page-size="pageSize"
             :total="totalPages * pageSize"
             @page-change="loadPage"
+            :always-visible="true"
         />
 
     </div>

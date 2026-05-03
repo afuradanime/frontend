@@ -28,6 +28,7 @@ import { animeListService } from '@/services/AnimeListService';
 import type { UserListItemDTO } from '@/models/AnimeList';
 import PostSection from '@/components/ui/PostSection.vue'
 import { PostParentType } from '@/models/Post'
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js'
 
 const { notify } = useNotification()
 const activeTab = ref<'geral' | 'opinioes' | 'forum' | 'estatisticas'>('geral')

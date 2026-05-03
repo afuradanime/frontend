@@ -4,7 +4,7 @@
     <div class="info-page">
         <div class="info-container">
             <h1>Termos de Serviço</h1>
-            <span class="updated">Última atualização: 26 de Abril 2026</span>
+            <span class="updated">Última atualização: 26 de Abril de 2026</span>
 
             <section>
                 <h2>1. Aceitação dos Termos</h2>
@@ -72,7 +72,7 @@
                 <span>
                     Ao autenticares com o Google, recebemos o teu nome, endereço de email e foto de perfil. 
                     Estes dados são utilizados exclusivamente para identificar a tua conta na plataforma e nunca são partilhados com terceiros.
-                    Podes solicitar a eliminação da tua conta e dados a qualquer momento através do suporte.
+                    Para mais informação sobre o nosso tratamento de dados pessoais, é favor rever a nossa <a href="/info/gdpr">política de privacidade</a>.
                 </span>
             </section>
 
@@ -86,7 +86,7 @@
             <section>
                 <h2>8. Contacto</h2>
                 <span>
-                    Para questões relacionadas com estes termos ou com a tua conta, podes contactar-nos através de e-mail.
+                    Para questões relacionadas com estes termos ou com a tua conta, podes contactar-nos através de e-mail (<a href="mailto:afuradanime@gmail.com">afuradanime@gmail.com</a>).
                 </span>
             </section>
         </div>

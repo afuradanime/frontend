@@ -65,6 +65,7 @@ onMounted(() => loadPage(1))
                 :page-size="pageSize"
                 :total="totalPages * pageSize"
                 @page-change="loadPage"
+                :always-visible="true"
             />
         </template>
     </PageWithFilter>

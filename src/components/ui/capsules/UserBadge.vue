@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js'
+
 defineProps<{
     badge: number
 }>()
@@ -7,7 +9,7 @@ const BadgeMap: Record<number, { label: string, icon: string }> = {
     1: { label: 'Contributor',     icon: 'star'},
     2: { label: 'Tradutor',     icon: '/badges/translator.png' },
     3: { label: 'Marca',    icon: '/badges/brand.png' },
-    4: { label: 'Beta tester', icon: 'volunteer_activism' },
+    4: { label: 'Beta tester', icon: '/badges/beta.png' },
     5: { label: 'Super Mega Illya Fan', icon: '/badges/illya.png'},
 }
 </script>
@@ -34,6 +36,5 @@ const BadgeMap: Record<number, { label: string, icon: string }> = {
 
 .user-badge .material-icons {
     font-size: 1rem;
-    color: white;
 }
 </style>

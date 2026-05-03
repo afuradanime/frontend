@@ -161,6 +161,14 @@ const router = createRouter({
         {
             path: '/info/version',
             component: () => import('@/pages/Info/AboutVersion.vue')
+        },
+        {
+            path: '/info/gdpr',
+            component: () => import('@/pages/Info/AboutGDPR.vue')
+        },
+        {
+            path: '/info/afuradanime',
+            component: () => import('@/pages/Info/AboutAfuradanime.vue')
         }
 	],
 })
