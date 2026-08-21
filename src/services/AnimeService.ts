@@ -1,6 +1,7 @@
 import { AxiosHTTPService } from './AxiosHttpService'
 import type { Anime, Licensor, Producer, Studio } from '../models/Anime'
 import type { Pagination } from '@/models/Pagination'
+import type { RatingCache } from '@/models/Rating'
 
 export interface EntityAnimeResponse<T> {
     animes: Anime[]
@@ -18,6 +19,16 @@ export interface AnimeFilter {
     end_date?: number
     min_episodes?: number
     max_episodes?: number
+}
+
+export interface AnimeWithRating {
+    anime: Anime
+    rating: RatingCache
+}
+
+export interface PaginatedAnimeWithRating {
+    data: AnimeWithRating[]
+    pagination: Pagination
 }
 
 export class AnimeService {
@@ -86,6 +97,20 @@ export class AnimeService {
     async fetchLicensorByID(licensorID: number, filter: AnimeFilter = {}, pageNumber = 1, pageSize = 20): Promise<EntityAnimeResponse<Licensor>> {
         const response = await this.httpService.get<EntityAnimeResponse<Licensor>>(`/anime/licensor/${licensorID}`, {
             params: { ...filter, pageNumber, pageSize },
+        })
+        return response.data
+    }
+
+    async fetchTopAnime(pageNumber = 1, pageSize = 20): Promise<PaginatedAnimeWithRating> {
+        const response = await this.httpService.get<PaginatedAnimeWithRating>('/ratingcache/top', {
+            params: { pageNumber, pageSize },
+        })
+        return response.data
+    }
+
+    async fetchPopularAnime(pageNumber = 1, pageSize = 20): Promise<PaginatedAnimeWithRating> {
+        const response = await this.httpService.get<PaginatedAnimeWithRating>('/ratingcache/popular', {
+            params: { pageNumber, pageSize },
         })
         return response.data
     }

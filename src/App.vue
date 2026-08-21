@@ -1,38 +1,60 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import Sidebar from './components/Sidebar.vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { authService } from './services/AuthService'
-import Toast from './components/Toast.vue'
+import Toast from './components/ui/Toast.vue'
+import Navbars from './components/navigation/Navbars.vue'
+import { useWelcome } from './composables/welcome'
+import WelcomeModal from './components/modals/WelcomeModal.vue'
+import { useTosPrompt } from './composables/tos'
+import TosModal from './components/modals/TosModal.vue'
+
+const { showWelcome } = useWelcome()
+const welcomeModalRef = ref<any>(null)
 
 onMounted(() => {
+
 	authService.fetchCurrentUser()
 })
 
-const menuItems = [
-	{ title: 'Explorar', icon: 'public', route: '/explore' },
-    { title: "Season", icon: 'calendar_today', route: '/season' },
-    { title: "Géneros", icon: 'extension', route: '/genres' },
-    { title: "Utilizadores", icon: 'people', route: '/users'},
-    { title: "Grupos", icon: 'group', route: '/groups' },
-    { title: "Artistas", icon: 'palette', route: '/artists' },
-    { title: "Aleatório", icon: 'shuffle', route: '/anime/random' }
-]
+watch(showWelcome, (val) => {
+    if (val) {
+        welcomeModalRef.value?.show()
+    }
+})
+
+const { pending, dismiss } = useTosPrompt()
 
 </script>
 
 <template>
 
-	<div class="app-container">
-        <Toast />
-		<Sidebar :menuItems="menuItems" />
-		<RouterView id="content"/>
+	<div class="viewport">
+		<Navbars />
+		<div class="main-content-wrapper">
+			<RouterView />
+        	<Toast />
+		</div>
+		<WelcomeModal 
+			:user="authService.user.value" 
+			ref="welcomeModalRef"
+		/>
+		<TosModal v-if="pending" @accepted="dismiss" @dismissed="dismiss" />
 	</div>
 
 </template>
 
 <style scoped>
-	.app-container {
-		display: flex;
-		flex-direction: row;
-	}
+.viewport {
+	height: 100%;
+	display: flex;
+	flex-direction: var(--app-direction);
+}
+
+.main-content-wrapper{
+	width: calc(100% - var(--sidebar-width));
+	margin-left: var(--sidebar-width);
+	margin-top: var(--topbar-height);
+	min-height: 100vh;
+	height: fit-content;
+}
 </style>

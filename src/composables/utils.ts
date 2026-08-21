@@ -1,3 +1,5 @@
+import { SeasonType, type Season } from "@/models/Anime";
+
 function DateFormat(date: string) {
     
     const d = new Date(date);
@@ -43,15 +45,15 @@ function TranslateDuration(duration: string): string {
 
 const RoleMap = [
     {
-        name: "Admin",
+        name: "Administrador",
         colour: "#EA7B7B"
     },
     {
-        name: "Moderator",
+        name: "Moderador",
         colour: "#5A9CB5"
     },
     {
-        name: "User",
+        name: "Utilizador",
         colour: "#97A87A"
     }
 ]
@@ -142,7 +144,107 @@ const TagMap = [
     "Crossdressing",
     "Urban Fantasy",
     "Villainess",
+
+    // "",
+    // "Acção",
+    // "Aventura",
+    // "Corridas",
+    // "Comédia",
+    // "Avant Garde",
+    // "Mitologia",
+    // "Mistério",
+    // "Drama",
+    // "Ecchi",
+    // "Fantasia",
+    // "Jogo de estratégia",
+    // "Hentai",
+    // "Histórico",
+    // "Horror",
+    // "Crianças",
+    // "",
+    // "Artes marciais",
+    // "Mecha",
+    // "Música",
+    // "Paródia",
+    // "Samurai",
+    // "Romance",
+    // "Escola",
+    // "Ficção científica",
+    // "Shoujo",
+    // "Girls love",
+    // "Shounen",
+    // "Boys love",
+    // "Espaço",
+    // "Desporto",
+    // "Super poderes",
+    // "Vampiros",
+    // "",
+    // "",
+    // "Harem",
+    // "Slice of Life",
+    // "Sobrenatural",
+    // "Militar",
+    // "Detective",
+    // "Psicológico",
+    // "Suspense",
+    // "Seinen",
+    // "Josei",
+    // "",
+    // "",
+    // "Galardoado",
+    // "Gourmet",
+    // "Emprego",
+    // "Erotico",
+    // "Elenco adulto",
+    // "Antropomorfo",
+    // "CGDCT",
+    // "Cuidado de crianças",
+    // "Desportos de combate",
+    // "Delinquentes",
+    // "Educacional",
+    // "Humor gag",
+    // "Gore",
+    // "Jogo de alto risco",
+    // "Idols (Feminino)",
+    // "Idols (Masculino)",
+    // "Isekai",
+    // "Iyashikei",
+    // "Polígono amoroso",
+    // "Transformação mágica de sexo",
+    // "Mahou Shoujo",
+    // "Médico",
+    // "Crime organizado",
+    // "Cultura Otaku",
+    // "Artes Cênicas",
+    // "Animais de estimação",
+    // "Reencarnação ",
+    // "Harem reverso",
+    // "Love Status Quo",
+    // "Mundo do espetáculo",
+    // "Sobrevivência",
+    // "Desportos em equipa",
+    // "Viagem no tempo",
+    // "Videojogos",
+    // "Artes visuais",
+    // "Travestismo",
+    // "Fantasia urbano",
+    // "Vilã",
 ]
+
+function getCurrentSeason(): Season {
+    const now = new Date()
+    const month = now.getMonth() + 1
+    const day = now.getDate()
+    const year = now.getFullYear()
+
+    let season: SeasonType
+    if ((month == 3 && day >= 20) || (month > 3 && month < 6) || (month == 6 && day < 21)) season = SeasonType.Spring
+    else if ((month == 6 && day >= 21) || (month > 6 && month < 9) || (month == 9 && day < 23)) season = SeasonType.Summer
+    else if ((month == 9 && day >= 23) || (month > 9 && month < 12) || (month == 12 && day < 22)) season = SeasonType.Fall
+    else season = SeasonType.Winter
+
+    return { Season: season, Year: year }
+}
 
 export { 
     DateFormat, 
@@ -150,5 +252,6 @@ export {
     TranslateDayOfWeek,
     TranslateDuration,
     RoleMap,
+    getCurrentSeason,
     TagMap
 }

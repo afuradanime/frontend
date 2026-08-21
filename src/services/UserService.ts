@@ -48,6 +48,9 @@ export class UserService {
         Birthday?: string
         AllowsFriendRequests?: boolean
         AllowsRecommendations?: boolean
+		AvatarURL?: string
+		AcceptedTermsOfService?: boolean
+		ListPrivate?: boolean
     }): Promise<void> {
         await this.httpService.put(`/users`, data)
     }
@@ -80,6 +83,16 @@ export class UserService {
 			`/friends/check/${userB}`
 		)
 		return response.data
+	}
+
+	async isOnline(userA: number): Promise<number> {
+		const response = await this.httpService.get<{
+			user_id: number,
+			is_online: number
+		}>(
+			`/activity/user/${userA}`
+		)
+		return response.data.is_online
 	}
 
 	async sendFriendRequest(receiverId: number): Promise<void> {

@@ -1,0 +1,75 @@
+:root {
+	/* Theme specific */
+	--bg-color: #f3f3f3;
+	--bg-color-rgb: 243, 243, 243;
+	--bg-color-sub: rgba(177, 172, 172, 0.2);
+	--txt-color-main: #606060;
+	--txt-color-sub: #303030;
+	--accent-color: #2269ba;
+
+	/* General */
+	--def-font: 'Roboto', sans-serif;
+	--normal-font-weight: 400;
+	--medium-font-weight: 500;
+	--bold-font-weight: 700;
+	--def-border: 2px solid var(--bg-color-sub);
+	--def-shadow-s: 10px;
+	--def-shadow-c: rgba(0, 0, 0, 0.2);
+	--def-gap: 6px;
+	--component-gap: 24px;
+
+	/* Nav */
+	--logo-size: 40%;
+	--sidebar-width: 180px;
+	--topbar-height: 0px;
+	--sidebar-bg: rgba(0, 0, 0, 0.03);
+	--app-direction: row;
+
+	/* Legacy variable aliases → theme-aware */
+	--primary-color: var(--bg-color);
+	--variation-color: var(--bg-color-sub);
+	--secondary-color: var(--bg-color-sub);
+	--border-color: var(--bg-color-sub);
+	--text-color: var(--txt-color-sub);
+	--text-color-secondary: var(--txt-color-main);
+	--default-box-shadow: 0 0 var(--def-shadow-s) var(--def-shadow-c);
+}
+
+:root.topbar {
+	--sidebar-width: 0px;
+	--topbar-height: 60px;
+	--topbar-bg: rgba(var(--bg-color-rgb), 0.9);
+	--app-direction: column;
+}
+
+:root.dark {
+	/* Theme specific */
+	--bg-color: #171419;
+	--bg-color-rgb: 23, 20, 25;
+	--bg-color-sub: rgba(60, 60, 60, 0.3);
+	--txt-color-main: #a1a0a0;
+	--txt-color-sub: #cacaca;
+	--accent-color: #63a9f8;
+
+	/* General */
+	--def-shadow-c: rgba(0, 0, 0, 0.5);
+}
+
+* {
+	text-decoration: none;
+	outline: none;
+}
+
+.filter-page-title {
+	font-size: 1.5em;
+	font-family: 'Convergence', sans-serif;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	color: var(--txt-color-main);
+	background: var(--bg-color);
+	background-image: url(../assets/noise-strong.png);
+	font-family: var(--def-font);
+}

@@ -1,46 +1,47 @@
-.main-content-section {
-	display: flex;
-	justify-content: space-around; 
-	padding-top: 2%;
-}
-
-.container-styling{
-	padding: 1rem;
-	border-radius: 0.5rem;
-	background: var(--primary-color); 
-	box-shadow: var(--default-box-shadow);  
-	border: 2px solid var(--border-color);
+.container-styling {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--primary-color);
+    border: 2px solid var(--border-color);
 }
 
 .main-container {
     height: fit-content;
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--default-box-shadow);
+    gap: 1rem;
 }
 
-.title{
-	margin: 0 0 1rem 0;
+.no-border {
+    border: none !important;
 }
 
-.sub-container {
-	background: var(--variation-color);
+.genre-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 0;
 }
 
 .genre-tag {
-	display: inline-block;
-	padding: 5px 10px;
-	margin-left: 5px;
-	background-color: var(--variation-color);
-	border-radius: 4px;
-	font-size: 14px;
-	text-decoration: none;
-	color: var(--text-color-secondary);
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: var(--variation-color);
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--text-color-secondary);
 }
 
-.genre-tag:hover {
-	background-color: var(--primary-color);
-	color: var(--text-color);
+.genre-tag a {
+    color: var(--text-color-secondary);
+    text-decoration: none;
+}
+
+.genre-tag a:hover {
+    color: var(--text-color);
+    text-decoration: none;
 }
 
 .anime-header {
@@ -48,7 +49,7 @@
     height: calc(350px + 40px);
     position: relative;
     overflow: hidden;
-    border-bottom: 2px solid #111111;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .anime-header-background {
@@ -66,23 +67,28 @@
     width: 100%;
     height: 350px;
     z-index: -1;
-    background-image: 
+    background-image:
         radial-gradient(circle at 25% 25%, black 1.5px, transparent 1.5px),
         radial-gradient(circle at 75% 75%, black 1.5px, transparent 1.5px);
     background-size: 4px 4px, 4px 4px;
     background-position: 0 0, 2px 2px;
-    mask: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
-    -webkit-mask: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+    mask: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+    -webkit-mask: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
 }
 
 .anime-poster {
-    width: calc(225px / 1.2);
-    height: calc(319px / 1.2);
-    position: absolute;
-    bottom: 0;
-    left: 50px;
+    width: 100%;
+    height: 100%;
     border-radius: 7px 7px 0px 0px;
     box-shadow: inset 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    background-repeat: round;
+}
+
+.anime-poster-large {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.6s ease;
+    border-radius: 7px 7px 0px 0px;
     background-repeat: round;
 }
 
@@ -120,10 +126,14 @@
 
 .anime-tabs {
     margin-left: calc(225px / 1.2 + 50px);
-    background-color: #171419;
+    background-color: var(--primary-color);
     width: 100%;
     height: 40px;
     display: flex;
+}
+
+.title {
+    margin-bottom: 10px;
 }
 
 .anime-tab {
@@ -132,7 +142,7 @@
     align-items: center;
     justify-content: center;
     padding: 0px 30px;
-    border-right: 2px solid #111111;
+    border-right: 2px solid var(--border-color);
 }
 
 .anime-tab:hover {
@@ -149,10 +159,40 @@
     color: var(--text-color-secondary);
 }
 
+.stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.star {
+    width: 0.8em;
+    margin: auto;
+}
+
 .main-content-section {
     display: flex;
     gap: 20px;
-    padding: 20px;
+    padding: 2rem 3rem;
+}
+
+.full-container {
+    width: 100%;
 }
 
 .left-sidebar {
@@ -160,7 +200,7 @@
 }
 
 .right-content {
-    width: 70%;
+    width: 80%;
 }
 
 .synopsis-content {
@@ -178,7 +218,7 @@
     border-radius: 7px 7px 0px 0px;
     box-shadow: outset 0px 4px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
-    
+
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -188,6 +228,8 @@
     list-style: none;
     padding: 0;
     gap: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 .social-link {
@@ -206,15 +248,15 @@
 }
 
 .info-link {
-    color: var(--text-color, #3498db);
+    color: var(--txt-color-main);
     text-decoration: none;
     padding: 0.25rem 0;
-    transition: color 0.2s ease;
+    transition: all 200ms ease;
 }
 
 .info-link:hover {
-    color: var(--primary-color-dark, #2980b9);
-    text-decoration: underline;
+    color: var(--accent-color);
+    text-decoration: none;
 }
 
 .no-friends {
@@ -225,9 +267,9 @@
 }
 
 .reply-section {
-    padding-left: 10px; 
-    margin-left: 15px; 
-    border-left: 2px solid var(--secondary-color); 
+    padding-left: 10px;
+    margin-left: 15px;
+    border-left: 2px solid var(--secondary-color);
     padding-top: 30px;
 }
 
@@ -258,7 +300,10 @@
     font-weight: bold;
 }
 
-.status-pending  { background: #555; color: #ccc; }
+.status-pending {
+    background: #555;
+    color: #ccc;
+}
 
 .translation-description {
     font-size: 0.9rem;
@@ -274,4 +319,48 @@
 .translation-date {
     font-size: 0.75rem;
     color: #666;
+}
+
+.post-skeleton {
+    display: flex;
+    gap: 12px;
+    padding: 4px 0;
+}
+
+.skeleton-avatar {
+    --border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.skeleton-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.skeleton-name {
+    width: 140px;
+    height: 16px;
+}
+
+.skeleton-line {
+    width: 100%;
+    height: 14px;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }

@@ -1,3 +1,4 @@
+import { tosEventBus } from '@/composables/tos'
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
 
 export interface IGetOptions {
@@ -29,6 +30,16 @@ export class AxiosHTTPService {
 			},
 			withCredentials: true,
 		})
+
+		this.axiosInstance.interceptors.response.use(
+			response => response,
+			error => {
+				if (error.response?.status === 403 && error.response?.data?.includes?.('Terms of service')) {
+					tosEventBus.emit()
+				}
+				return Promise.reject(error)
+			}
+		)
 	}
 
 	private toResponse<T>(axiosResponse: AxiosResponse<T>): Response<T> {
@@ -57,6 +68,13 @@ export class AxiosHTTPService {
 
 	async put<T>(url: string, data?: any, options?: IPostOptions): Promise<Response<T>> {
 		const res = await this.axiosInstance.put<T>(url, data, {
+			headers: options?.headers,
+		})
+		return this.toResponse(res)
+	}
+
+	async patch<T>(url: string, data?: any, options?: IPostOptions): Promise<Response<T>> {
+		const res = await this.axiosInstance.patch<T>(url, data, {
 			headers: options?.headers,
 		})
 		return this.toResponse(res)

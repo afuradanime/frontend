@@ -320,3 +320,29 @@ sl-checkbox::part(label) {
     border-top: 1px solid var(--text-color);
     opacity: 0.5;
 }
+
+.labeled-select::part(display-input) {
+    color: var(--text-color-secondary);
+}
+
+.labeled-select::part(combobox) {
+    display: flex !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+}
+
+.labeled-select::part(display-input) {
+    flex: 1 !important;
+    text-align: right !important;
+    min-width: 0 !important;
+}
+
+.select-prefix {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-color);
+    white-space: nowrap;
+    padding-right: 4px;
+    border-right: 1px solid var(--border-color);
+    margin-right: 4px;
+}
